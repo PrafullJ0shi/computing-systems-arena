@@ -1,23 +1,17 @@
 import { useEffect } from 'react'
+import { Award, ClipboardList, Gauge, Layers, Map } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { DISCLAIMER } from '@/config/worlds'
+import { RankMark } from '@/components/Marks'
 import { useArena } from '@/context/ArenaContext'
 
 const NAV = [
-  { to: '/', label: 'Map', end: true, d: 'M4 12h16M4 7h10M4 17h13' },
-  { to: '/sprint', label: 'Sprint', d: 'M5 16 6-6 4 3 5-7' },
-  { to: '/mock', label: 'Mock', d: 'M8 5h8v14H8zM10 9h4M10 13h4' },
-  { to: '/cards', label: 'Cards', d: 'M6 7h9v12H6zM10 7V5h9v12h-2' },
-  { to: '/profile', label: 'Rank', d: 'm12 4 2.2 4.6 5 .7-3.6 3.5.9 5.1L12 15.8 7.5 18l.9-5.1L4.8 9.3l5-.7z' },
+  { to: '/', label: 'Map', end: true, icon: Map },
+  { to: '/sprint', label: 'Sprint', icon: Gauge },
+  { to: '/mock', label: 'Mock', icon: ClipboardList },
+  { to: '/cards', label: 'Cards', icon: Layers },
+  { to: '/profile', label: 'Rank', icon: Award },
 ]
-
-function Icon({ d }: { d: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d={d} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 export function Shell() {
   const { progress, rank, banner, dismissBanner, bank } = useArena()
@@ -28,64 +22,53 @@ export function Shell() {
   }, [banner, dismissBanner])
 
   const source =
-    bank.origin === 'sample'
-      ? 'Sample questions'
-      : bank.replacedWeeks.length >= 13
-        ? 'Personal bank'
-        : `Personal bank · weeks ${bank.replacedWeeks.join(', ')}`
+    bank.origin === 'sample' ? 'Bundled bank' : bank.replacedWeeks.length >= 13 ? 'Imported bank' : `Imported weeks ${bank.replacedWeeks.join(', ')}`
 
   return (
     <div className="min-h-dvh">
-      <a className="skip" href="#main">
-        Skip to content
-      </a>
-      <header className="sticky top-0 z-30 border-b border-line/80 bg-bg/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-          <NavLink to="/" className="flex items-center gap-2 font-semibold tracking-tight" end>
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent font-mono text-sm text-accentink">CS</span>
-            <span className="hidden sm:block">Computing Systems Arena</span>
-            <span className="sm:hidden">Arena</span>
+      <a className="skip" href="#main">Skip to content</a>
+      <header className="sticky top-0 z-30 border-b border-line bg-bg">
+        <div className="mx-auto flex max-w-5xl items-center gap-4 px-3 py-2">
+          <NavLink to="/" end className="flex items-center gap-2 font-semibold">
+            <span className="inline-block h-3 w-3 bg-[#f0a202]" aria-hidden="true" />
+            Arena
           </NavLink>
-          <nav className="ml-6 hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `rounded-full px-3 py-1.5 text-sm ${isActive ? 'bg-bg3 text-ink' : 'text-muted'}`
+                  `flex items-center gap-1.5 border-b-2 px-2 py-2 text-sm ${isActive ? 'border-accent text-ink' : 'border-transparent text-muted'}`
                 }
               >
+                <item.icon size={16} strokeWidth={1.75} aria-hidden="true" />
                 {item.label}
               </NavLink>
             ))}
           </nav>
-          <div className="ml-auto flex items-center gap-2 text-sm">
-            <span className="hidden rounded-full bg-bg3 px-3 py-1 font-mono text-xs text-amber-200 sm:inline" style={{ color: 'var(--accent)' }}>
+          <div className="ml-auto flex items-center gap-3 font-mono text-sm tabular-nums">
+            <span className="hidden items-center gap-1 sm:flex">
+              <RankMark rank={rank.index} />
               {rank.name}
             </span>
-            <span className="font-mono tabular-nums">{progress.xp.toLocaleString()} XP</span>
-            <span className="font-mono tabular-nums" aria-label={`${progress.streak} day streak`}>
-              {progress.streak}d
-            </span>
+            <span>{progress.xp.toLocaleString()} XP</span>
+            <span aria-label={`${progress.streak} day streak`}>{progress.streak}d</span>
           </div>
         </div>
       </header>
       {banner && (
-        <div className="mx-auto mt-3 max-w-6xl px-4" role="status">
-          <p className="rounded-full bg-accent px-4 py-2 text-center text-sm font-semibold text-accentink">{banner}</p>
+        <div className="mx-auto max-w-5xl px-3 pt-3" role="status">
+          <p className="banner-line">{banner}</p>
         </div>
       )}
-      <main id="main" className="mx-auto max-w-6xl px-4 pb-28 pt-6 lg:pb-16">
-        <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">{source}</p>
+      <main id="main" className="mx-auto max-w-5xl px-3 pb-24 pt-5 lg:pb-10">
+        <p className="mb-4 font-mono text-xs text-muted">{source}</p>
         <Outlet />
         <footer className="mt-10 border-t border-line pt-4 text-sm text-muted">{DISCLAIMER}</footer>
       </main>
-      <nav
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg/95 backdrop-blur lg:hidden"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-        aria-label="Primary"
-      >
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label="Primary">
         <ul className="grid grid-cols-5">
           {NAV.map((item) => (
             <li key={item.to}>
@@ -93,10 +76,10 @@ export function Shell() {
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] ${isActive ? 'text-ink' : 'text-muted'}`
+                  `flex min-h-14 flex-col items-center justify-center gap-0.5 border-t-2 text-[11px] ${isActive ? 'border-accent text-ink' : 'border-transparent text-muted'}`
                 }
               >
-                <Icon d={item.d} />
+                <item.icon size={16} strokeWidth={1.75} aria-hidden="true" />
                 {item.label}
               </NavLink>
             </li>

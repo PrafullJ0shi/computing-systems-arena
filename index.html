@@ -3,23 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07090f" />
-    <meta
-      name="description"
-      content="Computing Systems Arena: a game-style revision app for Computing Systems. Thirteen worlds, quizzes, mini-games, bosses, and a timed mock."
-    />
     <title>Computing Systems Arena</title>
+    <meta name="description" content="Revision arena for Computing Systems: 13 worlds, quizzes, mini-games, bosses, flashcards, and a timed mock. Progress stays in the browser." />
+    <link rel="canonical" href="https://prafullj0shi.github.io/computing-systems-arena/" />
+    <meta name="theme-color" content="#16181b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Computing Systems Arena" />
+    <meta property="og:description" content="Thirteen worlds of quizzes, games, bosses, and a timed mock for Computing Systems." />
+    <meta property="og:url" content="https://prafullj0shi.github.io/computing-systems-arena/" />
+    <meta property="og:image" content="https://prafullj0shi.github.io/computing-systems-arena/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Computing Systems Arena" />
+    <meta name="twitter:description" content="Thirteen worlds of quizzes, games, bosses, and a timed mock for Computing Systems." />
+    <meta name="twitter:image" content="https://prafullj0shi.github.io/computing-systems-arena/og-image.png" />
     <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="%BASE_URL%favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Computing Systems Arena",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web",
+            "url": "https://prafullj0shi.github.io/computing-systems-arena/",
+            "description": "Revision arena for Computing Systems with quizzes, mini-games, bosses, flashcards, and a timed mock.",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+          },
+          {
+            "@type": "LearningResource",
+            "name": "Computing Systems Arena",
+            "learningResourceType": "quiz",
+            "url": "https://prafullj0shi.github.io/computing-systems-arena/",
+            "isAccessibleForFree": true
+          }
+        ]
+      }
+    </script>
     <script>
       try {
         var raw = localStorage.getItem('csa.progress.v1')
         var theme = raw ? JSON.parse(raw).theme : 'dark'
         if (theme !== 'light') theme = 'dark'
         document.documentElement.dataset.theme = theme
-        document.querySelector('meta[name="theme-color"]').setAttribute(
-          'content',
-          theme === 'light' ? '#f4f7fb' : '#07090f',
-        )
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'light' ? '#f4f5f2' : '#16181b')
       } catch (e) {
         document.documentElement.dataset.theme = 'dark'
       }

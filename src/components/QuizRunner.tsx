@@ -152,7 +152,7 @@ export function QuizRunner({ title, questions, mode, onAnswer, onDone, endsAt }:
   return (
     <section className="panel p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">{title}</p>
+        <p className="font-mono text-xs text-muted">{title}</p>
         <p className="font-mono text-sm tabular-nums">
           {index + 1} / {questions.length}
           {left !== null && (
@@ -162,7 +162,7 @@ export function QuizRunner({ title, questions, mode, onAnswer, onDone, endsAt }:
           )}
         </p>
       </div>
-      <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-xl font-semibold tracking-tight text-balance sm:text-2xl">
+      <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-xl font-semibold tracking-tight outline-none sm:text-2xl">
         {question.prompt}
       </h1>
       <p className="mt-2 text-sm text-muted">
@@ -183,7 +183,7 @@ export function QuizRunner({ title, questions, mode, onAnswer, onDone, endsAt }:
         </p>
       )}
       {question.code && (
-        <pre className="mt-4 overflow-x-auto rounded-xl bg-bg3 p-4 font-mono text-sm leading-6">{question.code}</pre>
+        <pre className="mt-4 overflow-x-auto border border-line bg-bg3 p-3 font-mono text-sm leading-6">{question.code}</pre>
       )}
       {modeKind === 'reveal' ? (
         <div className="mt-5">
@@ -192,7 +192,7 @@ export function QuizRunner({ title, questions, mode, onAnswer, onDone, endsAt }:
               Show a model answer
             </button>
           ) : (
-            <div className="rounded-2xl bg-bg3 p-4">
+            <div className="border border-line bg-bg3 p-4">
               <p className="text-sm font-semibold">Model answer</p>
               <p className="mt-2">{question.answerText || question.explanation}</p>
               <p className="mt-3 text-sm text-muted">{question.explanation}</p>
@@ -215,15 +215,15 @@ export function QuizRunner({ title, questions, mode, onAnswer, onDone, endsAt }:
             const active = selected.includes(optionIndex)
             const show = revealed && mode === 'practice'
             const isAnswer = question.answerIndexes.includes(optionIndex)
-            let tone = 'border-line bg-bg'
-            if (active) tone = 'border-accent bg-bg3'
-            if (show && isAnswer) tone = 'border-transparent bg-[var(--ok-bg)] text-[var(--ok-fg)]'
-            if (show && active && !isAnswer) tone = 'border-transparent bg-[var(--bad-bg)] text-[var(--bad-fg)]'
+            let tone = 'choice'
+            if (active) tone = 'choice choice-on'
+            if (show && isAnswer) tone = 'choice choice-ok'
+            if (show && active && !isAnswer) tone = 'choice choice-bad'
             return (
               <li key={`${question.id}-${optionIndex}`}>
                 <button
                   type="button"
-                  className={`flex w-full min-h-12 items-start gap-3 rounded-2xl border px-3 py-3 text-left ${tone}`}
+                  className={`${tone} ${show ? 'feedback-in' : ''}`}
                   aria-pressed={active}
                   onClick={() => toggle(optionIndex)}
                 >
@@ -238,7 +238,7 @@ export function QuizRunner({ title, questions, mode, onAnswer, onDone, endsAt }:
         </ul>
       )}
       {revealed && mode === 'practice' && modeKind !== 'reveal' && (
-        <div className="mt-4 rounded-2xl bg-bg3 p-4" role="status">
+        <div className="feedback feedback-in mt-4" role="status">
           <p className="font-semibold">{correctNow ? 'Correct.' : 'Not quite.'}</p>
           <p className="mt-2 text-sm leading-6">{question.explanation}</p>
           {question.traps.length > 0 && (

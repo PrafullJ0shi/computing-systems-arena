@@ -1,0 +1,14 @@
+name: Question issue
+description: A bundled question looks wrong
+body:
+  - type: input
+    attributes:
+      label: Question id
+      description: For example W02-Q014
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What is wrong
+    validations:
+      required: true
