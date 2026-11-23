@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { RankMark } from '@/components/Marks'
 import { RANKS } from '@/config/ranks'
 import { WORLDS, badgeId } from '@/config/worlds'
 import { useArena } from '@/context/ArenaContext'
@@ -13,8 +14,8 @@ export function ProfilePage() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">{progress.displayName || 'Student'}</p>
-          <h1 className="text-3xl font-semibold">{rank.name}</h1>
+          <p className="font-mono text-xs text-muted">{progress.displayName || 'Student'}</p>
+          <h1 className="flex items-center gap-2 text-[1.75rem] font-semibold"><RankMark rank={rank.index} />{rank.name}</h1>
           <p className="mt-1 font-mono tabular-nums text-muted">
             {progress.xp.toLocaleString()} XP
             {rank.nextName ? ` · ${rank.nextXp! - progress.xp} to ${rank.nextName}` : ' · top rank'}
@@ -24,8 +25,8 @@ export function ProfilePage() {
           Settings
         </Link>
       </div>
-      <div className="mt-4 h-2 overflow-hidden rounded-full bg-bg3" aria-hidden="true">
-        <div className="h-full bg-accent" style={{ width: `${ratio * 100}%` }} />
+      <div className="tick mt-4" aria-hidden="true">
+        <span style={{ width: `${ratio * 100}%` }} />
       </div>
       <p className="mt-3 text-sm text-muted">
         Streak {progress.streak} · longest {progress.longestStreak}
@@ -33,9 +34,10 @@ export function ProfilePage() {
       <h2 className="mt-8 text-xl font-semibold">Ranks</h2>
       <ol className="mt-3 space-y-2">
         {RANKS.map((item) => (
-          <li key={item.name} className={`flex items-center justify-between rounded-xl px-3 py-2 ${item.index === rank.index ? 'bg-bg3' : ''}`}>
-            <span>
-              {item.index + 1}. {item.name}
+          <li key={item.name} className={`flex items-center justify-between border-b border-line px-1 py-2 ${item.index === rank.index ? 'bg-bg3' : ''}`}>
+            <span className="flex items-center gap-2">
+              <RankMark rank={item.index} />
+              {item.name}
             </span>
             <span className="font-mono text-sm tabular-nums text-muted">{item.minXp.toLocaleString()}</span>
           </li>
@@ -49,8 +51,8 @@ export function ProfilePage() {
           return (
             <li key={world.week} className="grid grid-cols-[2rem_1fr_4rem] items-center gap-2 text-sm">
               <span className="font-mono">{world.week}</span>
-              <span className="h-2 overflow-hidden rounded-full bg-bg3">
-                <span className="block h-full bg-teal" style={{ width: `${mastery.ratio * 100}%` }} />
+              <span className="tick">
+                <span style={{ width: `${mastery.ratio * 100}%` }} />
               </span>
               <span className="font-mono tabular-nums">
                 {mastery.correct}/{mastery.total}

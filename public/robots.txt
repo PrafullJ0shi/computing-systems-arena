@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://prafullj0shi.github.io/computing-systems-arena/sitemap.xml

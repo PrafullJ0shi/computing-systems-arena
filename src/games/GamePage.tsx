@@ -48,10 +48,9 @@ export function GamePage() {
             {round.choices.map((choice, choiceIndex) => {
               const show = picked !== null
               const isAnswer = choiceIndex === round.answer
-              const tone = show && isAnswer ? 'bg-[var(--ok-bg)]' : show && picked === choiceIndex ? 'bg-[var(--bad-bg)]' : 'bg-bg'
               return (
                 <li key={choice}>
-                  <button type="button" className={`min-h-12 w-full rounded-2xl border border-line px-3 py-3 text-left ${tone}`} onClick={() => choose(choiceIndex)}>
+                  <button type="button" className={`choice ${show && isAnswer ? 'choice-ok' : ''} ${show && picked === choiceIndex && !isAnswer ? 'choice-bad' : ''} ${!show && picked === choiceIndex ? 'choice-on' : ''}`} onClick={() => choose(choiceIndex)}>
                     {choice}
                   </button>
                 </li>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="Liberation Sans, sans-serif">
+  <rect width="960" height="520" fill="#16181b"/>
+  <text x="32" y="40" fill="#e6e8e4" font-size="22" font-weight="600">Arena architecture</text>
+  <text x="32" y="62" fill="#a7aea8" font-size="13" font-family="Liberation Mono, monospace">static build · browser only</text>
+  <g fill="none" stroke="#3c4248" stroke-width="1">
+    <rect x="32" y="88" width="200" height="72"/>
+    <rect x="280" y="88" width="200" height="72"/>
+    <rect x="528" y="88" width="200" height="72"/>
+    <rect x="32" y="200" width="280" height="120"/>
+    <rect x="340" y="200" width="280" height="120"/>
+    <rect x="648" y="200" width="280" height="120"/>
+    <rect x="32" y="360" width="896" height="120"/>
+  </g>
+  <g fill="#e6e8e4" font-size="14">
+    <text x="44" y="116" font-weight="600">Shell</text>
+    <text x="44" y="136" fill="#a7aea8" font-size="12">header, nav, footer</text>
+    <text x="292" y="116" font-weight="600">Hash router</text>
+    <text x="292" y="136" fill="#a7aea8" font-size="12">map, quiz, mock, games</text>
+    <text x="540" y="116" font-weight="600">Feature pages</text>
+    <text x="540" y="136" fill="#a7aea8" font-size="12">sprint, vault, cards, boss</text>
+    <text x="44" y="228" font-weight="600">Content loader</text>
+    <text x="44" y="252" fill="#a7aea8" font-size="12">content/bank JSON</text>
+    <text x="44" y="270" fill="#a7aea8" font-size="12">optional private overlay</text>
+    <text x="44" y="288" fill="#a7aea8" font-size="12">normalize missing fields</text>
+    <text x="352" y="228" font-weight="600">Game engine</text>
+    <text x="352" y="252" fill="#a7aea8" font-size="12">XP, 10 ranks, badges</text>
+    <text x="352" y="270" fill="#a7aea8" font-size="12">SM-2 flashcards</text>
+    <text x="352" y="288" fill="#a7aea8" font-size="12">scoring and sprint order</text>
+    <text x="660" y="228" font-weight="600">Persistence</text>
+    <text x="660" y="252" fill="#a7aea8" font-size="12">localStorage progress</text>
+    <text x="660" y="270" fill="#a7aea8" font-size="12">IndexedDB imported bank</text>
+    <text x="44" y="392" font-weight="600">Build and deploy</text>
+    <text x="44" y="416" fill="#a7aea8" font-size="12">Vite bundles the bank into a static site. GitHub Actions runs lint, tests, and the build.</text>
+    <text x="44" y="436" fill="#a7aea8" font-size="12">A push to main uploads the dist folder. Pages serves it at the project URL. Routes stay in the hash.</text>
+  </g>
+  <rect x="900" y="24" width="16" height="16" fill="#f0a202"/>
+</svg>

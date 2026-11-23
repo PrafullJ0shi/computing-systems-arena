@@ -76,7 +76,7 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress))
     document.documentElement.dataset.theme = progress.theme
     const meta = document.querySelector('meta[name="theme-color"]')
-    meta?.setAttribute('content', progress.theme === 'light' ? '#f4f7fb' : '#07090f')
+    meta?.setAttribute('content', progress.theme === 'light' ? '#f4f5f2' : '#16181b')
   }, [progress])
 
   const bank = useMemo(() => applyPayload(bundledBank, imported), [imported])

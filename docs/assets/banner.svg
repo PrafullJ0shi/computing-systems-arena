@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <rect width="1280" height="640" fill="#16181b"/>
+  <path d="M72 480V240M140 480V180M208 480V300M276 480V140" stroke="#e6e8e4" stroke-width="8"/>
+  <rect x="260" y="124" width="32" height="32" fill="#f0a202"/>
+  <text x="360" y="270" fill="#e6e8e4" font-family="Liberation Sans, sans-serif" font-size="58" font-weight="600">Computing Systems Arena</text>
+  <text x="360" y="340" fill="#a7aea8" font-family="Liberation Mono, monospace" font-size="26">A bench sheet for thirteen weeks of revision</text>
+</svg>
