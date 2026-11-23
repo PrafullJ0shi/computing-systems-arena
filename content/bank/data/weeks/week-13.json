@@ -1,0 +1,833 @@
+{
+  "week": 13,
+  "title": "Mobile and Embedded Computing",
+  "learningGoals": [
+    "Define mobile and embedded computing and edge computing (on-device AI), and say why they matter.",
+    "Explain the constraints: battery and power, form factor, chipset and thermal limits, memory, compute (ARM), and communication and bandwidth, plus their impact.",
+    "Describe the smartphone as a computer: the SoC (CPU, GPU, NPU/TPU, DSP, ISP, modem, power management), ARM big.LITTLE, Google Tensor, the mobile GPU, and sensors.",
+    "Explain the Android architecture (apps → framework → runtime → HAL → Linux kernel), app sandboxing, the memory layout and app killing.",
+    "Explain the mobile as a client in a distributed system: APIs (REST, gRPC), HTTP(S) and JSON, stateless calls, latency and reliability fixes (retry, cache, batch), background threads and asynchronous programming."
+  ],
+  "sirStressed": [
+    "\"Understanding mobile devices = understanding the world's primary computing platform.\"",
+    "Edge computing / on-device AI (background blur, face detection) brings privacy and low latency. Big training stays in the cloud.",
+    "The constraints and their impact: battery (the screen and radios use the most), form factor, thermal throttling or shutdown, RAM 4–12 GB with limited swap, ARM with few cores, and a variable network. \"Mind the constraints and optimise accordingly.\"",
+    "SoC: CPU, GPU, NPU/TPU, DSP, ISP, modem, power management. ARM big.LITTLE = performance + efficiency cores. Google Tensor (TPU, Titan).",
+    "Android stack: apps → framework → runtime → HAL → Linux kernel optimised for mobile. Sandboxing. The OS kills apps when RAM is full.",
+    "The mobile as a client: REST or gRPC APIs, HTTP methods, JSON, encryption against man-in-the-middle attacks, stateless calls. Retry + caching + batching. Background threads + asynchronous code keep the UI smooth."
+  ],
+  "commonTraps": [
+    "Embedded = a computer inside a non-computer device (a washing machine), not just \"small\".",
+    "Edge computing = local processing, not \"the edge of the cloud data centre\".",
+    "big.LITTLE = a mix of high-performance and efficiency cores.",
+    "ISP = camera/image; DSP = audio/video signals; NPU/TPU = AI. Don't swap them.",
+    "In Android, the HAL sits between the runtime/framework and the Linux kernel. The kernel is at the bottom.",
+    "Thermal throttling lowers the CPU speed. It isn't a battery feature.",
+    "Stateless = the server doesn't remember earlier requests.",
+    "Network calls on the UI thread cause freezing. Use background threads and asynchronous code."
+  ],
+  "summary": [
+    "Mobile (phones, tablets, watches; the most-used platform) and embedded (computing inside appliances, medical devices, IoT, Samsung Bespoke AI). Edge / on-device AI: privacy, low latency, offline (blur, face detection). Training stays in the cloud.",
+    "Constraints: battery (the screen and radios use the most; control background apps), form factor (no fan, fixed RAM), thermal (throttling, app kill, shutdown), memory (4–12 GB, limited swap, memory budget, OS kills apps), compute (ARM, few big cores, small caches), network (variable 2G–5G and Wi-Fi, switching). Optimise for the constraints.",
+    "Phone = a computer. SoC: CPU (ARM), GPU (shader cores; the CPU sends commands), NPU/TPU, DSP (audio/video), ISP (camera), modem, PMU. Snapdragon, Apple A-series, Exynos, Google Tensor (TPU, Mali GPU, Titan security).",
+    "ARM big.LITTLE: big performance + LITTLE efficiency cores, lower clock speeds, for balance.",
+    "Android: apps (Java/Kotlin) → framework → ART (bytecode) → HAL → Linux kernel (mobile-optimised). Sandboxed processes, limited background resources, the OS kills apps when RAM is full. Input: touch, voice, sensors (GPS, gyroscope, accelerometer, proximity, NFC), camera, microphone, Bluetooth.",
+    "Mobile as a client: login → auth server → API gateway → back end. REST or gRPC, HTTP GET/POST/DELETE, JSON, HTTPS encryption (defeats MITM), stateless calls. The cloud provides scaling and elasticity (Uber surge after flights land).",
+    "Problems: delay, weak signal, overload, packet loss, battery and data drain. Fixes: retry, caching, batching, fewer background processes. Responsiveness: background threads, a light UI thread, asynchronous programming (Kotlin coroutines)."
+  ],
+  "questions": [
+    {
+      "id": "W13-Q001",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Mobile devices must optimise computation mainly because:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Infinite memory"
+        },
+        {
+          "id": "B",
+          "text": "Unlimited thermal capacity"
+        },
+        {
+          "id": "C",
+          "text": "They run on limited battery power"
+        },
+        {
+          "id": "D",
+          "text": "No background processes"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Introduction to Mobile and Embedded Computing"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q002",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What mainly differentiates mobile/embedded computing from desktop computing?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Constraints such as limited power and memory"
+        },
+        {
+          "id": "B",
+          "text": "Always faster"
+        },
+        {
+          "id": "C",
+          "text": "No networks"
+        },
+        {
+          "id": "D",
+          "text": "No OS"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Introduction to Mobile and Embedded Computing"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q003",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Embedded systems are best described as:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Large multi-core servers"
+        },
+        {
+          "id": "B",
+          "text": "Computing units built into non-computing devices"
+        },
+        {
+          "id": "C",
+          "text": "Always have a display"
+        },
+        {
+          "id": "D",
+          "text": "Not used in the real world"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "for example, a washing machine or fridge (Samsung Bespoke AI).",
+      "topicTags": [
+        "Introduction to Mobile and Embedded Computing"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q004",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which constraint most strongly affects mobile performance?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Infinite bandwidth"
+        },
+        {
+          "id": "B",
+          "text": "Unlimited storage"
+        },
+        {
+          "id": "C",
+          "text": "Heavy cooling"
+        },
+        {
+          "id": "D",
+          "text": "Battery and power limits"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Computing in Mobile Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q005",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why do mobiles rely heavily on wireless communication?",
+      "options": [
+        {
+          "id": "A",
+          "text": "They're expected to connect anytime, anywhere"
+        },
+        {
+          "id": "B",
+          "text": "They can't run offline apps"
+        },
+        {
+          "id": "C",
+          "text": "Wired is more common"
+        },
+        {
+          "id": "D",
+          "text": "Unlimited data"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "portability. That's also why the variable 2G–5G and Wi-Fi bandwidth is a constraint.",
+      "topicTags": [
+        "Computing in Mobile Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q006",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why does a small form factor affect hardware design?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It limits the size and capability of chipsets"
+        },
+        {
+          "id": "B",
+          "text": "More RAM"
+        },
+        {
+          "id": "C",
+          "text": "No sensors needed"
+        },
+        {
+          "id": "D",
+          "text": "Guaranteed performance"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "no fan and little space mean heat limits, which mean smaller, slower chips.",
+      "topicTags": [
+        "Computing in Mobile Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q007",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why does Android use a layered architecture (apps → framework → kernel)?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To remove multitasking"
+        },
+        {
+          "id": "B",
+          "text": "To slow execution"
+        },
+        {
+          "id": "C",
+          "text": "To avoid hardware interaction"
+        },
+        {
+          "id": "D",
+          "text": "To separate responsibilities and improve stability"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "each layer (apps, framework, ART, HAL, Linux kernel) has one job, and the layers below are hidden from the ones above.",
+      "topicTags": [
+        "The Mobile Phone as a Special Computing System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q008",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is chipset architecture important in mobiles?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It determines how efficiently apps can run"
+        },
+        {
+          "id": "B",
+          "text": "Not used"
+        },
+        {
+          "id": "C",
+          "text": "Same as desktop CPUs"
+        },
+        {
+          "id": "D",
+          "text": "No RAM needed"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the SoC design (big.LITTLE, NPU, ISP) decides speed and battery life.",
+      "topicTags": [
+        "The Mobile Phone as a Special Computing System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q009",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What role does the mobile OS play in resource management?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Doesn't allocate the CPU"
+        },
+        {
+          "id": "B",
+          "text": "Display only"
+        },
+        {
+          "id": "C",
+          "text": "It manages memory, processes and the application lifecycle"
+        },
+        {
+          "id": "D",
+          "text": "One app at a time"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "it includes killing background apps when RAM is full.",
+      "topicTags": [
+        "The Mobile Phone as a Special Computing System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q010",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is the phone considered a client in a distributed system?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It requests services from remote servers or cloud nodes"
+        },
+        {
+          "id": "B",
+          "text": "It's the main server"
+        },
+        {
+          "id": "C",
+          "text": "It stores entire databases"
+        },
+        {
+          "id": "D",
+          "text": "It can't communicate"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "The Mobile as a Client of a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q011",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is cloud back-end communication important for mobile apps?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It enables scalable storage and computation"
+        },
+        {
+          "id": "B",
+          "text": "No mobile network needed"
+        },
+        {
+          "id": "C",
+          "text": "Unlimited phone compute"
+        },
+        {
+          "id": "D",
+          "text": "The cloud runs the mobile OS"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "The Mobile as a Client of a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q012",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the web server's role in a mobile–web app architecture?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Runs mobile OS operations"
+        },
+        {
+          "id": "B",
+          "text": "Processes client requests and returns responses"
+        },
+        {
+          "id": "C",
+          "text": "Stores only media"
+        },
+        {
+          "id": "D",
+          "text": "Replaces the app"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "request → API → JSON response.",
+      "topicTags": [
+        "The Mobile as a Client of a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q013",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In a mobile–cloud system, why is the cloud needed?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To do heavy computation the phone can't handle"
+        },
+        {
+          "id": "B",
+          "text": "Apps can't take input"
+        },
+        {
+          "id": "C",
+          "text": "It replaces networks"
+        },
+        {
+          "id": "D",
+          "text": "Phones store nothing"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q014",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Embedded systems often use simple chipsets because:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Maximum multitasking"
+        },
+        {
+          "id": "B",
+          "text": "Desktop apps"
+        },
+        {
+          "id": "C",
+          "text": "High-end GPUs"
+        },
+        {
+          "id": "D",
+          "text": "They're designed for very specific tasks"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-Q015",
+      "week": 13,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which feature is central to mobile computing constraints?",
+      "options": [
+        {
+          "id": "A",
+          "text": "No OS"
+        },
+        {
+          "id": "B",
+          "text": "Unlimited resources"
+        },
+        {
+          "id": "C",
+          "text": "Limited power and a small hardware footprint"
+        },
+        {
+          "id": "D",
+          "text": "No communication"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W13-X01",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Blurring the background of a photo on the phone itself, without sending it to a server, is an example of:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cloud computing"
+        },
+        {
+          "id": "B",
+          "text": "Edge / on-device computing"
+        },
+        {
+          "id": "C",
+          "text": "Multi-tenancy"
+        },
+        {
+          "id": "D",
+          "text": "Replication"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Edge or on-device computing.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X02",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which SoC unit mainly improves camera image quality?",
+      "options": [
+        {
+          "id": "A",
+          "text": "DSP"
+        },
+        {
+          "id": "B",
+          "text": "ISP"
+        },
+        {
+          "id": "C",
+          "text": "Modem"
+        },
+        {
+          "id": "D",
+          "text": "PMU"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "The ISP (Image Signal Processor).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X03",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "ARM's big.LITTLE design means:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Big screen, little battery"
+        },
+        {
+          "id": "B",
+          "text": "A mix of high-performance and energy-efficient cores"
+        },
+        {
+          "id": "C",
+          "text": "A big GPU and a little CPU"
+        },
+        {
+          "id": "D",
+          "text": "Big RAM and little storage"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Performance (big) and efficiency (LITTLE) cores.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X04",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In the Android stack, which layer is at the very bottom?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Android Runtime"
+        },
+        {
+          "id": "B",
+          "text": "HAL"
+        },
+        {
+          "id": "C",
+          "text": "Linux kernel"
+        },
+        {
+          "id": "D",
+          "text": "Application framework"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "The (mobile-optimised) Linux kernel.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X05",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "When a phone gets too hot during heavy gaming, the CPU reduces its clock speed. This is called:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Load balancing"
+        },
+        {
+          "id": "B",
+          "text": "Thermal throttling"
+        },
+        {
+          "id": "C",
+          "text": "Sandboxing"
+        },
+        {
+          "id": "D",
+          "text": "Swapping"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Thermal throttling.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X06",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Data exchanged between a mobile app and a REST back end is most commonly formatted as:",
+      "options": [
+        {
+          "id": "A",
+          "text": "JSON"
+        },
+        {
+          "id": "B",
+          "text": "VTT"
+        },
+        {
+          "id": "C",
+          "text": "PNG"
+        },
+        {
+          "id": "D",
+          "text": "Bytecode"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "JSON.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X07",
+      "week": 13,
+      "source": "extra",
+      "type": "short",
+      "prompt": "List five constraints of mobile devices and one design response to each.",
+      "correctAnswers": [
+        "Any five: Battery: limit background apps, optimise CPU/GPU use, dim or adapt the screen. Form factor: use a small, efficient SoC. Thermal: throttling, with the OS killing apps when needed. Memory (4–12 GB, limited swap): strict memory budgets, and the OS kills background apps. Compute (ARM, few cores): big.LITTLE, NPUs for AI, offloading to the cloud. Network variability: caching, retries, batching, and edge processing."
+      ],
+      "explanation": "Any five: Battery: limit background apps, optimise CPU/GPU use, dim or adapt the screen. Form factor: use a small, efficient SoC. Thermal: throttling, with the OS killing apps when needed. Memory (4–12 GB, limited swap): strict memory budgets, and the OS kills background apps. Compute (ARM, few cores): big.LITTLE, NPUs for AI, offloading to the cloud. Network variability: caching, retries, batching, and edge processing.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X08",
+      "week": 13,
+      "source": "extra",
+      "type": "short",
+      "prompt": "What is app sandboxing in Android, and why is it needed?",
+      "correctAnswers": [
+        "Sandboxing: each app runs in its own process with its own memory, isolated from the others. It can't access another app's memory or data without explicit permission granted through the OS. It's needed for security and privacy (a malicious app can't read your banking app's data) and stability (one crashing app doesn't bring down the others)."
+      ],
+      "explanation": "Sandboxing: each app runs in its own process with its own memory, isolated from the others. It can't access another app's memory or data without explicit permission granted through the OS. It's needed for security and privacy (a malicious app can't read your banking app's data) and stability (one crashing app doesn't bring down the others).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X09",
+      "week": 13,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "A food-delivery app freezes whenever the user taps \"Track order\" on a weak 3G signal in a train, and it drains the battery. Suggest four improvements.",
+      "correctAnswers": [
+        "Any four: Make the network call on a background thread with asynchronous code (coroutines), so the UI thread stays responsive. Cache the last known order status and location, and show it immediately. Retry with back-off on failure. Batch or reduce polling (fewer, larger requests, or push notifications), which saves the battery and data. Compress the JSON payloads. Reduce background processes."
+      ],
+      "explanation": "Any four: Make the network call on a background thread with asynchronous code (coroutines), so the UI thread stays responsive. Cache the last known order status and location, and show it immediately. Retry with back-off on failure. Batch or reduce polling (fewer, larger requests, or push notifications), which saves the battery and data. Compress the JSON payloads. Reduce background processes.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W13-X10",
+      "week": 13,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give three reasons why a phone acts as a client and leaves heavy work to cloud servers, and two reasons why some AI is now done on the device instead.",
+      "correctAnswers": [
+        "Client reasons: Limited compute, RAM and battery. Data lives centrally (orders, maps, accounts) and needs real-time updates. The cloud gives scalability and elasticity and runs heavy ML inference and storage. On-device reasons: - Privacy (data stays on the phone). - Low latency and offline use (no network round trip), using NPUs or TPUs such as Google Tensor. Master Cheat Sheet (Weeks 1–13) Key numbers and formulas Fact Value CMOS power P ∝ V² × F × C: lowering the voltage and frequency saves power Locality rule 80/20: about 80% of the time is spent in about 20% of the code (loops) Character vs block I/O for 1024 I/Os vs 1 I/O 1024 bytes HDD access time seek + rotational latency + transfer chmod r = 4, w = 2, x = 1. 755 = rwxr-xr-x; 644 = rw-r--r--head / tail default 10 lines fork() return value 0 in the child, child PID in the parent, < 0 on error. n forks → 2ⁿ processes PID 0 / PID 1 swapper / init HLL VM compilers K × N → K + N (100 × 10 = 1000 → 110) Loops vs NumPy (Week 8 3.8 s vs 0.002 s demo) NVIDIA warp / AMD wavefront 32 / 64 threads Warps per block threads per block ÷ 32 (256 → 8) GPU global thread index blockIdx.x * blockDim.x + threadIdx.x GPU memory cycles (H100, registers 1, shared/L1 ~5, L2 50–100, global 400–800, host lecture) thousands Cycle time 1 / f. At 1.5 GHz that's 0.67 ns GPU execution time ≈ total operations ÷ effective throughput 1M additions CPU with 8 cores ≈ 125 ms; GPU with 10k cores ≈ 0.1 ms (plus transfers) HDFS 128 MB blocks, replication factor 3 Availability 99.9% ≈ 8.76 h of downtime a year Mobile RAM about 4–12 GB (16 GB on some high-end phones) VM vs container startup minutes vs seconds The big comparisons (exam favourites) A B The one-line difference von Neumann Harvard Unified vs split instruction and data paths. Modified Harvard = split L1, unified below (used today) Look-through Look-aside Searched in sequence (standard) vs in parallel (faster, needs cancellation) Write-invalidate Write-update For many writes vs for few writes Hyper-threading Multi-core Duplicates registers and interrupt logic only vs duplicates the whole core NUMA (tightly NORMA (loosely Shared memory vs message passing over a coupled) coupled) network SRAM DRAM Transistors, no refresh, fast cache vs capacitor, refresh, main memory NAND NOR Storage (SSD) vs execute-in-place (firmware) HDD SSD Mechanical seek and rotation vs constant access, erase-before-write, wear levelling Spatial locality Temporal locality Neighbouring data next vs the same data again soon Hard link Soft link Same inode, files only, survives deletion vs a path, directories too, can dangle CLI GUI Precise, automatable, remote vs visual, one-off Process Thread Own address space vs shares code, data, heap and files (has its own stack and registers) Zombie Orphan Dead, parent hasn't called wait yet vs parent died, adopted by init User threads Kernel threads Library-managed vs OS-scheduled. Linux and Windows map one-to-one Asynchronous Deferred Immediate vs at cancellation points (the Linux cancellation cancellation default) Abstraction Virtualisation Hide the implementation behind an interface vs create virtual versions of resources (efficiency + isolation) Process VM System VM One process's environment (JVM, debugger, emulator) vs a whole OS (VMware, VirtualBox) VM Container Own guest OS, strong isolation, GBs, minutes vs shared kernel, process isolation, MBs, seconds Type 1 hypervisor Type 2 hypervisor On the hardware (ESXi, Hyper-V, Xen; data centres) vs on a host OS (VirtualBox; development) A B The one-line difference Centralised VCS Distributed VCS One server, needs the network vs a full local copy, (SVN) (Git) offline, fast Git GitHub The tool vs the hosting platform Compiler Interpreter Whole program ahead of time, fast vs line by line, flexible. Python = bytecode + PVM Static profiling Dynamic profiling pylint/radon (code quality) vs cProfile/memory_profiler (runtime) Step over Step into Run the function call as one step vs go inside the function CPU GPU Few powerful cores for varied work vs thousands of simple cores for data parallelism Thread block Warp Programmer-defined vs hardware-defined (32) Shared memory Global memory Small, on-chip, per block, ~5 cycles vs large, off- (VRAM) chip, 400–800 cycles SIMD SIMT Rigid, no branching vs each thread has its own PC and registers and can branch Naive matmul Tiled matmul Repeated global reads vs tiles reused from shared memory (10×+ faster) Element-wise Reduction One thread per element vs many values combined into one Multi-process Multi-thread Across nodes, isolation vs within one node, shared (distributed) memory (web servers) Horizontal scaling Vertical scaling Add machines vs upgrade one machine Throughput Response time Requests per second vs arrival → first response Reliability Availability How often it fails vs % of time it's up Homogeneous Heterogeneous Same configuration vs mixed (GPU + CPU) cluster cluster Compute cluster Scale-out cluster Split a big job vs add nodes as the load grows Partitioning Replication Split data (parallel, uneven load) vs copy data (fault tolerance, consistency cost) Scalability Elasticity Ability to grow (may be manual) vs automatic up and down Static provisioning Dynamic Fixed per VM vs by load (auto-scaling) provisioning Multi-tenancy Server Many tenants share the infrastructure vs many low-consolidation load apps on one server IaaS / PaaS / SaaS — VMs (EC2) / platform (App Engine) / app (Gmail) A B The one-line difference Cloud computing Edge computing Process in the data centre vs process locally on the device ISP / DSP / NPU — Camera / audio-video signals / AI big cores LITTLE cores Performance vs efficiency (ARM big.LITTLE) Must-know commands # Linux (W3) ls -la; cd ..; pwd; mkdir -p a/b; cp f1 f2; mv f1 dir/; rm -r dir chmod 755 s.sh; chmod u+x s.sh; cat f | grep -i \"err\" | sort | uniq -c | sort -nr | head -5 find . -name \"*.log\" -type f -mtime -7; ln f hard; ln -s f soft; ls -i cmd > out 2> err; cmd >> out; wc -l < f; ps; jobs; kill PID; tail -f log | tee copy # Shell script (W4) #!/bin/bash sum=0; for n in \"$@\"; do sum=`expr $sum + $n`; done; echo \"Args: $# Sum: $sum\" if [ -f \"$1\" ]; then echo file; elif [ -d \"$1\" ]; then echo dir; else echo none; fi # Git (W7) git clone URL; git status; git add .; git commit -m \"msg\"; git branch feat git checkout feat; git merge feat; git pull origin master; git push origin master; git log; git diff # Python profiling and debugging (W8) python -m cProfile -s cumtime prog.py ; python -m pdb prog.py # b, n, s, c, p x, q # Python virtual environment (W6) python -m venv myenv && source myenv/bin/activate One line per week 1. Architecture: von Neumann/Harvard/modified Harvard, multi-core caches and coherence, HT vs cores, NUMA/NORMA, i3–i9, P ∝ V²FC. 2. Memory and I/O: locality, SRAM/DRAM/ROM, block vs character, HDD timing, SSD (NAND, wear levelling). 3. Linux: OS, kernel, shell, system calls; commands, redirection, filters, pipes; inodes and links; processes. 4. Scripting: $1 $# $@ $? , expr, test [ ] , if/case, loops, arrays, read . 5. Processes and threads: layout, 5 states, PCB, fork/wait/zombie/orphan, threads and pthreads, race condition → critical section → semaphores, the classic problems. 6. Virtualisation: abstraction layers, process VMs vs system VMs, HLL VM K+N, venv, VMs vs containers. 7. Git: repositories, versioning and branching, centralised vs distributed, the three states, commands, fork and PR. 8. Execution: compiler/interpreter/bytecode/JIT, 3 error types, profiling static vs dynamic, debugger stepping, pdb/gdb. 9. GPUs: CPU vs GPU, host–device flow, PCIe/NVLink bottleneck, thread/block/grid/warp/SM, shared memory, kernel, SIMD/SIMT, performance factors. 10. GPU tuning: the memory pyramid and cycles, minimise data movement, tiled matmul, NN operations, metrics."
+      ],
+      "explanation": "Client reasons: Limited compute, RAM and battery. Data lives centrally (orders, maps, accounts) and needs real-time updates. The cloud gives scalability and elasticity and runs heavy ML inference and storage. On-device reasons: - Privacy (data stays on the phone). - Low latency and offline use (no network round trip), using NPUs or TPUs such as Google Tensor. Master Cheat Sheet (Weeks 1–13) Key numbers and formulas Fact Value CMOS power P ∝ V² × F × C: lowering the voltage and frequency saves power Locality rule 80/20: about 80% of the time is spent in about 20% of the code (loops) Character vs block I/O for 1024 I/Os vs 1 I/O 1024 bytes HDD access time seek + rotational latency + transfer chmod r = 4, w = 2, x = 1. 755 = rwxr-xr-x; 644 = rw-r--r--head / tail default 10 lines fork() return value 0 in the child, child PID in the parent, < 0 on error. n forks → 2ⁿ processes PID 0 / PID 1 swapper / init HLL VM compilers K × N → K + N (100 × 10 = 1000 → 110) Loops vs NumPy (Week 8 3.8 s vs 0.002 s demo) NVIDIA warp / AMD wavefront 32 / 64 threads Warps per block threads per block ÷ 32 (256 → 8) GPU global thread index blockIdx.x * blockDim.x + threadIdx.x GPU memory cycles (H100, registers 1, shared/L1 ~5, L2 50–100, global 400–800, host lecture) thousands Cycle time 1 / f. At 1.5 GHz that's 0.67 ns GPU execution time ≈ total operations ÷ effective throughput 1M additions CPU with 8 cores ≈ 125 ms; GPU with 10k cores ≈ 0.1 ms (plus transfers) HDFS 128 MB blocks, replication factor 3 Availability 99.9% ≈ 8.76 h of downtime a year Mobile RAM about 4–12 GB (16 GB on some high-end phones) VM vs container startup minutes vs seconds The big comparisons (exam favourites) A B The one-line difference von Neumann Harvard Unified vs split instruction and data paths. Modified Harvard = split L1, unified below (used today) Look-through Look-aside Searched in sequence (standard) vs in parallel (faster, needs cancellation) Write-invalidate Write-update For many writes vs for few writes Hyper-threading Multi-core Duplicates registers and interrupt logic only vs duplicates the whole core NUMA (tightly NORMA (loosely Shared memory vs message passing over a coupled) coupled) network SRAM DRAM Transistors, no refresh, fast cache vs capacitor, refresh, main memory NAND NOR Storage (SSD) vs execute-in-place (firmware) HDD SSD Mechanical seek and rotation vs constant access, erase-before-write, wear levelling Spatial locality Temporal locality Neighbouring data next vs the same data again soon Hard link Soft link Same inode, files only, survives deletion vs a path, directories too, can dangle CLI GUI Precise, automatable, remote vs visual, one-off Process Thread Own address space vs shares code, data, heap and files (has its own stack and registers) Zombie Orphan Dead, parent hasn't called wait yet vs parent died, adopted by init User threads Kernel threads Library-managed vs OS-scheduled. Linux and Windows map one-to-one Asynchronous Deferred Immediate vs at cancellation points (the Linux cancellation cancellation default) Abstraction Virtualisation Hide the implementation behind an interface vs create virtual versions of resources (efficiency + isolation) Process VM System VM One process's environment (JVM, debugger, emulator) vs a whole OS (VMware, VirtualBox) VM Container Own guest OS, strong isolation, GBs, minutes vs shared kernel, process isolation, MBs, seconds Type 1 hypervisor Type 2 hypervisor On the hardware (ESXi, Hyper-V, Xen; data centres) vs on a host OS (VirtualBox; development) A B The one-line difference Centralised VCS Distributed VCS One server, needs the network vs a full local copy, (SVN) (Git) offline, fast Git GitHub The tool vs the hosting platform Compiler Interpreter Whole program ahead of time, fast vs line by line, flexible. Python = bytecode + PVM Static profiling Dynamic profiling pylint/radon (code quality) vs cProfile/memory_profiler (runtime) Step over Step into Run the function call as one step vs go inside the function CPU GPU Few powerful cores for varied work vs thousands of simple cores for data parallelism Thread block Warp Programmer-defined vs hardware-defined (32) Shared memory Global memory Small, on-chip, per block, ~5 cycles vs large, off- (VRAM) chip, 400–800 cycles SIMD SIMT Rigid, no branching vs each thread has its own PC and registers and can branch Naive matmul Tiled matmul Repeated global reads vs tiles reused from shared memory (10×+ faster) Element-wise Reduction One thread per element vs many values combined into one Multi-process Multi-thread Across nodes, isolation vs within one node, shared (distributed) memory (web servers) Horizontal scaling Vertical scaling Add machines vs upgrade one machine Throughput Response time Requests per second vs arrival → first response Reliability Availability How often it fails vs % of time it's up Homogeneous Heterogeneous Same configuration vs mixed (GPU + CPU) cluster cluster Compute cluster Scale-out cluster Split a big job vs add nodes as the load grows Partitioning Replication Split data (parallel, uneven load) vs copy data (fault tolerance, consistency cost) Scalability Elasticity Ability to grow (may be manual) vs automatic up and down Static provisioning Dynamic Fixed per VM vs by load (auto-scaling) provisioning Multi-tenancy Server Many tenants share the infrastructure vs many low-consolidation load apps on one server IaaS / PaaS / SaaS — VMs (EC2) / platform (App Engine) / app (Gmail) A B The one-line difference Cloud computing Edge computing Process in the data centre vs process locally on the device ISP / DSP / NPU — Camera / audio-video signals / AI big cores LITTLE cores Performance vs efficiency (ARM big.LITTLE) Must-know commands # Linux (W3) ls -la; cd ..; pwd; mkdir -p a/b; cp f1 f2; mv f1 dir/; rm -r dir chmod 755 s.sh; chmod u+x s.sh; cat f | grep -i \"err\" | sort | uniq -c | sort -nr | head -5 find . -name \"*.log\" -type f -mtime -7; ln f hard; ln -s f soft; ls -i cmd > out 2> err; cmd >> out; wc -l < f; ps; jobs; kill PID; tail -f log | tee copy # Shell script (W4) #!/bin/bash sum=0; for n in \"$@\"; do sum=`expr $sum + $n`; done; echo \"Args: $# Sum: $sum\" if [ -f \"$1\" ]; then echo file; elif [ -d \"$1\" ]; then echo dir; else echo none; fi # Git (W7) git clone URL; git status; git add .; git commit -m \"msg\"; git branch feat git checkout feat; git merge feat; git pull origin master; git push origin master; git log; git diff # Python profiling and debugging (W8) python -m cProfile -s cumtime prog.py ; python -m pdb prog.py # b, n, s, c, p x, q # Python virtual environment (W6) python -m venv myenv && source myenv/bin/activate One line per week 1. Architecture: von Neumann/Harvard/modified Harvard, multi-core caches and coherence, HT vs cores, NUMA/NORMA, i3–i9, P ∝ V²FC. 2. Memory and I/O: locality, SRAM/DRAM/ROM, block vs character, HDD timing, SSD (NAND, wear levelling). 3. Linux: OS, kernel, shell, system calls; commands, redirection, filters, pipes; inodes and links; processes. 4. Scripting: $1 $# $@ $? , expr, test [ ] , if/case, loops, arrays, read . 5. Processes and threads: layout, 5 states, PCB, fork/wait/zombie/orphan, threads and pthreads, race condition → critical section → semaphores, the classic problems. 6. Virtualisation: abstraction layers, process VMs vs system VMs, HLL VM K+N, venv, VMs vs containers. 7. Git: repositories, versioning and branching, centralised vs distributed, the three states, commands, fork and PR. 8. Execution: compiler/interpreter/bytecode/JIT, 3 error types, profiling static vs dynamic, debugger stepping, pdb/gdb. 9. GPUs: CPU vs GPU, host–device flow, PCIe/NVLink bottleneck, thread/block/grid/warp/SM, shared memory, kernel, SIMD/SIMT, performance factors. 10. GPU tuning: the memory pyramid and cycles, minimise data movement, tiled matmul, NN operations, metrics.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

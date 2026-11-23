@@ -1,0 +1,1059 @@
+{
+  "week": 5,
+  "title": "Program Execution in a System (Processes, Threads and Synchronisation)",
+  "learningGoals": [
+    "Distinguish a program (passive) from a process (active), and draw the process memory layout (code, data, bss, heap, stack).",
+    "Draw and explain the 5-state process diagram and the long-term and short-term schedulers.",
+    "Describe the PCB (process control block), fork() , PIDs, process termination, zombie vs orphan, wait() vs waitpid() , and signals.",
+    "Compare threads vs processes: what's shared and what's private.",
+    "Explain user-level vs kernel-level threads and the mapping models (many-to-one, one-to-one, many-to-many, two-level).",
+    "Use pthread operations (create, join or detach, scheduling policy, exit), thread pools, zeroed-out threads, and cancellation.",
+    "Explain race conditions, the critical-section requirements, Peterson's solution, test-and-set and swap, semaphores, and the classic problems (producer-consumer, readers-writers, dining philosophers)."
+  ],
+  "sirStressed": [
+    "\"When you run a program… what exactly runs?\" A process: code, data, heap and stack in memory.",
+    "The Running → Ready transition from interrupts and time slices is very, very important.",
+    "During a context switch the CPU does no useful work. It's overhead.",
+    "Zombie = finished but not cleaned up. Orphan = the parent exited first, so the OS assigns a new parent (init). Try simulating both with code.",
+    "Use multi-process when you need isolation, as Chrome does (one process per tab, plus threads). Don't blindly use threads everywhere.",
+    "Concurrency ≠ parallelism. Concurrency is overlapping (switching); parallelism is truly simultaneous (multi-core).",
+    "The kernel is the always-running core of the OS. Many-to-one mapping isn't efficient for general-purpose OSes.",
+    "Synchronisation is a very, very important concept. Without it, shared data gets corrupted."
+  ],
+  "commonTraps": [
+    "Mixing up the return values of fork() : 0 = child, a positive PID = parent, negative = failure.",
+    "Drawing an arrow from Waiting directly to Running. It must go Waiting → Ready. Also, there's no arrow back to New.",
+    "Zombie vs orphan swapped.",
+    "Assuming threads have private global variables or private open files. Those are shared. The stack, registers, signal mask and priority are private.",
+    "Saying many-to-one gives parallelism. It doesn't: one blocking call blocks every thread.",
+    "Saying \"Peterson's solution works on all modern CPUs\". It doesn't, because of instruction reordering.",
+    "Spin-lock vs blocking semaphore: spin locks waste CPU.",
+    "A single wait() waits for one child, not all of them.",
+    "Forgetting that the reader-preference readers-writers solution can starve writers.",
+    "Concluding \"Linux cascades termination\". It doesn't: orphans go to init."
+  ],
+  "summary": [
+    "Program = passive; process = a program in execution (active). Multiprogramming switches on I/O or exit; multitasking also switches on time-slice expiry.",
+    "Memory layout: code (read-only) | data (initialised globals) | bss (uninitialised globals) | heap ( malloc → brk ) | stack (locals) | argc/argv.",
+    "States: New → Ready (long-term scheduler) → Running (short-term scheduler) → Waiting (I/O) → Ready; Running → Ready (time slice or interrupt); Running → Terminated. A context switch is overhead.",
+    "PCB = identification (PID, PPID, UID, GID, SID) + processor state (registers, SP, PC) + control information (state, priority, scheduling).",
+    "fork() : 0 in the child, child PID in the parent, < 0 on error. PIDs 2–32767 (32-bit); 0 = swapper, 1 = init. n forks give 2ⁿ processes.",
+    "Exit: close files → children to init → status to parent → zombie until wait → scheduler runs. Orphan = parent died first.",
+    "wait = any one child (returns its PID). waitpid : −1 any, < −1 group |pid|, 0 same group, > 0 that child. Signals: SIGSTOP/SIGCONT; watch the timing on multi-core.",
+    "Thread = lightweight process, the unit of CPU execution. Shared: code, globals, heap, files, signal handlers, CWD, UID/GID. Private: stack, registers, signal mask, priority.",
+    "Benefits: responsiveness, resource sharing, economy, scalability. Chrome = multi-process + multi-thread.",
+    "User threads (Pthreads, Java, Win32 libraries) vs kernel threads (scheduled by the OS). Mapping: many-to-one (blocks everything), one-to-one (Linux, Windows), many-to-many, two-level.",
+    "pthreads: create (runs the start routine), attr_init , joinable (the default, join ) vs detached; SCHED_OTHER / RR / FIFO; self , equal , exit .",
+    "Thread pool (pre-create and reuse), zeroed-out threads (clear the data, keep the structure), cancellation (asynchronous vs deferred, the Linux default).",
+    "Race condition (X++ / X-- can give −1, 0 or 1). Critical section: mutual exclusion, progress, bounded waiting. Peterson (software) → test-and-set and swap (hardware) → semaphores (wait/signal; spin vs blocking).",
+    "Problems: producer-consumer (mutex, empty = n, full = 0), readers-writers (readcount, wrt; readers dominate), dining philosophers (deadlock risk)."
+  ],
+  "questions": [
+    {
+      "id": "W05-Q001",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "When a running process uses up its time slice, which state does it go to?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terminated"
+        },
+        {
+          "id": "B",
+          "text": "Running"
+        },
+        {
+          "id": "C",
+          "text": "Waiting"
+        },
+        {
+          "id": "D",
+          "text": "Ready"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "it isn't waiting for I/O, it just lost the CPU, so it goes back to the ready queue.",
+      "topicTags": [
+        "Program vs Process"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q002",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which option is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A process is an active entity"
+        },
+        {
+          "id": "B",
+          "text": "Multiprogramming has time-slice expiry as a decision point"
+        },
+        {
+          "id": "C",
+          "text": "Multitasking has time-slice expiry as a decision point"
+        },
+        {
+          "id": "D",
+          "text": "The OS manages all processes"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "multiprogramming switches only on I/O or exit. Time slices belong to multitasking.",
+      "topicTags": [
+        "Program vs Process"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q003",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does fork() return in the parent on success?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The new child's PID"
+        },
+        {
+          "id": "B",
+          "text": "0"
+        },
+        {
+          "id": "C",
+          "text": "−1"
+        },
+        {
+          "id": "D",
+          "text": "The parent's PID"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the parent gets the child's PID, the child gets 0, and −1 means an error.",
+      "topicTags": [
+        "Process Creation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q004",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In which PCB attribute group is the process priority stored?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Process identification"
+        },
+        {
+          "id": "B",
+          "text": "Process state information"
+        },
+        {
+          "id": "C",
+          "text": "Process control information"
+        },
+        {
+          "id": "D",
+          "text": "Processor state information"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "control information = scheduling state, priority and so on. Identification = PIDs; processor state = registers, PC and SP.",
+      "topicTags": [
+        "Process Creation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q005",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "A process that finishes normally reaches the Terminated state from which state?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ready"
+        },
+        {
+          "id": "B",
+          "text": "New"
+        },
+        {
+          "id": "C",
+          "text": "Waiting"
+        },
+        {
+          "id": "D",
+          "text": "Running"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "it must be running to execute its final exit() .",
+      "topicTags": [
+        "Process Termination"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q006",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "If a parent terminates, where do its children go in Linux?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To the grandparent"
+        },
+        {
+          "id": "B",
+          "text": "To PID 0 (sched)"
+        },
+        {
+          "id": "C",
+          "text": "To PID 1 (init)"
+        },
+        {
+          "id": "D",
+          "text": "The OS kills them all"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "orphans are adopted by init (PID 1), which later reaps them.",
+      "topicTags": [
+        "Process Termination"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q007",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does wait() return when a child exits?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The child's PID"
+        },
+        {
+          "id": "B",
+          "text": "The parent's PID"
+        },
+        {
+          "id": "C",
+          "text": "The child's exit status"
+        },
+        {
+          "id": "D",
+          "text": "0"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the return value is the PID. The exit status comes back through the pointer argument ( wait(&status) ).",
+      "topicTags": [
+        "Process Wait"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q008",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does waitpid(-2500, …) mean?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Any child in the same process group as this process"
+        },
+        {
+          "id": "B",
+          "text": "Any child whose process group ID is 2500"
+        },
+        {
+          "id": "C",
+          "text": "…user ID same as group"
+        },
+        {
+          "id": "D",
+          "text": "Any child with user ID 2500"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "pid < −1 means \"any child in group |pid|\". (−1 = any child, 0 = the same group, > 0 = that exact child.)",
+      "topicTags": [
+        "Process Wait"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q009",
+      "week": 5,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "The parent creates 3 children. Each child raises SIGSTOP as soon as it runs. The parent waits until each child has stopped before creating the next. After creating all three, the parent sends SIGCONT to all of them, and it exits only after all the children terminate.",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <signal.h>\n#include <unistd.h>\n#include <sys/wait.h>\nint main(void) {\n    setvbuf(stdout, NULL, _IONBF, 0);        /* unbuffered: no duplicated output after fork */\n    pid_t child[3];\n    for (int i = 0; i < 3; i++) {\n        pid_t pid = fork();\n        if (pid < 0) { perror(\"fork\"); exit(1); }\n        if (pid == 0) {                       /* child */\n            printf(\"Child %d (PID %d) stopping itself\\n\", i + 1, getpid());\n            raise(SIGSTOP);                  /* = kill(getpid(), SIGSTOP) */\n            printf(\"Child %d (PID %d) continued, exiting\\n\", i + 1, getpid());\n            exit(0);\n        }\n        child[i] = pid;                       /* parent */\n        int status;\n        waitpid(pid, &status, WUNTRACED);     /* returns once the child is STOPPED */\n        if (WIFSTOPPED(status))\n            printf(\"Parent: child %d stopped\\n\", pid);\n    }\n    for (int i = 0; i < 3; i++)\n        kill(child[i], SIGCONT);              /* resume everyone */\n    for (int i = 0; i < 3; i++)\n        waitpid(child[i], NULL, 0);           /* reap all: no zombies */\n    printf(\"Parent: all children terminated, exiting\\n\");\n    return 0;\n}",
+      "correctAnswers": [
+        "#include <stdio.h>\n#include <stdlib.h>\n#include <signal.h>\n#include <unistd.h>\n#include <sys/wait.h>\nint main(void) {\n    setvbuf(stdout, NULL, _IONBF, 0);        /* unbuffered: no duplicated output after fork */\n    pid_t child[3];\n    for (int i = 0; i < 3; i++) {\n        pid_t pid = fork();\n        if (pid < 0) { perror(\"fork\"); exit(1); }\n        if (pid == 0) {                       /* child */\n            printf(\"Child %d (PID %d) stopping itself\\n\", i + 1, getpid());\n            raise(SIGSTOP);                  /* = kill(getpid(), SIGSTOP) */\n            printf(\"Child %d (PID %d) continued, exiting\\n\", i + 1, getpid());\n            exit(0);\n        }\n        child[i] = pid;                       /* parent */\n        int status;\n        waitpid(pid, &status, WUNTRACED);     /* returns once the child is STOPPED */\n        if (WIFSTOPPED(status))\n            printf(\"Parent: child %d stopped\\n\", pid);\n    }\n    for (int i = 0; i < 3; i++)\n        kill(child[i], SIGCONT);              /* resume everyone */\n    for (int i = 0; i < 3; i++)\n        waitpid(child[i], NULL, 0);           /* reap all: no zombies */\n    printf(\"Parent: all children terminated, exiting\\n\");\n    return 0;\n}"
+      ],
+      "explanation": "Key points examiners look for: WUNTRACED (so waitpid returns on a stop, not just on exit), kill(pid, SIGCONT) , and a final wait for every child.",
+      "topicTags": [
+        "Process Signal (written response, with a model solution)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W05-Q010",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is global (shared) among all threads of a process?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Return value"
+        },
+        {
+          "id": "B",
+          "text": "Signal handlers"
+        },
+        {
+          "id": "C",
+          "text": "Signal mask"
+        },
+        {
+          "id": "D",
+          "text": "Register set"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "handlers are per-process. The mask, registers and return value are per-thread.",
+      "topicTags": [
+        "Threads vs Process"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q011",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is local to a thread?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Signal"
+        },
+        {
+          "id": "B",
+          "text": "Signal handlers"
+        },
+        {
+          "id": "C",
+          "text": "Signal mask"
+        },
+        {
+          "id": "D",
+          "text": "Current working directory"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "each thread can block different signals. The CWD and handlers are shared.",
+      "topicTags": [
+        "Threads vs Process"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q012",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which threads-to-processes relationship do traditional UNIX implementations use?",
+      "options": [
+        {
+          "id": "A",
+          "text": "One to one"
+        },
+        {
+          "id": "B",
+          "text": "M to 1"
+        },
+        {
+          "id": "C",
+          "text": "1 to M"
+        },
+        {
+          "id": "D",
+          "text": "M to M"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "in classic UNIX, each process has exactly one thread of execution.",
+      "topicTags": [
+        "Mapping between User-Level and Kernel-Level Threads"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q013",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which user-to-kernel thread mapping does Linux use?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Many to one"
+        },
+        {
+          "id": "B",
+          "text": "Many to many"
+        },
+        {
+          "id": "C",
+          "text": "Two-level"
+        },
+        {
+          "id": "D",
+          "text": "One to one"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "each pthread is backed by its own kernel thread (a task), as in Windows.",
+      "topicTags": [
+        "Mapping between User-Level and Kernel-Level Threads"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q014",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which attribute function sets a thread's priority (before creation)?",
+      "options": [
+        {
+          "id": "A",
+          "text": "pthread_attr_setdetachstate"
+        },
+        {
+          "id": "B",
+          "text": "pthread_setschedparam"
+        },
+        {
+          "id": "C",
+          "text": "pthread_attr_setschedpolicy"
+        },
+        {
+          "id": "D",
+          "text": "pthread_attr_setschedparam"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "the attr_ functions configure an attribute object used at creation time, and schedparam holds the priority.",
+      "topicTags": [
+        "Thread Operations: Joinable/Detached, Priority"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q015",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which function sets the priority of an already created thread?",
+      "options": [
+        {
+          "id": "A",
+          "text": "pthread_detach"
+        },
+        {
+          "id": "B",
+          "text": "pthread_setschedparam"
+        },
+        {
+          "id": "C",
+          "text": "pthread_attr_setschedpolicy"
+        },
+        {
+          "id": "D",
+          "text": "pthread_attr_setschedparam"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "there's no attr_ , so it acts on a live thread ID.",
+      "topicTags": [
+        "Thread Operations: Joinable/Detached, Priority"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q016",
+      "week": 5,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "A thread program with a shared global value . Thread 1 computes the factorial of the first command-line argument and adds it to value . Thread 2 does a second computation and adds it to value . Main prints value after joining both threads. (The second thread's task wasn't captured. The solution assumes the usual version: the sum 1..N of the second argument.)",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <pthread.h>\nlong value = 0;                                     /* shared */\npthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;\nvoid *factorial(void *arg) {\n    int n = atoi((char *)arg); long f = 1;\n    for (int i = 2; i <= n; i++) f *= i;\n    pthread_mutex_lock(&lock);   value += f;   pthread_mutex_unlock(&lock);\n    return NULL;\n}\nvoid *sum_to_n(void *arg) {\n    int n = atoi((char *)arg); long s = 0;\n    for (int i = 1; i <= n; i++) s += i;\n    pthread_mutex_lock(&lock);   value += s;   pthread_mutex_unlock(&lock);\n    return NULL;\n}\nint main(int argc, char *argv[]) {\n    if (argc != 3) { printf(\"Usage: %s <n1> <n2>\\n\", argv[0]); return 1; }\n    pthread_t t1, t2;\n    pthread_create(&t1, NULL, factorial, argv[1]);\n    pthread_create(&t2, NULL, sum_to_n,    argv[2]);\n    pthread_join(t1, NULL);\n    pthread_join(t2, NULL);\n    printf(\"value = %ld\\n\", value);                 /* e.g. ./a.out 5 4 -> 120 + 10 = 130 */\n    return 0;\n}\n/* compile: gcc prog.c -o prog -pthread */",
+      "correctAnswers": [
+        "#include <stdio.h>\n#include <stdlib.h>\n#include <pthread.h>\nlong value = 0;                                     /* shared */\npthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;\nvoid *factorial(void *arg) {\n    int n = atoi((char *)arg); long f = 1;\n    for (int i = 2; i <= n; i++) f *= i;\n    pthread_mutex_lock(&lock);   value += f;   pthread_mutex_unlock(&lock);\n    return NULL;\n}\nvoid *sum_to_n(void *arg) {\n    int n = atoi((char *)arg); long s = 0;\n    for (int i = 1; i <= n; i++) s += i;\n    pthread_mutex_lock(&lock);   value += s;   pthread_mutex_unlock(&lock);\n    return NULL;\n}\nint main(int argc, char *argv[]) {\n    if (argc != 3) { printf(\"Usage: %s <n1> <n2>\\n\", argv[0]); return 1; }\n    pthread_t t1, t2;\n    pthread_create(&t1, NULL, factorial, argv[1]);\n    pthread_create(&t2, NULL, sum_to_n,    argv[2]);\n    pthread_join(t1, NULL);\n    pthread_join(t2, NULL);\n    printf(\"value = %ld\\n\", value);                 /* e.g. ./a.out 5 4 -> 120 + 10 = 130 */\n    return 0;\n}\n/* compile: gcc prog.c -o prog -pthread */"
+      ],
+      "explanation": "Key points: a global variable is shared by the threads. A mutex protects value += … (the critical section, since this is a race condition otherwise). pthread_join happens before printing. Compile with -pthread . (This question was captured twice, qi17983 and qi17984. It's counted once here.)",
+      "topicTags": [
+        "Thread Data Sharing (written response, with a model solution)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out",
+      "needsReview": true
+    },
+    {
+      "id": "W05-Q017",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which option is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A pool bounds the number of threads per application"
+        },
+        {
+          "id": "B",
+          "text": "It serves requests faster than creating a new thread"
+        },
+        {
+          "id": "C",
+          "text": "Better performance, because thread resources aren't exhausted"
+        },
+        {
+          "id": "D",
+          "text": "It degrades performance at thread creation time"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "the threads are created up front, so there's no creation cost per request. That's the whole point of a pool.",
+      "topicTags": [
+        "Thread Pooling"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q018",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is TRUE about thread pooling?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It degrades performance"
+        },
+        {
+          "id": "B",
+          "text": "It increases thread-creation time"
+        },
+        {
+          "id": "C",
+          "text": "It bounds the number of threads for an application"
+        },
+        {
+          "id": "D",
+          "text": "A thread doesn't rejoin the pool when it finishes"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "a fixed pool limits the thread count, so the system isn't overwhelmed. Finished threads return to the pool.",
+      "topicTags": [
+        "Thread Pooling"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q019",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the preferred mode of thread cancellation in Linux?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Disabled"
+        },
+        {
+          "id": "B",
+          "text": "Enabled with deferred cancellation"
+        },
+        {
+          "id": "C",
+          "text": "Enabled with asynchronous cancellation"
+        },
+        {
+          "id": "D",
+          "text": "Both available"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "The captured answer marked c, but the progress notes say its correct-answer markers are unreliable on lowercase option labels like these. POSIX/Linux threads default to enabled + deferred: the thread is cancelled only at safe cancellation points, so it doesn't die while holding a lock. That matches the lecture. answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Zeroed-Out Threads (Cancellation)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out",
+      "needsReview": true
+    },
+    {
+      "id": "W05-Q020",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In Linux, thread cancellation is carried out through ______.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Signals"
+        },
+        {
+          "id": "B",
+          "text": "Events"
+        },
+        {
+          "id": "C",
+          "text": "Messages"
+        },
+        {
+          "id": "D",
+          "text": "Shared memory"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "pthread_cancel is delivered internally as a signal to the target thread.",
+      "topicTags": [
+        "Zeroed-Out Threads (Cancellation)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q021",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is NOT a requirement for a classic synchronisation solution?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Progress"
+        },
+        {
+          "id": "B",
+          "text": "Bounded waiting"
+        },
+        {
+          "id": "C",
+          "text": "Preemption"
+        },
+        {
+          "id": "D",
+          "text": "Mutual exclusion"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "the three requirements are mutual exclusion, progress and bounded waiting. Preemption isn't one of them.",
+      "topicTags": [
+        "Thread Concurrency and Synchronisation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-Q022",
+      "week": 5,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Semaphores use hardware synchronisation internally"
+        },
+        {
+          "id": "B",
+          "text": "Spin locks waste CPU on a do-nothing loop"
+        },
+        {
+          "id": "C",
+          "text": "Threads that can't get a blocking semaphore are blocked"
+        },
+        {
+          "id": "D",
+          "text": "Semaphores are faster than TestAndSet/Swap"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "semaphores are built on TAS/Swap, so they add overhead on top. Raw hardware instructions are faster.",
+      "topicTags": [
+        "Thread Concurrency and Synchronisation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W05-X01",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "What does fork() return in the child process?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The child's PID"
+        },
+        {
+          "id": "B",
+          "text": "The parent's PID"
+        },
+        {
+          "id": "C",
+          "text": "0"
+        },
+        {
+          "id": "D",
+          "text": "−1"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "0 in the child; the parent gets the child's PID.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X02",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A process finishes I/O. Which state does it move to next?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Running"
+        },
+        {
+          "id": "B",
+          "text": "Ready"
+        },
+        {
+          "id": "C",
+          "text": "New"
+        },
+        {
+          "id": "D",
+          "text": "Terminated"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Ready. Only the short-term scheduler moves a process from Ready to Running.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X03",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A child has exited but its parent hasn't called wait() yet. The child is a(n):",
+      "options": [
+        {
+          "id": "A",
+          "text": "Orphan"
+        },
+        {
+          "id": "B",
+          "text": "Zombie"
+        },
+        {
+          "id": "C",
+          "text": "Daemon"
+        },
+        {
+          "id": "D",
+          "text": "Detached thread"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Zombie: finished, but its exit status hasn't been collected.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X04",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which of these is private to each thread of a process?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Global variables"
+        },
+        {
+          "id": "B",
+          "text": "Open file descriptors"
+        },
+        {
+          "id": "C",
+          "text": "Stack"
+        },
+        {
+          "id": "D",
+          "text": "Current working directory"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "The stack (along with registers, the signal mask and priority). The others are shared.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X05",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In which thread mapping model can one blocking system call block all the threads of the process?",
+      "options": [
+        {
+          "id": "A",
+          "text": "One-to-one"
+        },
+        {
+          "id": "B",
+          "text": "Many-to-one"
+        },
+        {
+          "id": "C",
+          "text": "Many-to-many"
+        },
+        {
+          "id": "D",
+          "text": "Two-level"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Many-to-one. All the user threads share a single kernel thread.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X06",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "waitpid(2500, &st, 0) will return when:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Any child exits"
+        },
+        {
+          "id": "B",
+          "text": "A child in group 2500 exits"
+        },
+        {
+          "id": "C",
+          "text": "The child with PID 2500 exits"
+        },
+        {
+          "id": "D",
+          "text": "Immediately"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "A positive PID waits only for that specific child.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X07",
+      "week": 5,
+      "source": "extra",
+      "type": "short",
+      "prompt": "How many processes exist after this code runs (including the original)? fork(); fork();",
+      "correctAnswers": [
+        "4 processes (2²)."
+      ],
+      "explanation": "4 processes (2²).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X08",
+      "week": 5,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Two threads each run count++ 1000 times on a shared global count = 0 . The final value is sometimes less than 2000. Explain why, and name a fix.",
+      "correctAnswers": [
+        "count++ is really three steps: load, add, store. If the threads interleave, both can load the same value, and one update is lost. That's a race condition. Fix it by protecting count++ with a mutex or binary semaphore (or an atomic instruction) so it runs as a critical section."
+      ],
+      "explanation": "count++ is really three steps: load, add, store. If the threads interleave, both can load the same value, and one update is lost. That's a race condition. Fix it by protecting count++ with a mutex or binary semaphore (or an atomic instruction) so it runs as a critical section.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X09",
+      "week": 5,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "A web server receives thousands of short requests per second. Should it create a new thread per request or use a thread pool? Justify.",
+      "correctAnswers": [
+        "A thread pool. Creating and destroying a thread for each short request costs more than the work itself. A pool reuses pre-created (zeroed-out) threads, responds faster, and caps the number of threads so resources aren't exhausted."
+      ],
+      "explanation": "A thread pool. Creating and destroying a thread for each short request costs more than the work itself. A pool reuses pre-created (zeroed-out) threads, responds faster, and caps the number of threads so resources aren't exhausted.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W05-X10",
+      "week": 5,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Using the reader-preference readers-writers solution, give the execution order for arrivals W1, R1, R2, W2, R3.",
+      "correctAnswers": [
+        "W1 first (exclusive). Then R1 and R2 together (W2 blocks on wrt because readcount > 0). R3 arrives while readers are active and joins them (reader preference). W2 runs last, after readcount reaches 0."
+      ],
+      "explanation": "W1 first (exclusive). Then R1 and R2 together (W2 blocks on wrt because readcount > 0). R3 arrives while readers are active and joins them (reader preference). W2 runs last, after readcount reaches 0.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+.DS_Store
+*.local
+.env
+.env.*
+coverage
+.vite
+playwright-report
+test-results
+blob-report
+
+# Optional local overlay. The bundled bank lives in content/bank.
+content/private/*
+!content/private/.gitkeep

@@ -1,0 +1,501 @@
+{
+  "week": 7,
+  "title": "Source Code Repositories and Versioning Systems (Git and GitHub)",
+  "learningGoals": [
+    "Explain why teams need a source code repository: distributed teams, check-out and check-in, conflicts, diff .",
+    "Explain modular design and separate compilation (compilation units, extern , linking; import in Python).",
+    "Explain requirements change → versions (major and minor), storing versions as diffs, and branching.",
+    "Explain why repository tools and versioning tools are built as one piece.",
+    "Compare centralised vs distributed version control (SVN vs Git and Mercurial).",
+    "Use Git's three-state model and its core commands. Know Git vs GitHub, clone, fork, branch, commit, push, pull, merge, and pull request."
+  ],
+  "sirStressed": [
+    "Git ≠ GitHub. Git is the tool; GitHub is the platform (owned by Microsoft) that runs Git behind the scenes.",
+    "\"Whether you become a developer, tester or analyst, you should have basic knowledge of version control.\"",
+    "Version control applies to all file types, but Git and GitHub are tailored to source code.",
+    "The terminal supports every Git operation. The web UI and GitHub Desktop support only some.",
+    "He demonstrated live: creating a repo, adding and committing through the web UI (\"same as git commit \"), creating branch1 , students forking and raising pull requests, and cloning.",
+    "The course assignment (project-style; you upload code, documents and AI prompts used) was announced here. Grading split as sir described it: an end-term of about 40, quizzes roughly 25, an assignment roughly 20 (\"something like that\"). Check the exact split with the ops team."
+  ],
+  "commonTraps": [
+    "Clone vs fork: a clone copies to your local machine; a fork copies to your GitHub account (server side).",
+    "Pull vs push: pull brings changes in; push sends them out.",
+    "git add vs git commit : add only stages; commit records the snapshot. Neither one uploads anything (that's push).",
+    "Assuming every simultaneous edit is a conflict. Only the same lines conflict; different regions merge automatically.",
+    "Centralised = single point of failure, needs the network. Distributed = full local history, high redundancy.",
+    "A pull request is not a git pull . It's a request for the maintainer to pull your changes.",
+    "Forgetting extern : the compiler needs to know the symbol is defined in another compilation unit, and the linker resolves it."
+  ],
+  "summary": [
+    "Repository = a central record of a team's code. Check-out = a local copy; check-in = submit, with old and new versions time-stamped. Conflicts are detected by diff/WinDiff; different regions merge automatically and the same line needs a human.",
+    "Modular design (car, phone) → modular programming → separate compilation of each compilation unit, then link. extern marks an external symbol. Python uses import ; script mode vs module mode ( __name__ ).",
+    "Requirements change → versions: major for features, minor (3.1, 3.2) for bug fixes. Store diffs between versions. Branching (v1→v2 restaurants, v1→v3 toll-free).",
+    "Repositories and versioning are one tool: you package a version in one place, and they share diff.",
+    "Centralised (SVN): one server, needs the network, easy access control, real-time collaboration, one organisation. Distributed (Git, Mercurial): full local copies, fast, redundant, suits open source and distributed teams.",
+    "Git (Linus Torvalds, open source) vs GitHub (Microsoft, hosting platform, the \"origin\").",
+    "Three states: working directory → (add) → staging → (commit) → Git directory.",
+    "Commands: clone , branch , checkout , status , add , commit -m , pull origin master , merge , push origin master , log , diff , fetch . Fork + pull request for contributing."
+  ],
+  "questions": [
+    {
+      "id": "W07-Q001",
+      "week": 7,
+      "source": "quiz",
+      "type": "scenario",
+      "prompt": "Describe a scenario where a programmer's intervention is needed for the repository to check in the code.",
+      "correctAnswers": [
+        "Priya and Arjun both check out billing.py (version 7). Priya changes line 42 to tax = amount * 0.18 and checks in first, which creates version 8. Arjun changes the same line 42 to tax = round(amount * 0.12, 2) and tries to check in. The repository runs a diff, sees that both versions changed the same region of the same base line, and can't merge automatically. It flags a conflict, and Arjun must open the file, decide (with Priya) which logic is correct or combine them, then check in version 9. (If they'd edited different functions, the repository would have merged automatically with no human needed.)"
+      ],
+      "explanation": "Priya and Arjun both check out billing.py (version 7). Priya changes line 42 to tax = amount * 0.18 and checks in first, which creates version 8. Arjun changes the same line 42 to tax = round(amount * 0.12, 2) and tries to check in. The repository runs a diff, sees that both versions changed the same region of the same base line, and can't merge automatically. It flags a conflict, and Arjun must open the file, decide (with Priya) which logic is correct or combine them, then check in version 9. (If they'd edited different functions, the repository would have merged automatically with no human needed.)",
+      "topicTags": [
+        "Distributed Development and Source Code Usage"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W07-Q002",
+      "week": 7,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A source code repository is used to resolve conflicts in source code"
+        },
+        {
+          "id": "B",
+          "text": "Conflict detection can be done with diff on Linux"
+        },
+        {
+          "id": "C",
+          "text": "Conflict detection can be done with the WinDiff tool on Linux"
+        },
+        {
+          "id": "D",
+          "text": "Conflict detection can be done with diff on Windows"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "WinDiff is a Windows tool. Linux uses diff . (diff-style tools also exist on Windows, so D can be true. The repository helps detect and resolve conflicts, as the lecture says.) answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Distributed Development and Source Code Usage"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W07-Q003",
+      "week": 7,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one is a distributed version control system?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Subversion (SVN)"
+        },
+        {
+          "id": "B",
+          "text": "Git"
+        },
+        {
+          "id": "C",
+          "text": "CVS"
+        },
+        {
+          "id": "D",
+          "text": "Perforce"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "SVN, CVS and Perforce are centralised (a single server). Git (and Mercurial) are distributed. answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Requirement Change and Versioning"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W07-Q004",
+      "week": 7,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In a distributed VCS, every developer has:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Only a copy of the current version"
+        },
+        {
+          "id": "B",
+          "text": "The entire history of the project"
+        },
+        {
+          "id": "C",
+          "text": "Only the latest committed change"
+        },
+        {
+          "id": "D",
+          "text": "Access to a specific branch only"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "a clone is a full copy of the repository with all its history, so you can work offline and every clone is a backup. answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Requirement Change and Versioning"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W07-Q005",
+      "week": 7,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "When source code repositories take care of all dependencies, it helps to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Reduce compile time"
+        },
+        {
+          "id": "B",
+          "text": "Ensure consistent builds"
+        },
+        {
+          "id": "C",
+          "text": "Increase execution speed"
+        },
+        {
+          "id": "D",
+          "text": "Simplify syntax errors"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "everyone builds from the same recorded set of modules and versions, so builds come out the same on every machine.",
+      "topicTags": [
+        "Separate Compilation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W07-Q006",
+      "week": 7,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about modular design is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Modules are independently designed and realised"
+        },
+        {
+          "id": "B",
+          "text": "It gives high reusability"
+        },
+        {
+          "id": "C",
+          "text": "It makes assembly easier"
+        },
+        {
+          "id": "D",
+          "text": "It's costlier to maintain"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "modular design is cheaper to maintain, because you fix or replace one module (like a car part) without touching the rest.",
+      "topicTags": [
+        "Separate Compilation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W07-X01",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which tool detects differences between two versions of a text file?",
+      "options": [
+        {
+          "id": "A",
+          "text": "grep"
+        },
+        {
+          "id": "B",
+          "text": "diff"
+        },
+        {
+          "id": "C",
+          "text": "chmod"
+        },
+        {
+          "id": "D",
+          "text": "tee"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "diff (WinDiff on Windows).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X02",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Two developers change different functions in the same file and both commit. What does the repository do?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Reports a conflict"
+        },
+        {
+          "id": "B",
+          "text": "Merges both changes automatically"
+        },
+        {
+          "id": "C",
+          "text": "Keeps only the later change"
+        },
+        {
+          "id": "D",
+          "text": "Rejects both"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Different regions don't conflict, so they merge automatically.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X03",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which is a centralised version control system?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Git"
+        },
+        {
+          "id": "B",
+          "text": "Mercurial"
+        },
+        {
+          "id": "C",
+          "text": "Subversion"
+        },
+        {
+          "id": "D",
+          "text": "GitHub"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Subversion (SVN). Git and Mercurial are distributed, and GitHub is a hosting platform.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X04",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In Git's three-state model, git add moves changes from:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The staging area to the Git directory"
+        },
+        {
+          "id": "B",
+          "text": "The working directory to the staging area"
+        },
+        {
+          "id": "C",
+          "text": "The remote to local"
+        },
+        {
+          "id": "D",
+          "text": "Local to the remote"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Working directory → staging area. Commit then moves staging → Git directory.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X05",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Copying someone's GitHub repository into your own GitHub account is called:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Clone"
+        },
+        {
+          "id": "B",
+          "text": "Fork"
+        },
+        {
+          "id": "C",
+          "text": "Pull"
+        },
+        {
+          "id": "D",
+          "text": "Checkout"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Fork. Clone copies to your local machine.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X06",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In C, a variable used in a.c but defined in b.c should be declared in a.c with:",
+      "options": [
+        {
+          "id": "A",
+          "text": "static"
+        },
+        {
+          "id": "B",
+          "text": "extern"
+        },
+        {
+          "id": "C",
+          "text": "volatile"
+        },
+        {
+          "id": "D",
+          "text": "const"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "extern . The linker resolves it later.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X07",
+      "week": 7,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give two advantages and one disadvantage of distributed version control compared with centralised.",
+      "correctAnswers": [
+        "Advantages: faster local operations, works offline, high redundancy (any copy can restore the repository), good for distributed and open-source teams. Disadvantage: each developer needs storage for the full history, access control is harder, and collaboration isn't real-time."
+      ],
+      "explanation": "Advantages: faster local operations, works offline, high redundancy (any copy can restore the repository), good for distributed and open-source teams. Disadvantage: each developer needs storage for the full history, access control is harder, and collaboration isn't real-time.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X08",
+      "week": 7,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "v1 of a map app finds distances. Team A adds restaurant search and Team B adds toll-free routing, both starting from v1, and the features may be incompatible. How should the repository be organised?",
+      "correctAnswers": [
+        "Use branching: v1 is the root, with branch v1→v2 (restaurants) and branch v1→v3 (toll-free). Each team develops on its own branch without affecting the other. They can be merged later if they're compatible, with conflicts resolved by the developers."
+      ],
+      "explanation": "Use branching: v1 is the root, with branch v1→v2 (restaurants) and branch v1→v3 (toll-free). Each team develops on its own branch without affecting the other. They can be merged later if they're compatible, with conflicts resolved by the developers.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X09",
+      "week": 7,
+      "source": "extra",
+      "type": "code",
+      "prompt": "Write the Git commands to: create and switch to a branch fix-login , commit login.py , and then send it to the remote.",
+      "correctAnswers": [
+        "git checkout -b fix-login → git add login.py → git commit -m \"Fix login\" → git push origin fix-login ."
+      ],
+      "explanation": "git checkout -b fix-login → git add login.py → git commit -m \"Fix login\" → git push origin fix-login .",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W07-X10",
+      "week": 7,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Explain what a pull request is and why open-source projects rely on it.",
+      "correctAnswers": [
+        "A pull request asks the repository maintainer to review and pull (merge) your changes from your fork or branch into the main repository. Open-source contributors don't have write access to the main repository, so they fork, change, and raise a PR. The maintainer stays in control of quality while anyone can contribute."
+      ],
+      "explanation": "A pull request asks the repository maintainer to review and pull (merge) your changes from your fork or branch into the main repository. Open-source contributors don't have write access to the main repository, so they fork, change, and raise a PR. The maintainer stays in control of quality while anyone can contribute.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

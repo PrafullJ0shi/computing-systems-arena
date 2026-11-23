@@ -1,0 +1,185 @@
+{
+  "week": 4,
+  "questions": [
+    {
+      "id": "w04-q01",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The ALU is the part of the datapath that",
+      "options": [
+        "Performs arithmetic and logic on operand bits",
+        "Chooses which process runs next",
+        "Translates C into assembly",
+        "Stores files"
+      ],
+      "answer": 0,
+      "explanation": "Add, subtract, AND, OR, and the related flags are ALU work. Scheduling and compiling happen in software.",
+      "tags": [
+        "alu"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w04-q02",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which pairing is correct?",
+      "options": [
+        "MAR holds an address; MDR holds the data word being transferred",
+        "MAR holds data; MDR holds the opcode name as text",
+        "Both registers hold only cache tags",
+        "MAR is the program counter and MDR is the stack pointer"
+      ],
+      "answer": 0,
+      "explanation": "The memory address register names the location. The memory data register holds the word moving to or from that location.",
+      "tags": [
+        "registers"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Swapping MAR and MDR swaps the whole story."
+      ]
+    },
+    {
+      "id": "w04-q03",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The control unit’s job is to",
+      "options": [
+        "Turn a decoded opcode into control signals for the datapath",
+        "Store the user’s files",
+        "Replace the clock",
+        "Allocate disk blocks"
+      ],
+      "answer": 0,
+      "explanation": "The datapath can add, move, and store. The control unit decides which of those actions happen on this cycle.",
+      "tags": [
+        "control"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w04-q04",
+      "week": 4,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which pieces sit on the CPU datapath?",
+      "options": [
+        "ALU",
+        "Register file",
+        "Compiler",
+        "Buses between the registers"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "The datapath is the hardware that holds and moves operand bits. A compiler is a program that runs before those bits exist.",
+      "tags": [
+        "datapath"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w04-q05",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A processor averages 2 cycles per instruction. Which reading is fair?",
+      "options": [
+        "An instruction can take more than one clock",
+        "The clock is unused half the time, so CPI must be 0.5",
+        "Every instruction finishes in half a cycle",
+        "CPI is the cache block size"
+      ],
+      "answer": 0,
+      "explanation": "CPI counts clocks per instruction. Multi-cycle instructions, stalls, and cache misses all push the average above 1.",
+      "tags": [
+        "performance"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Inverting CPI into “instructions per cycle” without saying so."
+      ]
+    },
+    {
+      "id": "w04-q06",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "After a successful fetch, the instruction register holds",
+      "options": [
+        "The instruction that was just read from memory",
+        "The address of the previous instruction only",
+        "Only the condition flags",
+        "The page table"
+      ],
+      "answer": 0,
+      "explanation": "Fetch copies the memory word into the IR. The program counter holds an address, not the instruction bits.",
+      "tags": [
+        "registers"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w04-q07",
+      "week": 4,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A simple fetch copies PC into MAR, reads memory into IR, then increments PC before execute. Why increment so early?",
+      "options": [
+        "The sequential successor is ready, and a branch can still overwrite PC during execute",
+        "The ALU can run only when PC is even",
+        "The increment erases the instruction from memory",
+        "MAR and PC must stay equal forever"
+      ],
+      "answer": 0,
+      "explanation": "The common case is “fall through”. Execute overwrites PC when the instruction is a taken branch; otherwise the next fetch uses the incremented value.",
+      "tags": [
+        "cycle"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "Thinking the PC increments only after the whole instruction, so a branch has nowhere to write."
+      ]
+    },
+    {
+      "id": "w04-q08",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which register is deliberately not a general-purpose data register?",
+      "options": [
+        "The program counter",
+        "A register that ADD can name as a destination",
+        "A register that MOV can name as a source",
+        "There is no difference: every register is general-purpose"
+      ],
+      "answer": 0,
+      "explanation": "The PC is a register, but ordinary arithmetic does not use it as scratch storage. It exists to name the next instruction.",
+      "tags": [
+        "registers"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w04-q09",
+      "week": 4,
+      "source": "extra",
+      "type": "short",
+      "prompt": "In one or two sentences, what is the difference between the datapath and the control unit?",
+      "options": [],
+      "answer": "The datapath holds and transforms bits. The control unit decides which transformation happens on this cycle.",
+      "explanation": "Opcode bits and flags feed the control unit. Its output is a bundle of select and enable signals into the datapath.",
+      "tags": [
+        "datapath",
+        "control"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

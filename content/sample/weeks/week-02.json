@@ -1,0 +1,196 @@
+{
+  "week": 2,
+  "questions": [
+    {
+      "id": "w02-q01",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "What is the unsigned decimal value of the binary pattern 11010110?",
+      "options": [
+        "198",
+        "214",
+        "182",
+        "246"
+      ],
+      "answer": 1,
+      "explanation": "128 + 64 + 16 + 4 + 2 = 214. The zero bits (32 and 8 and 1) contribute nothing.",
+      "tags": [
+        "binary"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "Skipping a set bit, often the 16 or the 2, produces one of the other options."
+      ]
+    },
+    {
+      "id": "w02-q02",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "What is the decimal value of the hexadecimal number 0x3C?",
+      "options": [
+        "36",
+        "48",
+        "60",
+        "76"
+      ],
+      "answer": 2,
+      "explanation": "3 × 16 + 12 = 60. The hex digit C is twelve.",
+      "tags": [
+        "hex"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w02-q03",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The range of an 8-bit two’s-complement integer is",
+      "options": [
+        "0 to 255",
+        "−127 to 127",
+        "−128 to 127",
+        "−128 to 128"
+      ],
+      "answer": 2,
+      "explanation": "Eight bits give 256 patterns. Two’s complement spends them on −128 through 127, so there is one zero and one extra negative value.",
+      "tags": [
+        "twos-complement"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "−127 to 127 describes sign-magnitude, which also has a negative zero."
+      ]
+    },
+    {
+      "id": "w02-q04",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The 8-bit two’s complement of 00000101 is",
+      "options": [
+        "11111011",
+        "10000101",
+        "11111010",
+        "00000101"
+      ],
+      "answer": 0,
+      "explanation": "Invert the bits to get 11111010, then add one to get 11111011. That pattern is −5.",
+      "tags": [
+        "twos-complement"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Stopping after the invert, and forgetting the +1, yields 11111010."
+      ]
+    },
+    {
+      "id": "w02-q05",
+      "week": 2,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which statements about two’s complement are true?",
+      "options": [
+        "There is a single representation of zero",
+        "The same adder circuit works for the signed and unsigned reading of the bits",
+        "The positive and negative ranges are exactly the same size",
+        "Negating a value is invert-and-add-one"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "One zero and a shared adder are the reasons this encoding won. The range is not symmetric: −128 has no positive twin in 8 bits.",
+      "tags": [
+        "twos-complement"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "“Two zeros” belongs to sign-magnitude, not two’s complement."
+      ]
+    },
+    {
+      "id": "w02-q06",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A little-endian machine stores the 16-bit value 0x1234 at address 100. Which byte is at address 100?",
+      "options": [
+        "0x12",
+        "0x34",
+        "0x00",
+        "0x1"
+      ],
+      "answer": 1,
+      "explanation": "Little-endian puts the least significant byte at the lowest address. A big-endian machine would put 0x12 there.",
+      "tags": [
+        "endian"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Swapping the endian names swaps the answer."
+      ]
+    },
+    {
+      "id": "w02-q07",
+      "week": 2,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "IEEE-754 stores a biased exponent mainly so that",
+      "options": [
+        "The sign bit can be deleted",
+        "Exponents can be stored and ordered as an unsigned field",
+        "Every number is an integer",
+        "The fraction can be omitted"
+      ],
+      "answer": 1,
+      "explanation": "Adding a bias (127 in binary32) turns a signed exponent into an unsigned field. Finite positive numbers then sort in the same order as their encodings.",
+      "tags": [
+        "floating-point"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "The bias is not the fraction, and it does not remove the sign bit."
+      ]
+    },
+    {
+      "id": "w02-q08",
+      "week": 2,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Add the 8-bit two’s-complement values 01111111 and 00000001. What happens?",
+      "options": [
+        "Signed overflow: the bit pattern 10000000 reads as −128",
+        "No overflow: the signed result is +128",
+        "The adder cannot accept these bits",
+        "The result is zero"
+      ],
+      "answer": 0,
+      "explanation": "127 + 1 does not fit. The bits wrap to 10000000, which is −128 in this encoding. The carry into the sign bit and the carry out of it disagree.",
+      "tags": [
+        "overflow"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "Reading the same bits as the unsigned value 128 and calling the signed add “fine”."
+      ]
+    },
+    {
+      "id": "w02-q09",
+      "week": 2,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why do integer ALUs usually prefer two’s complement to sign-magnitude?",
+      "options": [],
+      "answer": "Negation is invert-and-add-one, there is only one zero, and one adder handles both signs.",
+      "explanation": "Sign-magnitude has two zeros and needs extra sign logic around the adder. Two’s complement keeps the common case on a single adder.",
+      "tags": [
+        "twos-complement"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

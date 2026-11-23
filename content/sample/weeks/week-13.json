@@ -1,0 +1,178 @@
+{
+  "week": 13,
+  "questions": [
+    {
+      "id": "w13-q01",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A directory is",
+      "options": [
+        "A table that maps a name to the information needed to find a file",
+        "The raw bytes of every file concatenated",
+        "A CPU register",
+        "An interrupt vector"
+      ],
+      "answer": 0,
+      "explanation": "The directory answers “what does this name mean?”. The file’s bytes live in data blocks found from that answer.",
+      "tags": [
+        "directory"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w13-q02",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In a Unix-style file system, the file’s name lives",
+      "options": [
+        "In the directory entry, while the inode stores metadata and block pointers",
+        "Only inside the inode, and the directory stores the file’s bytes",
+        "In the program counter",
+        "In the TLB"
+      ],
+      "answer": 0,
+      "explanation": "Several names can point at one inode (hard links). That only works if the name stays in the directory and the inode stays nameless.",
+      "tags": [
+        "files"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Putting the filename inside the inode."
+      ]
+    },
+    {
+      "id": "w13-q03",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Contiguous allocation gives fast sequential reads and",
+      "options": [
+        "Makes a file hard to grow when the next blocks are already taken",
+        "Removes any need to track free space",
+        "Places every block at a random offset with no record",
+        "Forbids directories"
+      ],
+      "answer": 0,
+      "explanation": "One extent is easy to read. Growing it needs a free neighbor, or a copy to a larger hole.",
+      "tags": [
+        "allocation"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w13-q04",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Linked allocation",
+      "options": [
+        "Lets a file use any free blocks, but random access walks the chain",
+        "Requires one huge contiguous run",
+        "Stores no pointers at all",
+        "Cannot represent a file larger than one block"
+      ],
+      "answer": 0,
+      "explanation": "Each block points at the next. There is no external fragmentation. Reaching block n costs n steps unless you add an index.",
+      "tags": [
+        "allocation"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w13-q05",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "An index block, or an inode’s pointer array, helps because",
+      "options": [
+        "Block n of a file can be found without reading the previous data blocks",
+        "The file must be contiguous",
+        "Directories become unnecessary",
+        "Free space can be ignored"
+      ],
+      "answer": 0,
+      "explanation": "The index is a table of block addresses. One read of the index, plus one read of the data block, reaches an arbitrary offset.",
+      "tags": [
+        "allocation"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w13-q06",
+      "week": 13,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which statements about allocating file blocks are true?",
+      "options": [
+        "A free-space bitmap uses one bit per block to say whether that block is free",
+        "Contiguous allocation can make a file hard to grow",
+        "An index lets you find block n without reading every earlier data block",
+        "The directory entry stores the raw bytes of the file"
+      ],
+      "answer": [0, 1, 2],
+      "explanation": "A bitmap tracks free blocks. Contiguous files need a larger hole to grow. An index is a table of block addresses. The directory maps a name; it does not hold the file’s bytes.",
+      "tags": [
+        "allocation",
+        "files"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "The file’s bytes live in data blocks, not in the name."
+      ]
+    },
+    {
+      "id": "w13-q07",
+      "week": 13,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A journaling file system writes intended metadata changes to a log so that",
+      "options": [
+        "After a crash it can finish or undo a partial update",
+        "Files never occupy blocks",
+        "The CPU can skip interrupts",
+        "Directories live in registers"
+      ],
+      "answer": 0,
+      "explanation": "The log makes an update atomic from the recovery program’s point of view. Without it, a crash can leave a pointer to a block that was never claimed, or the reverse.",
+      "tags": [
+        "journaling"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "w13-q08",
+      "week": 13,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "An absolute path",
+      "options": [
+        "Starts at the root and does not depend on the current directory",
+        "Is always shorter than a relative path",
+        "Contains only an inode number and no names",
+        "Cannot name a directory"
+      ],
+      "answer": 0,
+      "explanation": "A relative path is resolved from the current directory. An absolute path names every step from the root.",
+      "tags": [
+        "directory"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w13-q09",
+      "week": 13,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why can removing a name from a directory leave the file’s bytes on disk?",
+      "options": [],
+      "answer": "Another name may still point at the same inode, or a process may still have the file open.",
+      "explanation": "The bytes are reclaimed when the link count and the open count both hit zero. “Delete” often just drops a directory entry.",
+      "tags": [
+        "files"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

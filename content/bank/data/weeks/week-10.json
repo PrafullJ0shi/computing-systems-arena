@@ -1,0 +1,938 @@
+{
+  "week": 10,
+  "title": "Program Execution and Performance Tuning in GPUs",
+  "learningGoals": [
+    "Explain why performance tuning matters: two programs doing the same task can perform very differently.",
+    "Describe the GPU memory hierarchy (registers → shared/L1 → L2 → global/VRAM → host RAM), with access cycles, scope and sizes.",
+    "Convert cycles into time (for example, 1 cycle at 1.5 GHz ≈ 0.67 ns).",
+    "Explain naive vs tiled matrix multiplication using shared memory and locality.",
+    "Explain how neural-network operations (element-wise, reduction, dot product) map onto GPU threads.",
+    "Know the basic performance metrics: kernel time, memory bandwidth, occupancy, efficiency."
+  ],
+  "sirStressed": [
+    "\"Tuning to the underlying GPU is very, very important.\" Small savings × millions of operations = big gains.",
+    "Memory hierarchy with cycle counts: registers 1, shared/L1 5, L2 50–100, global 400–800, host thousands. Closer = faster, but smaller.",
+    "One cycle = one tick of the GPU clock. At 1.5 GHz that's ≈ 0.67 ns. Be ready to calculate this.",
+    "Host → device is the costliest move. Move large chunks in one shot. \"Minimise the data movement.\"",
+    "Matrix multiplication is the canonical example: locality-aware programs, tiling and shared memory give a multi-fold speed-up.",
+    "NNs = layers of maths, mostly multiplication and addition (element-wise, reduction, dot product), which is why GPUs enable real-time AI."
+  ],
+  "commonTraps": [
+    "Order of the pyramid: registers (top, fastest) → shared/L1 → L2 → global → host (bottom, slowest).",
+    "Scope: registers = per thread; shared memory = per block; L2 = chip-wide; global = all threads of the GPU.",
+    "Constant memory is read-only.",
+    "Thinking tiling reduces the number of multiplications. It doesn't. It reduces global memory reads through reuse.",
+    "Forgetting synchronisation in tiled code.",
+    "Mixing up a reduction (many → one) with element-wise (one → one for each element).",
+    "Counting only kernel time. Total time includes the PCIe transfers."
+  ],
+  "summary": [
+    "Tuning matters: core occupancy, choice of memory, number of transfers.",
+    "Pyramid: registers (per thread, KB, 1 cycle) → shared/L1 (per block, ~5) → constant/texture (read-only) → L2 (chip-wide, ~50 MB, 50–100) → global VRAM (off-chip, 400–800) → host RAM (thousands, via PCIe/NVLink).",
+    "1 cycle at 1.5 GHz ≈ 0.67 ns. Data-hungry cores sit idle if data is late.",
+    "Rules: move big chunks once; reuse data; compute more, move less.",
+    "Matmul: naive = repeated global reads. Tiled = load tiles (for example 16×16 of 1024×1024) into shared memory, reuse them across the block's threads, one block per output tile, sync, then a multi-fold (10×+) speed-up.",
+    "NN: neuron = weighted sum + bias + activation. Operations: element-wise (bias/activation, one thread per element; the JEE grace-marks analogy), reduction (sum → one value), dot product (multiply pairs and add). GPUs do layers in ms, enabling real-time AI (live translation, self-driving).",
+    "Metrics: kernel time, bandwidth, occupancy, efficiency, speed-up. Profilers: Nsight, PyTorch profiler."
+  ],
+  "questions": [
+    {
+      "id": "W10-Q001",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why are GPUs important for AI and data science?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Code readability"
+        },
+        {
+          "id": "B",
+          "text": "They allow parallel execution of many data operations"
+        },
+        {
+          "id": "C",
+          "text": "More RAM"
+        },
+        {
+          "id": "D",
+          "text": "Fewer bugs"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q002",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which best describes the GPU's role in modern computing?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It replaces the CPU"
+        },
+        {
+          "id": "B",
+          "text": "It accelerates highly parallel tasks such as graphics and ML"
+        },
+        {
+          "id": "C",
+          "text": "Permanent storage"
+        },
+        {
+          "id": "D",
+          "text": "Input devices"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q003",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "GPU vs CPU: which is true?",
+      "options": [
+        {
+          "id": "A",
+          "text": "GPUs have fewer, faster cores"
+        },
+        {
+          "id": "B",
+          "text": "They share the same ISA"
+        },
+        {
+          "id": "C",
+          "text": "GPUs contain thousands of smaller, efficient cores"
+        },
+        {
+          "id": "D",
+          "text": "GPUs run the OS"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "many simple cores vs a few powerful ones.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q004",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does \"data movement cost\" mean?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cooling energy"
+        },
+        {
+          "id": "B",
+          "text": "The time and energy needed to move data between memory levels"
+        },
+        {
+          "id": "C",
+          "text": "Storage needed"
+        },
+        {
+          "id": "D",
+          "text": "The price of RAM"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "for example, a global access takes 400–800 cycles vs ~5 for shared memory.",
+      "topicTags": [
+        "Memory Hierarchy in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q005",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is understanding the memory hierarchy essential?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bigger hardware"
+        },
+        {
+          "id": "B",
+          "text": "To optimise data movement and reduce latency"
+        },
+        {
+          "id": "C",
+          "text": "Syntax"
+        },
+        {
+          "id": "D",
+          "text": "Compilation errors"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Memory Hierarchy in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q006",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which GPU memory is shared, fastest, but small?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Global"
+        },
+        {
+          "id": "B",
+          "text": "Shared"
+        },
+        {
+          "id": "C",
+          "text": "Constant"
+        },
+        {
+          "id": "D",
+          "text": "Register"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "registers are faster but private to each thread. Among the memories threads can share, on-chip shared memory is the fastest.",
+      "topicTags": [
+        "Memory Hierarchy in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q007",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is tiling?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Drawing images"
+        },
+        {
+          "id": "B",
+          "text": "Dividing data into smaller blocks to make better use of the cache/shared memory"
+        },
+        {
+          "id": "C",
+          "text": "Raising the clock speed"
+        },
+        {
+          "id": "D",
+          "text": "Extra threads"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "tiles are loaded into shared memory once and reused by the whole block.",
+      "topicTags": [
+        "Matrix Multiplication Example"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q008",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is matrix multiplication ideal for GPUs?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sequential, dependent operations"
+        },
+        {
+          "id": "B",
+          "text": "Each element can be computed independently"
+        },
+        {
+          "id": "C",
+          "text": "Little memory"
+        },
+        {
+          "id": "D",
+          "text": "Branching"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "each C[i][j] is its own dot product, so it can be one thread each.",
+      "topicTags": [
+        "Matrix Multiplication Example"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q009",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How does multi-threading speed up matrix multiplication?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Threads process sub-blocks concurrently"
+        },
+        {
+          "id": "B",
+          "text": "Fewer calculations"
+        },
+        {
+          "id": "C",
+          "text": "Changes the logic"
+        },
+        {
+          "id": "D",
+          "text": "More CPU use"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the amount of work stays the same; it just happens in parallel.",
+      "topicTags": [
+        "Matrix Multiplication Example"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q010",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What are element-wise operations?",
+      "options": [
+        {
+          "id": "A",
+          "text": "One whole data set at once"
+        },
+        {
+          "id": "B",
+          "text": "Applying a computation to each element individually"
+        },
+        {
+          "id": "C",
+          "text": "Summing all elements"
+        },
+        {
+          "id": "D",
+          "text": "Combining into a vector"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "for example, adding a bias or applying ReLU, with one thread per element. Option C describes a reduction.",
+      "topicTags": [
+        "Neural-Network Operations on GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q011",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Dot-product operations on GPUs are:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Not parallel"
+        },
+        {
+          "id": "B",
+          "text": "Basic building blocks of neural-network layers"
+        },
+        {
+          "id": "C",
+          "text": "Graphics only"
+        },
+        {
+          "id": "D",
+          "text": "CPU only"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "each neuron computes a weighted sum, which is a dot product.",
+      "topicTags": [
+        "Neural-Network Operations on GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q012",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why do NN operations perform well on GPUs?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Repetitive matrix and vector maths"
+        },
+        {
+          "id": "B",
+          "text": "Serial processing"
+        },
+        {
+          "id": "C",
+          "text": "Heavy branching"
+        },
+        {
+          "id": "D",
+          "text": "Cache only"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Neural-Network Operations on GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q013",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why analyse kernel performance before optimising?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To identify memory bottlenecks and compute imbalance"
+        },
+        {
+          "id": "B",
+          "text": "To skip documentation"
+        },
+        {
+          "id": "C",
+          "text": "To reduce correctness"
+        },
+        {
+          "id": "D",
+          "text": "Automatic fixes"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "measure first, then optimise (the same rule as profiling in Week 8).",
+      "topicTags": [
+        "Performance Tuning of NN Code"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q014",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is occupancy?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The percentage of GPU cores (warp slots) actively executing threads"
+        },
+        {
+          "id": "B",
+          "text": "VRAM used"
+        },
+        {
+          "id": "C",
+          "text": "Number of GPUs"
+        },
+        {
+          "id": "D",
+          "text": "CPU clock"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Performance Tuning of NN Code"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q015",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which factor affects GPU performance the most?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Thread count and memory access patterns"
+        },
+        {
+          "id": "B",
+          "text": "Syntax"
+        },
+        {
+          "id": "C",
+          "text": "Compiler version"
+        },
+        {
+          "id": "D",
+          "text": "Print statements"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "occupancy plus coalesced memory access.",
+      "topicTags": [
+        "Performance Tuning of NN Code"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q016",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "GPUs differ from CPUs mainly because they:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Execute many threads simultaneously"
+        },
+        {
+          "id": "B",
+          "text": "Use slower cores for sequential logic"
+        },
+        {
+          "id": "C",
+          "text": "Manage the OS kernel"
+        },
+        {
+          "id": "D",
+          "text": "Have fewer arithmetic units"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary: Quick Recap"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q017",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why should programmers understand GPU memory?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To optimise data placement for faster access"
+        },
+        {
+          "id": "B",
+          "text": "More RAM"
+        },
+        {
+          "id": "C",
+          "text": "Fewer syntax errors"
+        },
+        {
+          "id": "D",
+          "text": "Disable caching"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary: Quick Recap"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-Q018",
+      "week": 10,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the ultimate goal of GPU performance tuning?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Scalable, efficient parallel execution"
+        },
+        {
+          "id": "B",
+          "text": "Longer code"
+        },
+        {
+          "id": "C",
+          "text": "Slow the CPU"
+        },
+        {
+          "id": "D",
+          "text": "Remove threads"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary: Quick Recap"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W10-X01",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which GPU memory is fastest and private to each thread?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Shared memory"
+        },
+        {
+          "id": "B",
+          "text": "Registers"
+        },
+        {
+          "id": "C",
+          "text": "L2 cache"
+        },
+        {
+          "id": "D",
+          "text": "Global memory"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Registers: per thread, 1 cycle.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X02",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Shared memory is shared by:",
+      "options": [
+        {
+          "id": "A",
+          "text": "All threads in the GPU"
+        },
+        {
+          "id": "B",
+          "text": "All threads in one block"
+        },
+        {
+          "id": "C",
+          "text": "The CPU and the GPU"
+        },
+        {
+          "id": "D",
+          "text": "All SMs"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "All threads of a block.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X03",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which data movement is generally the most expensive?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Register → core"
+        },
+        {
+          "id": "B",
+          "text": "Shared → register"
+        },
+        {
+          "id": "C",
+          "text": "Host RAM → GPU VRAM"
+        },
+        {
+          "id": "D",
+          "text": "L1 → register"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Host → device over PCIe/NVLink takes thousands of cycles.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X04",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Tiling in matrix multiplication mainly reduces:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The number of multiplications"
+        },
+        {
+          "id": "B",
+          "text": "Repeated global memory reads"
+        },
+        {
+          "id": "C",
+          "text": "The size of the matrix"
+        },
+        {
+          "id": "D",
+          "text": "The number of threads"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Tiling reuses tiles held in shared memory. The FLOP count stays the same.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X05",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Adding the same bias to every element of a vector is a(n):",
+      "options": [
+        {
+          "id": "A",
+          "text": "Reduction"
+        },
+        {
+          "id": "B",
+          "text": "Element-wise operation"
+        },
+        {
+          "id": "C",
+          "text": "Dot product"
+        },
+        {
+          "id": "D",
+          "text": "Transpose"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Element-wise (one thread per element).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X06",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which memory is read-only and specialised for constants or graphics access patterns?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Constant/texture memory"
+        },
+        {
+          "id": "B",
+          "text": "Registers"
+        },
+        {
+          "id": "C",
+          "text": "Global memory"
+        },
+        {
+          "id": "D",
+          "text": "Host memory"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Constant/texture memory.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X07",
+      "week": 10,
+      "source": "extra",
+      "type": "short",
+      "prompt": "A GPU runs at 2 GHz. How long is one cycle? Estimate the time for one shared-memory access (5 cycles) and one global access (600 cycles).",
+      "correctAnswers": [
+        "1 / (2 × 10⁹) = 0.5 ns. Shared ≈ 5 × 0.5 = 2.5 ns. Global ≈ 600 × 0.5 = 300 ns."
+      ],
+      "explanation": "1 / (2 × 10⁹) = 0.5 ns. Shared ≈ 5 × 0.5 = 2.5 ns. Global ≈ 600 × 0.5 = 300 ns.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X08",
+      "week": 10,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Compute the dot product of [2, 0, 3, 1] and [1, 4, 2, 5], and explain how a GPU would parallelise it.",
+      "correctAnswers": [
+        "2·1 + 0·4 + 3·2 + 1·5 = 2 + 0 + 6 + 5 = 13. The GPU uses 4 threads to multiply the pairs in parallel, then a parallel reduction (2 + 0 = 2 and 6 + 5 = 11, then 2 + 11 = 13) in log₂4 = 2 steps."
+      ],
+      "explanation": "2·1 + 0·4 + 3·2 + 1·5 = 2 + 0 + 6 + 5 = 13. The GPU uses 4 threads to multiply the pairs in parallel, then a parallel reduction (2 + 0 = 2 and 6 + 5 = 11, then 2 + 11 = 13) in log₂4 = 2 steps.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X09",
+      "week": 10,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "A student's matrix-multiplication kernel for a 2048×2048 matrix reads every A and B element directly from global memory, and the GPU sits mostly idle. Diagnose the problem and describe the fix.",
+      "correctAnswers": [
+        "The kernel is memory-bound. It makes repeated global memory reads at 400–800 cycles each, so the cores starve. Fix: a tiled kernel. Load 16×16 (or 32×32) tiles of A and B into shared memory, sync, let every thread in the block reuse the tiles, have each block compute one output tile of C, and loop over the tile pairs. Also keep the matrices on the GPU and use coalesced loads."
+      ],
+      "explanation": "The kernel is memory-bound. It makes repeated global memory reads at 400–800 cycles each, so the cores starve. Fix: a tiled kernel. Load 16×16 (or 32×32) tiles of A and B into shared memory, sync, let every thread in the block reuse the tiles, have each block compute one output tile of C, and loop over the tile pairs. Also keep the matrices on the GPU and use coalesced loads.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W10-X10",
+      "week": 10,
+      "source": "extra",
+      "type": "short",
+      "prompt": "List the memory levels from fastest to slowest, with approximate access cycles.",
+      "correctAnswers": [
+        "Registers (1) → shared/L1/constant cache (~5) → L2 (50–100) → global VRAM (400–800) → host RAM (thousands)."
+      ],
+      "explanation": "Registers (1) → shared/L1/constant cache (~5) → L2 (50–100) → global VRAM (400–800) → host RAM (thousands).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

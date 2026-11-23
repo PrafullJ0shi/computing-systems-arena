@@ -1,0 +1,1556 @@
+{
+  "week": 9,
+  "title": "Introduction to GPUs",
+  "learningGoals": [
+    "Explain CPU vs GPU architecture and why GPUs suit massively parallel, data-parallel AI/ML work.",
+    "Describe the GPU as a co-processor: the host–device workflow and heterogeneous computing.",
+    "Explain CPU–GPU data transfer (RAM ↔ VRAM over PCIe / NVLink), why it's a bottleneck, and how to optimise it.",
+    "Explain the threading hierarchy: thread → block (programmer-defined) → grid, shared memory, SM, and the GPU \"kernel\".",
+    "Explain warps (NVIDIA, 32 threads) and wavefronts (AMD, 64), and calculate warp counts.",
+    "Compare SIMD vs SIMT, and explain branch divergence.",
+    "Estimate GPU vs CPU performance and list the factors: occupancy, memory access pattern, divergence, latency hiding."
+  ],
+  "sirStressed": [
+    "\"The hottest thing in the world: GPUs.\" You must be able to explain what GPUs are, how they differ from CPUs, and why they matter for AI.",
+    "A GPU kernel is a function that runs on the GPU. Don't confuse it with the OS kernel.",
+    "Thread, block and grid are generic terms. Warp and SM are NVIDIA terms (AMD: wavefront). A warp is a hardware execution group of 32, and blocks are logical groupings by the programmer. Numbering starts at 0.",
+    "Each SM has limited registers and shared memory, so an SM fits only some blocks at once.",
+    "Total time = transfer in + launch + compute + transfer out, so the CPU can win for small jobs.",
+    "Data movement is very important. \"When you calculate, consider the time taken to move the data to and fro… If you reduce data movement, you're scoring very high.\" Optimisation is super important.",
+    "The Computing Systems assignment was live at this point (a student noted it unlocks only after you complete the course survey). AI tools may be used, but not for generating screenshots of output."
+  ],
+  "commonTraps": [
+    "Thinking GPU cores are as powerful as CPU cores. They're many but simple.",
+    "Warp size: NVIDIA warp = 32; AMD wavefront = 64.",
+    "Block vs warp: the block is programmer-defined; the warp is hardware-defined.",
+    "GPU kernel ≠ OS kernel.",
+    "Forgetting the data-transfer overhead (PCIe/NVLink). It's often the real bottleneck.",
+    "SIMD vs SIMT: SIMT gives each thread its own PC and registers, so it can branch.",
+    "\"More threads always means faster.\" Occupancy, memory access, divergence and transfers decide.",
+    "Shared memory vs VRAM: shared memory = small, fast, on-chip, per block. VRAM = large, global, slower."
+  ],
+  "summary": [
+    "CPU = few powerful cores for varied and control tasks. GPU = thousands of simple cores for the same operation on huge data. VRAM is GPU memory. Uses: AI/ML/DL, graphics and gaming, video, science, self-driving cars, GPU-as-a-Service.",
+    "Co-processor model (heterogeneous): the CPU = host (brain/manager); the GPU = device (specialist). Workflow: prepare in RAM → copy to VRAM → launch the kernel → copy results back. Parallelism requires independent tasks.",
+    "Transfers: PCIe (tens of GB/s) and NVLink (faster). Transfers are a bottleneck. Batch, keep data on the GPU, overlap, use PyTorch, TensorFlow or CuPy.",
+    "Hierarchy: thread (smallest unit) → block (programmer, shares shared memory) → grid (all blocks). Hardware: warp = 32 threads (NVIDIA) or wavefront = 64 (AMD), run on SMs (limited registers and shared memory).",
+    "Shared memory = fast on-chip memory, like a cache. VRAM = global and slow.",
+    "Kernel = a GPU function (CUDA). Global index = blockIdx.x * blockDim.x + threadIdx.x .",
+    "Warps: 256 threads/block → 8 warps. 100 blocks → 800 warps.",
+    "SIMD = one instruction on multiple data (rigid). SIMT = threads with their own PC and registers that can branch (modern GPUs). Divergence costs time.",
+    "Performance: occupancy, memory access pattern (coalesced), divergence, latency hiding (warp switching), throughput. Time ≈ operations ÷ effective throughput. 1M additions: CPU with 8 cores ≈ 125 ms vs GPU with 10k cores ≈ 0.1 ms (plus transfer)."
+  ],
+  "questions": [
+    {
+      "id": "W09-Q001",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In what kind of tasks do GPUs give the most benefit?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Text-based computations"
+        },
+        {
+          "id": "B",
+          "text": "Graphical and numerical parallel computations"
+        },
+        {
+          "id": "C",
+          "text": "Network management"
+        },
+        {
+          "id": "D",
+          "text": "OS scheduling"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "GPUs excel at the same maths on lots of data at once.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q002",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What makes GPUs crucial in modern data science?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Faster sequential instructions"
+        },
+        {
+          "id": "B",
+          "text": "I/O handling"
+        },
+        {
+          "id": "C",
+          "text": "They handle large-scale parallel numeric operations"
+        },
+        {
+          "id": "D",
+          "text": "Less power than CPUs"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "matrix and vector maths across huge data sets.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q003",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the main goal of introducing GPUs in this module?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Replace CPUs"
+        },
+        {
+          "id": "B",
+          "text": "Understand how GPUs accelerate computation"
+        },
+        {
+          "id": "C",
+          "text": "Video rendering only"
+        },
+        {
+          "id": "D",
+          "text": "Compare old CPUs"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "GPUs assist CPUs; they don't replace them.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q004",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement best describes the CPU–GPU relationship?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The GPU replaces the CPU"
+        },
+        {
+          "id": "B",
+          "text": "They work independently"
+        },
+        {
+          "id": "C",
+          "text": "The GPU is a co-processor assisting the CPU with parallel workloads"
+        },
+        {
+          "id": "D",
+          "text": "They do identical work"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "the CPU is the host and controller; the GPU is the device and specialist.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q005",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Key benefit of GPUs in AI systems?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Reduce algorithm complexity"
+        },
+        {
+          "id": "B",
+          "text": "Easier debugging"
+        },
+        {
+          "id": "C",
+          "text": "Faster model training through parallel data handling"
+        },
+        {
+          "id": "D",
+          "text": "No CPUs needed"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "training is mostly parallel matrix maths.",
+      "topicTags": [
+        "Why GPUs Are Useful"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q006",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which task best shows a GPU's strength?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Keyboard input"
+        },
+        {
+          "id": "B",
+          "text": "Word processors and browsers"
+        },
+        {
+          "id": "C",
+          "text": "Training deep neural networks"
+        },
+        {
+          "id": "D",
+          "text": "Storing files"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "A, B and D are general-purpose CPU or I/O jobs.",
+      "topicTags": [
+        "Why GPUs Are Useful"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q007",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why are GPUs preferred for AI/ML?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Higher clock speeds"
+        },
+        {
+          "id": "B",
+          "text": "Thousands of small cores processing data in parallel"
+        },
+        {
+          "id": "C",
+          "text": "Less electricity"
+        },
+        {
+          "id": "D",
+          "text": "More memory"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "GPU clocks are actually lower than CPU clocks. The win comes from the number of cores.",
+      "topicTags": [
+        "Why GPUs Are Useful"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q008",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How do GPUs achieve performance gains in data science?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Running one complex task quickly"
+        },
+        {
+          "id": "B",
+          "text": "Processing many independent operations simultaneously"
+        },
+        {
+          "id": "C",
+          "text": "Delegating to CPUs"
+        },
+        {
+          "id": "D",
+          "text": "Caching internet data"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "data parallelism over independent operations.",
+      "topicTags": [
+        "Why GPUs Are Useful"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q009",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is CPU–GPU data transfer often a bottleneck?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Too few GPU cores"
+        },
+        {
+          "id": "B",
+          "text": "The CPU and GPU have separate memory spaces"
+        },
+        {
+          "id": "C",
+          "text": "GPUs don't multithread"
+        },
+        {
+          "id": "D",
+          "text": "CPUs are faster"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "RAM and VRAM are separate, so data has to be copied over PCIe.",
+      "topicTags": [
+        "GPU as a Co-processor"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q010",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What role does the CPU play?",
+      "options": [
+        {
+          "id": "A",
+          "text": "All the parallel work"
+        },
+        {
+          "id": "B",
+          "text": "Task coordination and control flow"
+        },
+        {
+          "id": "C",
+          "text": "Controls GPU clocking"
+        },
+        {
+          "id": "D",
+          "text": "Matrix multiplication"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "the CPU is the manager or \"general physician\".",
+      "topicTags": [
+        "GPU as a Co-processor"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q011",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which best represents the CPU–GPU execution model?",
+      "options": [
+        {
+          "id": "A",
+          "text": "They share the same cache"
+        },
+        {
+          "id": "B",
+          "text": "The GPU runs everything and the CPU idles"
+        },
+        {
+          "id": "C",
+          "text": "The CPU launches GPU kernels and manages data flow"
+        },
+        {
+          "id": "D",
+          "text": "Both run identical code"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "GPU as a Co-processor"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q012",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What happens in a typical GPU computation cycle?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The GPU reads from disk and writes files"
+        },
+        {
+          "id": "B",
+          "text": "The CPU transfers data to GPU memory, the GPU runs the kernel, and the results come back"
+        },
+        {
+          "id": "C",
+          "text": "The GPU runs code from CPU memory"
+        },
+        {
+          "id": "D",
+          "text": "The CPU runs kernels line by line"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "this is the 4-step host–device workflow.",
+      "topicTags": [
+        "GPU as a Co-processor"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q013",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which step slows down a GPU program the most?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Running the kernel"
+        },
+        {
+          "id": "B",
+          "text": "Transferring large data sets between the CPU and GPU"
+        },
+        {
+          "id": "C",
+          "text": "Loops on GPU threads"
+        },
+        {
+          "id": "D",
+          "text": "Launching kernels"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "PCIe bandwidth is much lower than the GPU's memory bandwidth.",
+      "topicTags": [
+        "CPU–GPU Communication and Data Transfer"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q014",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is CPU↔GPU transfer necessary?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The GPU can't access the CPU's RAM directly"
+        },
+        {
+          "id": "B",
+          "text": "The CPU can't process data"
+        },
+        {
+          "id": "C",
+          "text": "The GPU stores text only"
+        },
+        {
+          "id": "D",
+          "text": "The CPU can't compute"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "CPU–GPU Communication and Data Transfer"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q015",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What typically happens before a kernel runs?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The GPU loads input data from CPU memory over PCIe"
+        },
+        {
+          "id": "B",
+          "text": "It fetches from disk"
+        },
+        {
+          "id": "C",
+          "text": "It fetches from the cloud"
+        },
+        {
+          "id": "D",
+          "text": "The CPU skips allocation"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "CPU–GPU Communication and Data Transfer"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q016",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How can programmers minimise the communication overhead?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Send small chunks repeatedly"
+        },
+        {
+          "id": "B",
+          "text": "Maximise the number of transfers"
+        },
+        {
+          "id": "C",
+          "text": "Keep most data resident in GPU memory"
+        },
+        {
+          "id": "D",
+          "text": "Disable GPU caching"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "keep data on the GPU, and batch transfers rather than sending many small ones.",
+      "topicTags": [
+        "CPU–GPU Communication and Data Transfer"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q017",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is a GPU thread?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A single independent execution unit doing part of the computation"
+        },
+        {
+          "id": "B",
+          "text": "An I/O function"
+        },
+        {
+          "id": "C",
+          "text": "A memory block"
+        },
+        {
+          "id": "D",
+          "text": "A hardware device"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Threads in GPUs: Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q018",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What lets GPUs manage thousands of threads efficiently?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A dedicated pipeline per thread"
+        },
+        {
+          "id": "B",
+          "text": "Grouping threads into warps/blocks for collective scheduling"
+        },
+        {
+          "id": "C",
+          "text": "No grouping"
+        },
+        {
+          "id": "D",
+          "text": "Shared CPU caches"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "the hardware schedules warps of 32, not single threads.",
+      "topicTags": [
+        "Threads in GPUs: Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q019",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about GPU threads is true?",
+      "options": [
+        {
+          "id": "A",
+          "text": "All must run different instructions"
+        },
+        {
+          "id": "B",
+          "text": "They can't use shared memory"
+        },
+        {
+          "id": "C",
+          "text": "They're scheduled in groups by the hardware"
+        },
+        {
+          "id": "D",
+          "text": "One instruction per second"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Threads in GPUs: Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q020",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How does GPU threading differ from CPU threading?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Fewer but more powerful"
+        },
+        {
+          "id": "B",
+          "text": "Huge numbers running similar instructions simultaneously"
+        },
+        {
+          "id": "C",
+          "text": "Many unrelated programs at once"
+        },
+        {
+          "id": "D",
+          "text": "Identical"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Threads in GPUs: Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q021",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How are thread blocks and grids related?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Each grid consists of multiple thread blocks"
+        },
+        {
+          "id": "B",
+          "text": "They're the same"
+        },
+        {
+          "id": "C",
+          "text": "A block can be in several grids"
+        },
+        {
+          "id": "D",
+          "text": "A grid needs no blocks"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "thread → block → grid.",
+      "topicTags": [
+        "Warps/Wavefronts (NVIDIA/AMD), Thread Blocks and Grids"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q022",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the purpose of the grid?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It defines the total number of blocks launched by a kernel"
+        },
+        {
+          "id": "B",
+          "text": "CPU scheduling"
+        },
+        {
+          "id": "C",
+          "text": "Clock frequency"
+        },
+        {
+          "id": "D",
+          "text": "Memory storage"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "kernel<<<gridSize, blockSize>>> .",
+      "topicTags": [
+        "Warps/Wavefronts (NVIDIA/AMD), Thread Blocks and Grids"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q023",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is a thread block?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Threads executing completely independently"
+        },
+        {
+          "id": "B",
+          "text": "A group of threads that share memory and execute together"
+        },
+        {
+          "id": "C",
+          "text": "Unrelated kernels"
+        },
+        {
+          "id": "D",
+          "text": "One instruction"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "the block's threads share the on-chip shared memory and can synchronise.",
+      "topicTags": [
+        "Warps/Wavefronts (NVIDIA/AMD), Thread Blocks and Grids"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q024",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does thread indexing achieve?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It identifies each thread's unique position in the grid"
+        },
+        {
+          "id": "B",
+          "text": "Manual memory assignment"
+        },
+        {
+          "id": "C",
+          "text": "The same data for every thread"
+        },
+        {
+          "id": "D",
+          "text": "Prevents overlap"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "i = blockIdx.x*blockDim.x + threadIdx.x tells each thread which element is its own.",
+      "topicTags": [
+        "Warps/Wavefronts (NVIDIA/AMD), Thread Blocks and Grids"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q025",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What happens when threads in a warp take different paths (if-else)?",
+      "options": [
+        {
+          "id": "A",
+          "text": "All paths run in parallel with no slowdown"
+        },
+        {
+          "id": "B",
+          "text": "The diverging paths run serially, which reduces efficiency"
+        },
+        {
+          "id": "C",
+          "text": "Merged with no penalty"
+        },
+        {
+          "id": "D",
+          "text": "The kernel crashes"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "branch divergence. One group waits while the other path runs.",
+      "topicTags": [
+        "Multi-Threading in GPUs (the SIMT Model)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q026",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why does understanding SIMT matter to developers?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It helps minimise divergence and improve efficiency"
+        },
+        {
+          "id": "B",
+          "text": "Slower but more accurate code"
+        },
+        {
+          "id": "C",
+          "text": "No optimisation needed"
+        },
+        {
+          "id": "D",
+          "text": "Same as CPU programming"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Multi-Threading in GPUs (the SIMT Model)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q027",
+      "week": 9,
+      "source": "quiz",
+      "type": "short",
+      "prompt": "What does SIMT stand for?",
+      "correctAnswers": [
+        "A, Single Instruction Multiple Threads"
+      ],
+      "explanation": "A, Single Instruction Multiple Threads",
+      "topicTags": [
+        "Multi-Threading in GPUs (the SIMT Model)"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W09-Q028",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How does SIMT differ from CPU execution?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Each GPU thread has a unique instruction stream"
+        },
+        {
+          "id": "B",
+          "text": "All threads in a warp execute the same instruction simultaneously"
+        },
+        {
+          "id": "C",
+          "text": "GPU threads wait for the CPU"
+        },
+        {
+          "id": "D",
+          "text": "A single core for everything"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "threads in a warp move in lockstep (each has its own PC, which is what allows divergence).",
+      "topicTags": [
+        "Multi-Threading in GPUs (the SIMT Model)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q029",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does \"occupancy\" mean?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The ratio of active threads to the total available threads"
+        },
+        {
+          "id": "B",
+          "text": "Memory used"
+        },
+        {
+          "id": "C",
+          "text": "Number of cores"
+        },
+        {
+          "id": "D",
+          "text": "Temperature"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "strictly, it's active warps ÷ the maximum possible warps per SM.",
+      "topicTags": [
+        "Estimating the Performance of Multi-Threading in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q030",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What happens if too many threads are launched without enough resources?",
+      "options": [
+        {
+          "id": "A",
+          "text": "They run efficiently"
+        },
+        {
+          "id": "B",
+          "text": "Some must wait, reducing effective occupancy"
+        },
+        {
+          "id": "C",
+          "text": "Extra threads are cancelled"
+        },
+        {
+          "id": "D",
+          "text": "The CPU takes over"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Estimating the Performance of Multi-Threading in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q031",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why measure kernel execution time?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It shows whether GPU resources are under- or over-utilised"
+        },
+        {
+          "id": "B",
+          "text": "Only for debugging"
+        },
+        {
+          "id": "C",
+          "text": "No effect"
+        },
+        {
+          "id": "D",
+          "text": "Temperature control"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Estimating the Performance of Multi-Threading in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q032",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which factor affects GPU performance the most?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Physical size"
+        },
+        {
+          "id": "B",
+          "text": "How efficiently threads are scheduled and executed"
+        },
+        {
+          "id": "C",
+          "text": "Colour"
+        },
+        {
+          "id": "D",
+          "text": "Number of CPU cores"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Estimating the Performance of Multi-Threading in GPUs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q033",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does \"speed-up\" represent?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The ratio of GPU execution time to CPU execution time"
+        },
+        {
+          "id": "B",
+          "text": "Threads per second"
+        },
+        {
+          "id": "C",
+          "text": "Transfer delay"
+        },
+        {
+          "id": "D",
+          "text": "Clock speed"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "it's the time ratio that compares the CPU and the GPU, so it's the only sensible option. Strictly, speed-up = CPU time ÷ GPU time (125 ms ÷ 0.1 ms = 1,250×). Write it that way in a subjective answer.",
+      "topicTags": [
+        "Example: Performance Estimation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q034",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about CPU vs GPU for ML is accurate?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The GPU processes many independent data points simultaneously, drastically cutting the runtime"
+        },
+        {
+          "id": "B",
+          "text": "The CPU is always faster"
+        },
+        {
+          "id": "C",
+          "text": "Same time"
+        },
+        {
+          "id": "D",
+          "text": "Not affected by scheduling"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Example: Performance Estimation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q035",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In the matrix-multiplication example, what determines GPU performance?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The number of matrix elements multiplied and parallelised"
+        },
+        {
+          "id": "B",
+          "text": "Monitor type"
+        },
+        {
+          "id": "C",
+          "text": "Casing"
+        },
+        {
+          "id": "D",
+          "text": "Background CPU tasks"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Example: Performance Estimation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-Q036",
+      "week": 9,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the main goal of performance estimation?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Predict how fast a kernel runs and how efficiently resources are used"
+        },
+        {
+          "id": "B",
+          "text": "CPU power"
+        },
+        {
+          "id": "C",
+          "text": "Fan speed"
+        },
+        {
+          "id": "D",
+          "text": "Internet bandwidth"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Example: Performance Estimation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W09-X01",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "How many threads are in one NVIDIA warp?",
+      "options": [
+        {
+          "id": "A",
+          "text": "16"
+        },
+        {
+          "id": "B",
+          "text": "32"
+        },
+        {
+          "id": "C",
+          "text": "64"
+        },
+        {
+          "id": "D",
+          "text": "128"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "32. An AMD wavefront is 64.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X02",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In GPU programming, a \"kernel\" is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The core of the operating system"
+        },
+        {
+          "id": "B",
+          "text": "A function executed on the GPU by many threads"
+        },
+        {
+          "id": "C",
+          "text": "The GPU's VRAM"
+        },
+        {
+          "id": "D",
+          "text": "The PCIe driver"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "A CUDA/GPU function, not the OS kernel.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X03",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Who defines the size of a thread block?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The GPU hardware"
+        },
+        {
+          "id": "B",
+          "text": "The programmer"
+        },
+        {
+          "id": "C",
+          "text": "The OS scheduler"
+        },
+        {
+          "id": "D",
+          "text": "The PCIe bus"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Blocks are a logical grouping set by the programmer. Warps are set by the hardware.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X04",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which memory is small, very fast, on-chip and shared by the threads of a block?",
+      "options": [
+        {
+          "id": "A",
+          "text": "VRAM (global memory)"
+        },
+        {
+          "id": "B",
+          "text": "Shared memory"
+        },
+        {
+          "id": "C",
+          "text": "Main RAM"
+        },
+        {
+          "id": "D",
+          "text": "SSD"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Shared memory (on-chip, per SM/block, like a cache).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X05",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In the host–device model, which step comes immediately before the GPU kernel executes?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Results copied to RAM"
+        },
+        {
+          "id": "B",
+          "text": "Data copied from RAM to VRAM"
+        },
+        {
+          "id": "C",
+          "text": "The GPU prepares data in RAM"
+        },
+        {
+          "id": "D",
+          "text": "The CPU shuts down"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Prepare in RAM → copy to VRAM → launch → copy back.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X06",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The ability of threads to take different branches because each has its own program counter is a feature of:",
+      "options": [
+        {
+          "id": "A",
+          "text": "SIMD"
+        },
+        {
+          "id": "B",
+          "text": "SIMT"
+        },
+        {
+          "id": "C",
+          "text": "MISD"
+        },
+        {
+          "id": "D",
+          "text": "Von Neumann"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "SIMT.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X07",
+      "week": 9,
+      "source": "extra",
+      "type": "short",
+      "prompt": "A kernel is launched with 64 blocks of 512 threads each. How many threads and how many NVIDIA warps is that? How many AMD wavefronts?",
+      "correctAnswers": [
+        "Threads = 64 × 512 = 32,768. Warps = 32,768 / 32 = 1,024 (16 per block). AMD wavefronts = 32,768 / 64 = 512."
+      ],
+      "explanation": "Threads = 64 × 512 = 32,768. Warps = 32,768 / 32 = 1,024 (16 per block). AMD wavefronts = 32,768 / 64 = 512.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X08",
+      "week": 9,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Using the lecture's model, estimate the time to add two arrays of 2 million elements on an 8-core CPU (where 125,000 additions per core ≈ 125 ms) and on a GPU with 20,000 cores.",
+      "correctAnswers": [
+        "CPU: 2,000,000 / 8 = 250,000 per core ≈ 250 ms (twice the lecture's 125 ms). GPU: 2,000,000 / 20,000 = 100 per core, the same per-core load as the lecture's example, so ≈ 0.1 ms, plus the RAM↔VRAM transfer time."
+      ],
+      "explanation": "CPU: 2,000,000 / 8 = 250,000 per core ≈ 250 ms (twice the lecture's 125 ms). GPU: 2,000,000 / 20,000 = 100 per core, the same per-core load as the lecture's example, so ≈ 0.1 ms, plus the RAM↔VRAM transfer time.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X09",
+      "week": 9,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "A data scientist moves each training batch to the GPU, computes, copies the loss back to the CPU after every operation, and finds the GPU barely faster than the CPU. Explain why, and suggest two fixes.",
+      "correctAnswers": [
+        "The time goes on CPU↔GPU data transfer over PCIe, not computation. Sending results back after every operation adds huge overhead. Fixes: keep the data and intermediate results on the GPU (copy back only at the end of an epoch or step), batch transfers, overlap transfer with computation, and use a framework such as PyTorch or TensorFlow that manages device memory."
+      ],
+      "explanation": "The time goes on CPU↔GPU data transfer over PCIe, not computation. Sending results back after every operation adds huge overhead. Fixes: keep the data and intermediate results on the GPU (copy back only at the end of an epoch or step), batch transfers, overlap transfer with computation, and use a framework such as PyTorch or TensorFlow that manages device memory.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W09-X10",
+      "week": 9,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why does adding 2 to 10 million numbers suit a GPU, while running a word processor, a music player and a scanner together suits a CPU?",
+      "correctAnswers": [
+        "Adding 2 to 10 million numbers is the same simple operation on independent data, which is perfect for thousands of simple GPU cores running in parallel (data parallelism). The word processor, music player and scanner are different, varied tasks with interrupts, I/O and complex control logic, which need the powerful general-purpose CPU cores and multitasking."
+      ],
+      "explanation": "Adding 2 to 10 million numbers is the same simple operation on independent data, which is perfect for thousands of simple GPU cores running in parallel (data parallelism). The word processor, music player and scanner are different, varied tasks with interrupts, I/O and complex control logic, which need the powerful general-purpose CPU cores and multitasking.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

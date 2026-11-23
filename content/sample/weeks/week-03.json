@@ -1,0 +1,189 @@
+{
+  "week": 3,
+  "questions": [
+    {
+      "id": "w03-q01",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A is 1 and B is 0. What is A AND B?",
+      "options": [
+        "0",
+        "1",
+        "The value depends on a previous clock",
+        "2"
+      ],
+      "answer": 0,
+      "explanation": "AND is 1 only when every input is 1. Here B is 0, so the output is 0.",
+      "tags": [
+        "gates"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w03-q02",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which expression equals NOT (A OR B)?",
+      "options": [
+        "(NOT A) AND (NOT B)",
+        "(NOT A) OR (NOT B)",
+        "A AND B",
+        "A OR (NOT B)"
+      ],
+      "answer": 0,
+      "explanation": "De Morgan’s law: a NOT pushed over an OR becomes AND, and each input is inverted.",
+      "tags": [
+        "boolean"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Swapping AND with OR while pushing the NOT is the usual slip."
+      ]
+    },
+    {
+      "id": "w03-q03",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A 2-input XOR outputs 1 when",
+      "options": [
+        "The inputs are equal",
+        "The inputs differ",
+        "Both inputs are 0",
+        "Both inputs are 1"
+      ],
+      "answer": 1,
+      "explanation": "XOR is the “odd parity” function for two bits: 1 exactly when the bits are different.",
+      "tags": [
+        "gates"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "XOR is not OR. Both inputs being 1 produces 0."
+      ]
+    },
+    {
+      "id": "w03-q04",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which one of these gates is universal by itself?",
+      "options": [
+        "AND",
+        "XOR",
+        "NAND",
+        "OR"
+      ],
+      "answer": 2,
+      "explanation": "NAND can build NOT, AND, and OR, and therefore any truth table. XOR cannot build AND, so it is not universal.",
+      "tags": [
+        "gates"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "XOR feels powerful because it mixes bits, but it is not a complete basis."
+      ]
+    },
+    {
+      "id": "w03-q05",
+      "week": 3,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "What does a 1-bit full adder produce?",
+      "options": [
+        "A sum bit",
+        "A carry-out bit",
+        "A quotient",
+        "The next program counter"
+      ],
+      "answer": [
+        0,
+        1
+      ],
+      "explanation": "A full adder adds three bits (the two operands and a carry-in) and emits a sum bit and a carry-out.",
+      "tags": [
+        "adder"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w03-q06",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A 4-to-1 multiplexer uses its select inputs to",
+      "options": [
+        "Choose one of four data inputs and copy it to the output",
+        "Add the four data inputs",
+        "Store the inputs until the next second",
+        "Invert all four inputs"
+      ],
+      "answer": 0,
+      "explanation": "The select lines are an address. Exactly one data input is connected through to the output.",
+      "tags": [
+        "mux"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w03-q07",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "What separates a sequential circuit from a combinational one?",
+      "options": [
+        "Sequential circuits remember state, usually in flip-flops",
+        "Sequential circuits may use only NAND gates, and combinational circuits may not",
+        "Combinational circuits require a clock by definition",
+        "Combinational circuits store a bit with no feedback"
+      ],
+      "answer": 0,
+      "explanation": "A combinational output is a function of the current inputs only. A sequential circuit has state, so the past matters.",
+      "tags": [
+        "sequential"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "A clock is common in sequential designs; it is not what defines a combinational cloud of gates."
+      ]
+    },
+    {
+      "id": "w03-q08",
+      "week": 3,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which expression is equal to A OR (NOT A AND B)?",
+      "options": [
+        "A OR B",
+        "A AND B",
+        "NOT A",
+        "NOT B"
+      ],
+      "answer": 0,
+      "explanation": "A + A′B = (A + A′)(A + B) = A + B. When A is 1 the result is already 1; when A is 0 the second term leaves B.",
+      "tags": [
+        "boolean"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "AND-ing A with B instead of OR-ing them."
+      ]
+    },
+    {
+      "id": "w03-q09",
+      "week": 3,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why can a lab that stocks only NAND gates still build any truth table?",
+      "options": [],
+      "answer": "NAND can make NOT, AND, and OR, so it can make any boolean function.",
+      "explanation": "Tie both inputs of a NAND to invert. NAND the result to get AND. De Morgan then gives OR. Those three are enough for any table.",
+      "tags": [
+        "gates"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

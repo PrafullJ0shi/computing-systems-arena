@@ -1,0 +1,804 @@
+{
+  "week": 1,
+  "title": "Getting Started (Computer System Basics and Architectures)",
+  "learningGoals": [
+    "Name the basic parts of a computer system and explain what each one does.",
+    "Explain the memory hierarchy (registers → L1 → L2 → L3 → main memory → disk) and why data moves in blocks.",
+    "Explain the stored program concept (von Neumann), and the Harvard and Modified Harvard architectures, with their merits and demerits.",
+    "Explain multi-core cache behaviour: look-through vs look-aside and write-update vs write-invalidate.",
+    "Classify multiprocessor systems (tightly vs loosely coupled, homogeneous vs heterogeneous, NUMA vs NORMA).",
+    "Tell i3, i5, i7 and i9 apart by technology (hyper-threading, turbo boost), and explain why lower frequency saves power (P ∝ V²·F·C)."
+  ],
+  "sirStressed": [
+    "Think in systems, not parts. Focus on application and reasoning, not memorisation. Recorded videos teach the WHAT; live sessions teach the WHY and HOW.",
+    "RAM is volatile: power off and its contents are gone. Storage is persistent.",
+    "A core = registers (CPU state) + interrupt logic + execution unit + cache. Hardware threads are counted by register sets.",
+    "Hyper-threading ≠ two cores. HT gives two register sets but one execution unit, so only one task runs at a time and the gain comes from fast switching when a task waits. Two cores really run two tasks in parallel, provided they don't depend on each other.",
+    "Interrupts: like a student interrupting the lecture with a doubt, an important event interrupts the CPU, and the interrupt logic handles it.",
+    "Use tools like the Intel identification utility or CPU-Z to see your own cores, threads and cache."
+  ],
+  "commonTraps": [
+    "\"Harvard is the most used architecture.\" Wrong. Modified Harvard is (split L1 only).",
+    "Mixing up look-through (sequential, standard) with look-aside (parallel, faster on a miss, but cancellation signals make it rare).",
+    "Picking write-update when the question says \"repeated writes to the same block\". The answer is write-invalidate.",
+    "Thinking hyper-threading means two programs execute at the same instant. It doesn't: there is one execution unit.",
+    "NUMA vs NORMA: NORMA = no remote memory access (loosely coupled, message passing). NUMA = non-uniform (tightly coupled, shared memory).",
+    "Saying a processor group is \"homogeneous\" without saying at which level (ISA or frequency).",
+    "Assuming a program can run directly from disk. The stored program concept says it must be in memory.",
+    "Treating keyboard and mouse as block devices. They're character devices; disks and SSDs are block devices."
+  ],
+  "summary": [
+    "System = CPU (ALU + control unit + registers) + memory subsystem (L1/L2/L3/RAM) + I/O, with storage as secondary memory.",
+    "Hierarchy: smaller = faster. Inclusive (L1 ⊂ L2 ⊂ L3 ⊂ RAM). Transfers are blocks (different sizes per level), and L1↔CPU moves words. Blocks exist because of locality of reference.",
+    "von Neumann / stored program: programs and data are in memory and execute from memory. Bottleneck: a unified cache can't serve fetch and data access together under pipelining.",
+    "Harvard: split I/D caches at all levels, which helps pipelining. But no balancing and no on-the-fly instruction modification.",
+    "Modified Harvard: split L1, unified L2 and below. Gets the best of both, and it's used today.",
+    "Multi-core: private split L1 per core, shared unified L2/L3. On an L1 miss, search the other L1s first. Look-through is the standard; look-aside is faster but needs cancellation signals.",
+    "Coherence: write-invalidate for many writes, write-update for few writes.",
+    "Multiprocessor: tightly coupled (shared memory, NUMA; homogeneous at ISA or frequency level, or heterogeneous) vs loosely coupled (network, message passing, NORMA).",
+    "Intel: i3 = HT, i5 = turbo, i7 = HT + turbo, i9 = multiple turbo levels. P ∝ V²FC, so lower V and F save power.",
+    "HT vs cores: HT duplicates registers and interrupt logic only; a core duplicates everything."
+  ],
+  "questions": [
+    {
+      "id": "W01-Q001",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which of the following is an I/O device?",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 Cache"
+        },
+        {
+          "id": "B",
+          "text": "L2 Cache"
+        },
+        {
+          "id": "C",
+          "text": "ROM"
+        },
+        {
+          "id": "D",
+          "text": "Joystick"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "a joystick is an input device. L1/L2 caches and ROM are all part of the memory subsystem.",
+      "topicTags": [
+        "Basic Components of a Computer System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q002",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which of the following is a part of the memory subsystem?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pen drive"
+        },
+        {
+          "id": "B",
+          "text": "L2 Cache"
+        },
+        {
+          "id": "C",
+          "text": "Hard disk"
+        },
+        {
+          "id": "D",
+          "text": "Keyboard"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "the memory subsystem is registers, caches and main memory. Pen drives and hard disks are secondary storage (I/O), and a keyboard is input.",
+      "topicTags": [
+        "Basic Components of a Computer System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q003",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one of the following is NOT a part of the memory subsystem?",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 Cache"
+        },
+        {
+          "id": "B",
+          "text": "L2 Cache"
+        },
+        {
+          "id": "C",
+          "text": "Main Memory"
+        },
+        {
+          "id": "D",
+          "text": "Hard disk"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "a hard disk is secondary memory, treated as an I/O device, not part of the CPU-side memory hierarchy.",
+      "topicTags": [
+        "Basic Components of a Computer System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q004",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one of the following is TRUE in the von Neumann architecture?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Programs can be executed directly from the hard disk"
+        },
+        {
+          "id": "B",
+          "text": "Programs should reside in memory for execution"
+        },
+        {
+          "id": "C",
+          "text": "Programs can be executed both from memory and from the hard disk"
+        },
+        {
+          "id": "D",
+          "text": "Programs can be executed directly from I/O devices"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "stored-program concept. A program must be loaded into main memory before the CPU can execute it.",
+      "topicTags": [
+        "Unicore Systems with Stored Program Concept"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q005",
+      "week": 1,
+      "source": "quiz",
+      "type": "multi",
+      "prompt": "Which of the following designs are NOT possible in the von Neumann architecture? (more than one answer)",
+      "options": [
+        {
+          "id": "A",
+          "text": "Single-cycle design"
+        },
+        {
+          "id": "B",
+          "text": "Multi-cycle design"
+        },
+        {
+          "id": "C",
+          "text": "Pipelined design"
+        },
+        {
+          "id": "D",
+          "text": "Superscalar"
+        }
+      ],
+      "correctAnswers": [
+        "C",
+        "D"
+      ],
+      "explanation": "with one unified memory/cache, an instruction fetch and a data access can't happen in the same cycle. Pipelining and superscalar designs need exactly that.",
+      "topicTags": [
+        "Unicore Systems with Stored Program Concept"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q006",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the main organisational change in the Harvard architecture over von Neumann?",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 is split (instruction/data) and all other levels are unified"
+        },
+        {
+          "id": "B",
+          "text": "All cache levels are split into instruction and data caches"
+        },
+        {
+          "id": "C",
+          "text": "L2 is split and the other levels are unified"
+        },
+        {
+          "id": "D",
+          "text": "All cache levels are unified"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "in Harvard, instructions and data follow completely separate paths at every level.",
+      "topicTags": [
+        "Harvard and Modified Harvard Architecture"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q007",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the main organisational change in the Modified Harvard architecture over von Neumann? (same options)",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 is split (instruction/data) and all other levels are unified"
+        },
+        {
+          "id": "B",
+          "text": "All cache levels are split into instruction and data caches"
+        },
+        {
+          "id": "C",
+          "text": "L2 is split and the other levels are unified"
+        },
+        {
+          "id": "D",
+          "text": "All cache levels are unified"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "only L1 is split, for parallel fetch and data access. Lower levels stay unified so instructions can be modified on the fly.",
+      "topicTags": [
+        "Harvard and Modified Harvard Architecture"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W01-Q008",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the main organisational change in Modified Harvard over Harvard? (same options)",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 is split (instruction/data) and all other levels are unified"
+        },
+        {
+          "id": "B",
+          "text": "All cache levels are split into instruction and data caches"
+        },
+        {
+          "id": "C",
+          "text": "L2 is split and the other levels are unified"
+        },
+        {
+          "id": "D",
+          "text": "All cache levels are unified"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "compared with Harvard, modified Harvard keeps the split only at L1 and unifies L2 and below.",
+      "topicTags": [
+        "Harvard and Modified Harvard Architecture"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q009",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which cache module is local to the core?",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 Cache"
+        },
+        {
+          "id": "B",
+          "text": "L2 Cache"
+        },
+        {
+          "id": "C",
+          "text": "Main Memory"
+        },
+        {
+          "id": "D",
+          "text": "L3 Cache"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "each core has its own private split L1. L2/L3 are shared.",
+      "topicTags": [
+        "Multi-core Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q010",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "If a local L1 miss occurs in a multi-core system, from which cache is the data transferred?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Shared L2"
+        },
+        {
+          "id": "B",
+          "text": "Other cores' local L1 caches"
+        },
+        {
+          "id": "C",
+          "text": "Shared L3"
+        },
+        {
+          "id": "D",
+          "text": "Main memory"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "the other cores' L1s are checked first, because they may hold the latest (modified) copy. That's how coherence is kept.",
+      "topicTags": [
+        "Multi-core Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q011",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "The Intel Atom processor is an example of a ______ multiprocessor system.",
+      "options": [
+        {
+          "id": "A",
+          "text": "ISA-level symmetric"
+        },
+        {
+          "id": "B",
+          "text": "Frequency-level symmetric"
+        },
+        {
+          "id": "C",
+          "text": "Heterogeneous"
+        },
+        {
+          "id": "D",
+          "text": "Loosely coupled"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "all of Atom's cores run the same ISA (x86) but can run at different frequencies, which makes it ISA-level symmetric.",
+      "topicTags": [
+        "Multi-processor Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q012",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one is NOT a loosely coupled multiprocessor system?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Client–server"
+        },
+        {
+          "id": "B",
+          "text": "Peer-to-peer"
+        },
+        {
+          "id": "C",
+          "text": "Cloud computing"
+        },
+        {
+          "id": "D",
+          "text": "NUMA systems"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "NUMA is tightly coupled (shared memory). The others communicate over a network (message passing, NORMA).",
+      "topicTags": [
+        "Multi-processor Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W01-Q013",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which Intel processor has 2 turbo-boosting frequencies?",
+      "options": [
+        {
+          "id": "A",
+          "text": "i3"
+        },
+        {
+          "id": "B",
+          "text": "i5"
+        },
+        {
+          "id": "C",
+          "text": "i7"
+        },
+        {
+          "id": "D",
+          "text": "i9"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "the lecture: i5 has turbo, i7 has HT + turbo, and i9 has multiple turbo levels (Turbo Boost 2.0 + Turbo Boost Max 3.0). worked out, not from the quiz review.",
+      "topicTags": [
+        "Intel Architecture"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W01-Q014",
+      "week": 1,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which Intel processor does NOT support hyper-threading?",
+      "options": [
+        {
+          "id": "A",
+          "text": "i3"
+        },
+        {
+          "id": "B",
+          "text": "i5"
+        },
+        {
+          "id": "C",
+          "text": "i7"
+        },
+        {
+          "id": "D",
+          "text": "i9"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "in the lecture's comparison, i3 = HT without turbo, i5 = turbo without HT, and i7/i9 = both. worked out, not from the quiz review.",
+      "topicTags": [
+        "Intel Architecture"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W01-X01",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which architecture do most modern laptop processors follow?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pure von Neumann"
+        },
+        {
+          "id": "B",
+          "text": "Harvard"
+        },
+        {
+          "id": "C",
+          "text": "Modified Harvard"
+        },
+        {
+          "id": "D",
+          "text": "NORMA"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Modified Harvard: split L1 (I and D), unified L2 and below.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X02",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In a Harvard architecture, which of these is a demerit?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pipelining is impossible"
+        },
+        {
+          "id": "B",
+          "text": "Instructions cannot be modified on the fly"
+        },
+        {
+          "id": "C",
+          "text": "Instructions and data share one cache"
+        },
+        {
+          "id": "D",
+          "text": "It needs message passing"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Instructions and data are fully separated, so you can't modify an instruction on the fly. (Harvard helps pipelining, so (a) is wrong.)",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X03",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Core C1 is going to write to the same cache block 50 times in a row. Another core has a copy. Which policy is preferred?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Write-update"
+        },
+        {
+          "id": "B",
+          "text": "Write-invalidate"
+        },
+        {
+          "id": "C",
+          "text": "Look-aside"
+        },
+        {
+          "id": "D",
+          "text": "Look-through"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Write-invalidate. Invalidate once and after that only C1 holds the block, so the later writes cost nothing extra. Write-update would broadcast all 50 writes.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X04",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A cache access scheme that signals the next level at the same time as searching the current level is called:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Look-through"
+        },
+        {
+          "id": "B",
+          "text": "Look-aside"
+        },
+        {
+          "id": "C",
+          "text": "Write-through"
+        },
+        {
+          "id": "D",
+          "text": "Inclusive"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Look-aside. It's faster on a miss but needs cancellation signals, so look-through is the standard.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X05",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Ten processors share the same ISA; nine run at 3.6 GHz and one at 4.2 GHz. The system is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Homogeneous at ISA and frequency level"
+        },
+        {
+          "id": "B",
+          "text": "Homogeneous at ISA level only"
+        },
+        {
+          "id": "C",
+          "text": "Heterogeneous at ISA level"
+        },
+        {
+          "id": "D",
+          "text": "Loosely coupled"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Same ISA means ISA-level homogeneous. Different frequencies mean not frequency-level homogeneous.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X06",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The memory model of a loosely coupled multiprocessor (for example, client-server over a network) is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "UMA"
+        },
+        {
+          "id": "B",
+          "text": "NUMA"
+        },
+        {
+          "id": "C",
+          "text": "NORMA"
+        },
+        {
+          "id": "D",
+          "text": "Shared memory"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "NORMA, No Remote Memory Access. Nodes communicate only by message passing.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X07",
+      "week": 1,
+      "source": "extra",
+      "type": "short",
+      "prompt": "State the stored program concept in one or two lines.",
+      "correctAnswers": [
+        "Everything the CPU executes, both instructions and data, must reside in main memory. A program is loaded from storage into memory before it runs."
+      ],
+      "explanation": "Everything the CPU executes, both instructions and data, must reside in main memory. A program is loaded from storage into memory before it runs.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X08",
+      "week": 1,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why is data moved between memory levels in blocks rather than single bytes?",
+      "correctAnswers": [
+        "Because of locality of reference: after accessing item i, items next to it (i+1, …) are likely to be needed soon, so bringing the whole block avoids future misses."
+      ],
+      "explanation": "Because of locality of reference: after accessing item i, items next to it (i+1, …) are likely to be needed soon, so bringing the whole block avoids future misses.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X09",
+      "week": 1,
+      "source": "extra",
+      "type": "short",
+      "prompt": "A CPU drops from 1.0 V and 3 GHz to 0.8 V and 1.5 GHz. By what factor does dynamic power change?",
+      "correctAnswers": [
+        "(0.8/1.0)² × (1.5/3) = 0.64 × 0.5 = 0.32. Power falls to about 32% of the original."
+      ],
+      "explanation": "(0.8/1.0)² × (1.5/3) = 0.64 × 0.5 = 0.32. Power falls to about 32% of the original.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W01-X10",
+      "week": 1,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Explain how hyper-threading differs from having two cores.",
+      "correctAnswers": [
+        "HT adds an extra register set and interrupt logic to one core with one execution unit, so two threads are loaded but only one executes at a time, and the core switches quickly when one waits. Two cores each have their own execution unit, so two independent threads really run in parallel."
+      ],
+      "explanation": "HT adds an extra register set and interrupt logic to one core with one execution unit, so two threads are loaded but only one executes at a time, and the core switches quickly when one waits. Two cores each have their own execution unit, so two independent threads really run in parallel.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

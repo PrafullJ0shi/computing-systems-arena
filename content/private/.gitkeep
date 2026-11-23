@@ -1,0 +1,2 @@
+# Drop the private bank here (or set VITE_PRIVATE_CONTENT_DIR).
+# This directory is gitignored except for this file.

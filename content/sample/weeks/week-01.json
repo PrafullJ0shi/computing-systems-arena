@@ -1,0 +1,200 @@
+{
+  "week": 1,
+  "questions": [
+    {
+      "id": "w01-q01",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A stored-program computer keeps the instructions of a program where?",
+      "options": [
+        "In a plugboard that is rewired for every new program",
+        "In memory, so the same hardware can run different programs",
+        "Only inside the ALU, which rewrites them as it executes",
+        "In the power supply, which sequences the clock"
+      ],
+      "answer": 1,
+      "explanation": "The program counter fetches instructions from memory. Load a different bit pattern and the same processor runs a different program.",
+      "tags": [
+        "stored-program"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "The ALU operates on bits; it is not the program store."
+      ]
+    },
+    {
+      "id": "w01-q02",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which order matches one ordinary instruction cycle?",
+      "options": [
+        "Execute, fetch, decode",
+        "Decode, execute, fetch",
+        "Fetch, decode, execute",
+        "Fetch, execute, decode"
+      ],
+      "answer": 2,
+      "explanation": "The CPU reads the instruction word, works out what it means, then carries it out. The next fetch uses the updated program counter.",
+      "tags": [
+        "cycle"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "Decode cannot run before the instruction has been read."
+      ]
+    },
+    {
+      "id": "w01-q03",
+      "week": 1,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which of these are parts of a typical system bus?",
+      "options": [
+        "Address bus",
+        "Data bus",
+        "Control bus",
+        "Compiler bus"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Address lines name a location, data lines carry the word, and control lines say whether this is a read, a write, or a similar action.",
+      "tags": [
+        "bus"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "A compiler is software, not a set of wires."
+      ]
+    },
+    {
+      "id": "w01-q04",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The phrase “von Neumann bottleneck” points at which limit?",
+      "options": [
+        "Instructions and data share one path to memory",
+        "The ALU cannot add",
+        "Disks spin slower than the clock, and that is the whole story",
+        "A process is allowed only one thread"
+      ],
+      "answer": 0,
+      "explanation": "One memory interface serves both instruction fetches and data loads, so the processor often waits on that shared path.",
+      "tags": [
+        "performance"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w01-q05",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A service answers each request in 4 ms and finishes 200 requests a second. The 4 ms figure is",
+      "options": [
+        "Throughput",
+        "Latency",
+        "Clock rate",
+        "Page size"
+      ],
+      "answer": 1,
+      "explanation": "Latency is the wait for one operation. Throughput counts how many finish per unit of time. A busy service can have both a queue and a high completion rate.",
+      "tags": [
+        "performance"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "A large throughput number does not tell you the wait for a single request."
+      ]
+    },
+    {
+      "id": "w01-q06",
+      "week": 1,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which of these are hardware in a typical computer?",
+      "options": [
+        "Central processor",
+        "Main memory",
+        "Operating-system kernel",
+        "Input and output controllers"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "The kernel is software that is loaded into memory. The processor, memory, and device controllers are hardware.",
+      "tags": [
+        "organization"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "The operating system is essential, and it is still software."
+      ]
+    },
+    {
+      "id": "w01-q07",
+      "week": 1,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "During a normal fetch, the program counter holds",
+      "options": [
+        "The opcode of the instruction that just finished",
+        "The address of the next instruction to read",
+        "The result of the last ALU operation",
+        "A cache line tag"
+      ],
+      "answer": 1,
+      "explanation": "The program counter is an address. The instruction bits themselves are copied into the instruction register.",
+      "tags": [
+        "registers"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "The program counter does not store the instruction word."
+      ]
+    },
+    {
+      "id": "w01-q08",
+      "week": 1,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which statement about a machine word is the reliable one?",
+      "options": [
+        "A word is always 16 bits",
+        "A word is always one byte",
+        "A word is the width the machine commonly treats as a unit, and that width depends on the machine",
+        "A word is the size of a disk sector"
+      ],
+      "answer": 2,
+      "explanation": "A byte is 8 bits by modern convention. Word size is an architectural choice: both 32-bit and 64-bit machines are ordinary.",
+      "tags": [
+        "organization"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "“A word is 16 bits” is a habit from one generation of machines, not a rule."
+      ]
+    },
+    {
+      "id": "w01-q09",
+      "week": 1,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why is it useful that instructions live in the same memory as data?",
+      "options": [],
+      "answer": "The processor can treat a program as data: load it, switch it, or generate it, without rewiring the hardware.",
+      "explanation": "That is the stored-program idea. The machine does not need a new circuit for each program; it needs a new bit pattern in memory.",
+      "tags": [
+        "stored-program"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

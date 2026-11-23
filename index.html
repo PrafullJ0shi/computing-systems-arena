@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07090f" />
+    <meta
+      name="description"
+      content="Computing Systems Arena: a game-style revision app for Computing Systems. Thirteen worlds, quizzes, mini-games, bosses, and a timed mock."
+    />
+    <title>Computing Systems Arena</title>
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <script>
+      try {
+        var raw = localStorage.getItem('csa.progress.v1')
+        var theme = raw ? JSON.parse(raw).theme : 'dark'
+        if (theme !== 'light') theme = 'dark'
+        document.documentElement.dataset.theme = theme
+        document.querySelector('meta[name="theme-color"]').setAttribute(
+          'content',
+          theme === 'light' ? '#f4f7fb' : '#07090f',
+        )
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

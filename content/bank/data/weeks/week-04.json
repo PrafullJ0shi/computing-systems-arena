@@ -1,0 +1,1090 @@
+{
+  "week": 4,
+  "title": "Shell Scripting",
+  "learningGoals": [
+    "Explain what the shell and a shell script are, why scripts exist, and where they're used (DevOps, data science, security, AI/ML).",
+    "Write and run scripts that use command-line arguments ( $1 , $# , $0 ), read , expr and arithmetic.",
+    "Use system/environment variables vs user-defined variables correctly (no spaces around = ).",
+    "Write conditions with test / [ ] (numeric, string and file tests), if , if-else , elif , nested if , and case .",
+    "Write for (list style and C style) and while loops with break and continue .",
+    "Handle files (copy lines N..M) two ways, and use arrays (length, slice, replace, unset).",
+    "Solve classic programs: reverse a number, perfect number, number pattern, even/odd, sum of digits, menu calculator, palindromes in a file.",
+    "Apply hard links vs soft links to scenarios."
+  ],
+  "sirStressed": [
+    "\"Shell scripting saves time and reduces errors\": write it once, fix it once, reuse it forever.",
+    "Shift your thinking from typing commands to composing workflows. Small commands are LEGO blocks.",
+    "Exam questions are scenario-based, use-case-based and application-based. \"We will never ask you to write a very lengthy script.\" \"We don't test your memory; we test solid understanding, application and problem-solving.\"",
+    "Using AI to write scripts is fine, but understand every line, test it and cross-check the output. Ask the AI to comment each line.",
+    "Hands-on is a must. Use WSL on Windows; macOS works out of the box.",
+    "A hard link is not a copy. It's one more name for the same inode, and the file is gone only when the link count reaches 0. A soft link can point to network files; a hard link can't."
+  ],
+  "commonTraps": [
+    "Spaces around = ( a = 5 ) cause an error. Write a=5 .",
+    "Forgetting spaces inside the test brackets: [$a -gt 5] is wrong; [ $a -gt 5 ] is right.",
+    "Using > or < for numbers inside [ ] . Use -gt / -lt ; inside [ ] , > means redirection.",
+    "expr $a * $b without the backslash. It must be \\* .",
+    "Expecting decimals: expr 20 / 12 = 1.",
+    "Thinking 0 means false. In the shell, exit status 0 = true/success.",
+    "Ending if with end or } . It's fi ; case ends with esac ; loops use do … done .",
+    "Leaving out ;; in case .",
+    "Forgetting to increment in a while loop gives an infinite loop.",
+    "Using single quotes instead of backticks around expr . Single quotes print the text literally."
+  ],
+  "summary": [
+    "Shell = translator between you and the OS. Script = commands in a file that run in sequence, like a batch. It saves time and reduces errors. Not for GUIs.",
+    "Run with sh file.sh , or chmod +x then ./file.sh . #!/bin/bash is the shebang; # is a comment.",
+    "$0 (script name), $1 .. (arguments), $# (count), $@ (all), $? (exit status). read var takes input.",
+    "`expr $a + $b` : backticks, \\* for multiplication, integer only. $(( )) is the modern form.",
+    "Variables are untyped and case-sensitive; no spaces around = . System variables are UPPERCASE ( PATH , HOME , PWD , USER , SHELL ). export makes a variable environment-wide.",
+    "0 = true. test / [ ] : numeric -eq -ne -lt -le -gt -ge ; string = != -n -z ; file -s -f -d -r -w -x .",
+    "if … then … elif … else … fi ; case $v in pat) …;; *) …;; esac .",
+    "for i in list; do … done ; for (( i=0; i<n; i++ )) ; while [ cond ]; do … done ; break , continue .",
+    "Files: head -$end | tail -$num , or while read line … done < file .",
+    "Arrays: ${a[i]} , ${a[@]} , ${#a[@]} , ${#a[i]} , ${a[@]:3:2} , ${a[i]:0:4} , ${a[@]/old/new} , unset a[i] .",
+    "Programs: reverse ( %10 , *10+ , /10 ), perfect number (divisors up to n/2), pattern (nested while, echo -n ), even/odd, digit sum, menu calculator, palindromes.",
+    "Links: hard = inode, same FS, survives deletion. Soft = path, can cross filesystems, dangles."
+  ],
+  "questions": [
+    {
+      "id": "W04-Q001",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which wc option prints the length of the longest line?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-l"
+        },
+        {
+          "id": "B",
+          "text": "-L"
+        },
+        {
+          "id": "C",
+          "text": "-w"
+        },
+        {
+          "id": "D",
+          "text": "-c"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "capital -L = longest line. Lowercase -l = line count, -w = words, -c = bytes.",
+      "topicTags": [
+        "Text Processing Commands: Filters (wc, sort, head, tail)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q002",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "You want to copy lines 5 to 15 of a file. Which command is best suited?",
+      "options": [
+        {
+          "id": "A",
+          "text": "head -15 file | tail -10"
+        },
+        {
+          "id": "B",
+          "text": "head -15 file"
+        },
+        {
+          "id": "C",
+          "text": "tail -10 file"
+        },
+        {
+          "id": "D",
+          "text": "head -15 file | tail -5"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the idea is right: take the first 15 lines, then keep the last few. But lines 5–15 are 11 lines, so the exact command is head -15 file | tail -11 (or sed -n '5,15p' file ). Option A actually gives lines 6–15. Pick A in the quiz, but know the exact form. worked out.",
+      "topicTags": [
+        "Text Processing Commands: Filters (wc, sort, head, tail)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q003",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the final output of the command? (The command was an image and wasn't captured. From the options, it was almost certainly ls > op.txt | wc -l .)",
+      "options": [
+        {
+          "id": "A",
+          "text": "Number of lines + 1 in the ls output"
+        },
+        {
+          "id": "B",
+          "text": "Number of lines in op.txt"
+        },
+        {
+          "id": "C",
+          "text": "Number of lines in ls"
+        },
+        {
+          "id": "D",
+          "text": "0"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "> sends ls 's output into op.txt, so nothing goes down the pipe, and wc -l counts 0 lines. The command was reconstructed.",
+      "topicTags": [
+        "Text Processing Commands: Piping"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q004",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Piping follows ______ data flow from one command to the next.",
+      "options": [
+        {
+          "id": "A",
+          "text": "First In First Out"
+        },
+        {
+          "id": "B",
+          "text": "First In Last Out"
+        },
+        {
+          "id": "C",
+          "text": "Last In First Out"
+        },
+        {
+          "id": "D",
+          "text": "Random sequence"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "a pipe is a FIFO buffer. Data comes out in the same order it went in. worked out, not from the quiz review. The recorded flag on D was uncertain.",
+      "topicTags": [
+        "Text Processing Commands: Piping"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q005",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which grep option matches the whole line exactly?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-c"
+        },
+        {
+          "id": "B",
+          "text": "-w"
+        },
+        {
+          "id": "C",
+          "text": "-i"
+        },
+        {
+          "id": "D",
+          "text": "-x"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "-x = the whole line must match. -w = whole word, -c = count, -i = ignore case.",
+      "topicTags": [
+        "Text/File Search Commands: grep, find"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q006",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which find command finds files with read-only permission for everyone (user, group, other)?",
+      "options": [
+        {
+          "id": "A",
+          "text": "find . -type l"
+        },
+        {
+          "id": "B",
+          "text": "find . -size -10M"
+        },
+        {
+          "id": "C",
+          "text": "find . -perm 444"
+        },
+        {
+          "id": "D",
+          "text": "find . perm 400"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "444 = r--r--r-- . Option A finds symlinks and B finds small files. D lacks the dash and uses 400 (user only).",
+      "topicTags": [
+        "Text/File Search Commands: grep, find"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q007",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) A symbolic link acts like a shortcut. (ii) Deleting the file doesn't remove the data as long as at least one symbolic link remains.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "a symlink only stores the path. Delete the original and the link dangles, because the data is gone.",
+      "topicTags": [
+        "File Processing Commands: Hard Link and Symbolic Link"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q008",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) Hard links can be created for directories. (ii) Deleting the file doesn't remove the data as long as at least one hard link to that inode remains.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "hard links to directories aren't allowed (they could create loops). The data lives until the inode's link count reaches 0.",
+      "topicTags": [
+        "File Processing Commands: Hard Link and Symbolic Link"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q009",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Output of sh ShellScriptPgm.sh 50 Hello ?",
+      "code": "#ShellScriptPgm.sh\necho \"Shell Script Program with $2 and $1 as Parameter\"",
+      "options": [
+        {
+          "id": "A",
+          "text": "…with $2 and $1 as Parameter"
+        },
+        {
+          "id": "B",
+          "text": "…with Hello and 50 as Parameter"
+        },
+        {
+          "id": "C",
+          "text": "…with 50 and Hello as Parameter"
+        },
+        {
+          "id": "D",
+          "text": "echo …"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "$1 = 50 and $2 = Hello. Inside double quotes, variables are expanded.",
+      "topicTags": [
+        "Shell Scripting: Starting with Shell Scripting"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q010",
+      "week": 4,
+      "source": "quiz",
+      "type": "short",
+      "prompt": "Most appropriate display for sh ShellScriptPgm1.sh when the user types \"Biju Raveendran\":",
+      "code": "#ShellScriptPgm1.sh\necho What is your Name \\?\nread name\necho Hello $name, Welcome.",
+      "correctAnswers": [
+        "C, \"What is your Name ? / Biju Raveendran / Hello Biju Raveendran, Welcome\""
+      ],
+      "explanation": "\\? escapes the ? , so a plain ? prints. read name with a single variable stores the whole line, including both words.",
+      "topicTags": [
+        "Shell Scripting: Starting with Shell Scripting"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q011",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is the correct way to assign a user-defined variable?",
+      "options": [
+        {
+          "id": "A",
+          "text": "number = 2000"
+        },
+        {
+          "id": "B",
+          "text": "number =2000"
+        },
+        {
+          "id": "C",
+          "text": "number= 2000"
+        },
+        {
+          "id": "D",
+          "text": "number=2000"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "there must be no spaces around = in the shell. Otherwise it's treated as a command.",
+      "topicTags": [
+        "Shell Scripting: Variables and Constants"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q012",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which command prints all environment variables?",
+      "options": [
+        {
+          "id": "A",
+          "text": "echo $env"
+        },
+        {
+          "id": "B",
+          "text": "echo env"
+        },
+        {
+          "id": "C",
+          "text": "setenv"
+        },
+        {
+          "id": "D",
+          "text": "printenv"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "printenv (or env ) lists them all. setenv is csh syntax for setting one.",
+      "topicTags": [
+        "Shell Scripting: Variables and Constants"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q013",
+      "week": 4,
+      "source": "quiz",
+      "type": "short",
+      "prompt": "Output of sh vehRent.sh car ?",
+      "code": "rental=$1\ncase $rental in\n  *)        echo \"Wrong Vehicle\";;\n  \"car\")    echo \"Rent is Rs. 400/-\"\n            echo \"Can be reduced\";;\n  \"van\")    echo \"Rent is Rs. 500/-\";;\n  \"jeep\") echo \"Rent is Rs. 300/-\";;\n  \"bike\") echo \"Rent is Rs. 200/-\";;\nesac",
+      "correctAnswers": [
+        "D, \"Wrong Vehicle\""
+      ],
+      "explanation": "case takes the first pattern that matches, and * matches everything. Always put *) last!",
+      "topicTags": [
+        "Shell Scripting: Conditional Statements"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q014",
+      "week": 4,
+      "source": "quiz",
+      "type": "short",
+      "prompt": "Output of sh secondDigit.sh 254 ?",
+      "code": "if [ $# -eq 0 ]\nthen\n     echo \"Supply an integer\"\n     exit 1\nfi\nnum=`expr $1 / 10`               # 25\ndigit=`expr $num % 10`           # 5\nif [ `expr $digit % 2` -eq 0 ]\nthen\n     echo \"second digit is EVEN\"\nelse\n     echo \"second digit is ODD\"\nfi",
+      "correctAnswers": [
+        "D, \"second digit is ODD\""
+      ],
+      "explanation": "254 / 10 = 25 (integer division). 25 % 10 = 5, which is odd.",
+      "topicTags": [
+        "Shell Scripting: Conditional Statements"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q015",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is continue used for in a loop?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Skipping one iteration"
+        },
+        {
+          "id": "B",
+          "text": "Breaking out of the loop"
+        },
+        {
+          "id": "C",
+          "text": "Breaking out of a condition"
+        },
+        {
+          "id": "D",
+          "text": "Skipping the condition"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "continue jumps to the next iteration. break exits the loop.",
+      "topicTags": [
+        "Shell Scripting: Looping Constructs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q016",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does this program do?",
+      "code": "echo Enter two numbers with space in between\nread a b\nm=$a\nif [ $b -lt $m ]; then m=$b; fi\nwhile [ $m -ne 0 ]\ndo\n     x=`expr $a % $m`\n     y=`expr $b % $m`\n     if [ $x -eq 0 -a $y -eq 0 ]; then\n          echo Output of $a and $b is $m\n          break\n     fi\n     m=`expr $m - 1`\ndone",
+      "options": [
+        {
+          "id": "A",
+          "text": "Smallest divisor"
+        },
+        {
+          "id": "B",
+          "text": "GCD"
+        },
+        {
+          "id": "C",
+          "text": "Largest digit"
+        },
+        {
+          "id": "D",
+          "text": "Sum of common divisors"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "it counts down from the smaller number, and the first value that divides both is the greatest common divisor.",
+      "topicTags": [
+        "Shell Scripting: Looping Constructs"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q017",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How do you read a line from a file (inside a loop)?",
+      "options": [
+        {
+          "id": "A",
+          "text": "read line"
+        },
+        {
+          "id": "B",
+          "text": "echo $line"
+        },
+        {
+          "id": "C",
+          "text": "echo line"
+        },
+        {
+          "id": "D",
+          "text": "break"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "while read line; do …; done < file reads one line per iteration.",
+      "topicTags": [
+        "Shell Scripting: Handling Files"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q018",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does this program do?",
+      "code": "while read line\ndo\n     x=`expr $line % 2`\n     if [ $x -eq 0 ]; then echo $line; fi\ndone < integernos.txt",
+      "options": [
+        {
+          "id": "A",
+          "text": "Finds the even numbers from user input"
+        },
+        {
+          "id": "B",
+          "text": "…from a command-line argument"
+        },
+        {
+          "id": "C",
+          "text": "Breaking out of a condition statement"
+        },
+        {
+          "id": "D",
+          "text": "Finds the odd numbers from user input"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "The marked option C (\"breaking out from condition statement\") is clearly a mismatch, copied from another question. The loop reads each number from the file ( < integernos.txt ) and prints it if % 2 is 0. Among the options, A is the closest (even numbers, read via read ), but the input comes from the file, not the keyboard. answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Shell Scripting: Handling Files"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "worked_out",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q019",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Remove the 4th element.",
+      "code": "Unix=('Debian' 'Red hat' 'Ubuntu' 'Suse' 'Fedora' 'UTS' 'OpenLinux')",
+      "options": [
+        {
+          "id": "A",
+          "text": "unset Unix"
+        },
+        {
+          "id": "B",
+          "text": "unset Unix[3]"
+        },
+        {
+          "id": "C",
+          "text": "UnixNew=( ${Unix[@]/Red*/} )"
+        },
+        {
+          "id": "D",
+          "text": "echo ${Unix[@]/Fedora/SCO}"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "indexes start at 0, so the 4th element ('Suse') is index 3. unset Unix deletes the whole array.",
+      "topicTags": [
+        "Shell Scripting: Arrays"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q020",
+      "week": 4,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Print the 4th to 6th elements.",
+      "code": "Unix=('Debian' 'Red hat' 'Ubuntu' 'Suse' 'Fedora' 'UTS' 'OpenLinux')",
+      "options": [
+        {
+          "id": "A",
+          "text": "echo ${Unix[@]}"
+        },
+        {
+          "id": "B",
+          "text": "echo ${#Unix[@]}"
+        },
+        {
+          "id": "C",
+          "text": "echo ${Unix[3]}"
+        },
+        {
+          "id": "D",
+          "text": "echo ${Unix[@]:3:3}"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "${arr[@]:start:count} starts at index 3 and takes 3 elements, giving Suse Fedora UTS. The quiz review shows no answers for these, so the solutions below were written for this book and are fully worked.",
+      "topicTags": [
+        "Shell Scripting: Arrays"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W04-Q021",
+      "week": 4,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "Read a string and count how many times a given character occurs in it.",
+      "code": "#!/bin/bash\necho \"Enter a string:\"; read str\necho \"Enter the character to count:\"; read ch\ncount=0\nlen=${#str}\nfor (( i=0; i<len; i++ ))\ndo\n     if [ \"${str:$i:1}\" = \"$ch\" ]; then\n          count=`expr $count + 1`\n     fi\ndone\necho \"'$ch' occurs $count times in \\\"$str\\\"\"",
+      "correctAnswers": [
+        "#!/bin/bash\necho \"Enter a string:\"; read str\necho \"Enter the character to count:\"; read ch\ncount=0\nlen=${#str}\nfor (( i=0; i<len; i++ ))\ndo\n     if [ \"${str:$i:1}\" = \"$ch\" ]; then\n          count=`expr $count + 1`\n     fi\ndone\necho \"'$ch' occurs $count times in \\\"$str\\\"\""
+      ],
+      "explanation": "The quiz review shows no answer for this written question, so the solution was written for this book.",
+      "topicTags": [
+        "Shell Scripting: Programming (written-response, with model solutions)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W04-Q022",
+      "week": 4,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "Take one number (2–999) from the command line, with error checks, and say whether it's prime.",
+      "code": "#!/bin/bash\nif [ $# -ne 1 ]; then echo \"Usage: $0 <number 2-999>\"; exit 1; fi\nn=$1\nif [ $n -lt 2 -o $n -gt 999 ]; then echo \"Number must be between 2 and 999\"; exit 1; fi\ni=2; prime=1\nwhile [ `expr $i \\* $i` -le $n ]\ndo\n     if [ `expr $n % $i` -eq 0 ]; then prime=0; break; fi\n     i=`expr $i + 1`\ndone\nif [ $prime -eq 1 ]; then echo \"$n is PRIME\"; else echo \"$n is NOT prime\"; fi",
+      "correctAnswers": [
+        "#!/bin/bash\nif [ $# -ne 1 ]; then echo \"Usage: $0 <number 2-999>\"; exit 1; fi\nn=$1\nif [ $n -lt 2 -o $n -gt 999 ]; then echo \"Number must be between 2 and 999\"; exit 1; fi\ni=2; prime=1\nwhile [ `expr $i \\* $i` -le $n ]\ndo\n     if [ `expr $n % $i` -eq 0 ]; then prime=0; break; fi\n     i=`expr $i + 1`\ndone\nif [ $prime -eq 1 ]; then echo \"$n is PRIME\"; else echo \"$n is NOT prime\"; fi"
+      ],
+      "explanation": "The quiz review shows no answer for this written question, so the solution was written for this book.",
+      "topicTags": [
+        "Shell Scripting: Programming (written-response, with model solutions)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W04-Q023",
+      "week": 4,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "Take Num (2–50) from the command line, with error checks, and print the first Num Fibonacci numbers.",
+      "code": "#!/bin/bash\nif [ $# -ne 1 ]; then echo \"Usage: $0 <Num 2-50>\"; exit 1; fi\nnum=$1\nif [ $num -lt 2 -o $num -gt 50 ]; then echo \"Num must be between 2 and 50\"; exit 1; fi\na=0; b=1\nfor (( i=1; i<=num; i++ ))\ndo\n     echo -n \"$a \"\n     c=`expr $a + $b`; a=$b; b=$c\ndone\necho",
+      "correctAnswers": [
+        "#!/bin/bash\nif [ $# -ne 1 ]; then echo \"Usage: $0 <Num 2-50>\"; exit 1; fi\nnum=$1\nif [ $num -lt 2 -o $num -gt 50 ]; then echo \"Num must be between 2 and 50\"; exit 1; fi\na=0; b=1\nfor (( i=1; i<=num; i++ ))\ndo\n     echo -n \"$a \"\n     c=`expr $a + $b`; a=$b; b=$c\ndone\necho"
+      ],
+      "explanation": "The quiz review shows no answer for this written question, so the solution was written for this book.",
+      "topicTags": [
+        "Shell Scripting: Programming (written-response, with model solutions)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W04-Q024",
+      "week": 4,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "Read a number N and a character, then print a pattern. (The figure was garbled when captured. The standard version is a right-angled triangle: row i prints the character i times.)",
+      "code": "#!/bin/bash\necho \"Enter number of rows:\"; read n\necho \"Enter a character:\"; read ch\ni=1\nwhile [ $i -le $n ]\ndo\n     j=1\n     while [ $j -le $i ]\n     do\n          echo -n \"$ch \"\n          j=`expr $j + 1`\n     done\n     echo                 # new line after each row\n     i=`expr $i + 1`\ndone\n# n=5, ch=c gives:          c / c c / c c c / c c c c / c c c c c",
+      "correctAnswers": [
+        "#!/bin/bash\necho \"Enter number of rows:\"; read n\necho \"Enter a character:\"; read ch\ni=1\nwhile [ $i -le $n ]\ndo\n     j=1\n     while [ $j -le $i ]\n     do\n          echo -n \"$ch \"\n          j=`expr $j + 1`\n     done\n     echo                 # new line after each row\n     i=`expr $i + 1`\ndone\n# n=5, ch=c gives:          c / c c / c c c / c c c c / c c c c c"
+      ],
+      "explanation": "The quiz review shows no answer for this written question, so the solution was written for this book.",
+      "topicTags": [
+        "Shell Scripting: Programming (written-response, with model solutions)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out",
+      "needsReview": true
+    },
+    {
+      "id": "W04-Q025",
+      "week": 4,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "Read Num integers into an array, bubble-sort it, and display the result.",
+      "code": "#!/bin/bash\necho \"How many numbers?\"; read n\nfor (( i=0; i<n; i++ )); do read -p \"Element $((i+1)): \" arr[$i]; done\nfor (( i=0; i<n-1; i++ ))\ndo\n     for (( j=0; j<n-i-1; j++ ))\n     do\n          if [ ${arr[$j]} -gt ${arr[$((j+1))]} ]; then\n               t=${arr[$j]}; arr[$j]=${arr[$((j+1))]}; arr[$((j+1))]=$t\n          fi\n     done\ndone\necho \"Sorted: ${arr[@]}\"",
+      "correctAnswers": [
+        "#!/bin/bash\necho \"How many numbers?\"; read n\nfor (( i=0; i<n; i++ )); do read -p \"Element $((i+1)): \" arr[$i]; done\nfor (( i=0; i<n-1; i++ ))\ndo\n     for (( j=0; j<n-i-1; j++ ))\n     do\n          if [ ${arr[$j]} -gt ${arr[$((j+1))]} ]; then\n               t=${arr[$j]}; arr[$j]=${arr[$((j+1))]}; arr[$((j+1))]=$t\n          fi\n     done\ndone\necho \"Sorted: ${arr[@]}\""
+      ],
+      "explanation": "The quiz review shows no answer for this written question, so the solution was written for this book.",
+      "topicTags": [
+        "Shell Scripting: Programming (written-response, with model solutions)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W04-Q026",
+      "week": 4,
+      "source": "quiz",
+      "type": "code",
+      "prompt": "Load an array from a file (the file name is a command-line argument) and find the second-largest number without sorting.",
+      "code": "#!/bin/bash\nif [ $# -ne 1 ] || [ ! -f \"$1\" ]; then echo \"Usage: $0 <existing file>\"; exit 1; fi\ni=0\nwhile read line; do arr[$i]=$line; i=`expr $i + 1`; done < \"$1\"\nif [ ${#arr[@]} -lt 2 ]; then echo \"Need at least 2 numbers\"; exit 1; fi\nfirst=${arr[0]}; second=\"\"\nfor x in \"${arr[@]:1}\"\ndo\n     if [ $x -gt $first ]; then second=$first; first=$x\n     elif [ $x -ne $first ] && { [ -z \"$second\" ] || [ $x -gt $second ]; }; then second=$x\n     fi\ndone\necho \"Largest: $first    Second largest: ${second:-none (all equal)}\"",
+      "correctAnswers": [
+        "#!/bin/bash\nif [ $# -ne 1 ] || [ ! -f \"$1\" ]; then echo \"Usage: $0 <existing file>\"; exit 1; fi\ni=0\nwhile read line; do arr[$i]=$line; i=`expr $i + 1`; done < \"$1\"\nif [ ${#arr[@]} -lt 2 ]; then echo \"Need at least 2 numbers\"; exit 1; fi\nfirst=${arr[0]}; second=\"\"\nfor x in \"${arr[@]:1}\"\ndo\n     if [ $x -gt $first ]; then second=$first; first=$x\n     elif [ $x -ne $first ] && { [ -z \"$second\" ] || [ $x -gt $second ]; }; then second=$x\n     fi\ndone\necho \"Largest: $first    Second largest: ${second:-none (all equal)}\""
+      ],
+      "explanation": "Exam tip: for written scripts, always include #!/bin/bash , check the argument count with $# , validate the range, and print a usage message. Examiners give marks for the error checks.",
+      "topicTags": [
+        "Shell Scripting: Programming (written-response, with model solutions)"
+      ],
+      "difficulty": 3,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W04-X01",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "What does this print?",
+      "code": "a=20; b=12\necho `expr $a / $b`",
+      "options": [
+        {
+          "id": "A",
+          "text": "1.666"
+        },
+        {
+          "id": "B",
+          "text": "1"
+        },
+        {
+          "id": "C",
+          "text": "2"
+        },
+        {
+          "id": "D",
+          "text": "error"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "expr does integer division only.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X02",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which assignment is valid?",
+      "options": [
+        {
+          "id": "A",
+          "text": "count = 5"
+        },
+        {
+          "id": "B",
+          "text": "count =5"
+        },
+        {
+          "id": "C",
+          "text": "count=5"
+        },
+        {
+          "id": "D",
+          "text": "$count=5"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "No spaces are allowed around = , and you don't put $ on the left side.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X03",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In a shell if , a command that returns exit status 0 is treated as:",
+      "options": [
+        {
+          "id": "A",
+          "text": "False"
+        },
+        {
+          "id": "B",
+          "text": "True"
+        },
+        {
+          "id": "C",
+          "text": "An error"
+        },
+        {
+          "id": "D",
+          "text": "Undefined"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "In the shell, 0 = success = true.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X04",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which test checks that data.csv exists and is not empty?",
+      "options": [
+        {
+          "id": "A",
+          "text": "[ -f data.csv ]"
+        },
+        {
+          "id": "B",
+          "text": "[ -s data.csv ]"
+        },
+        {
+          "id": "C",
+          "text": "[ -d data.csv ]"
+        },
+        {
+          "id": "D",
+          "text": "[ -z data.csv ]"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "-s means it exists and its size is greater than 0. ( -f only checks that it's a regular file.)",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X05",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Running sh run.sh alpha beta gamma , what is the value of $# ?",
+      "options": [
+        {
+          "id": "A",
+          "text": "4"
+        },
+        {
+          "id": "B",
+          "text": "3"
+        },
+        {
+          "id": "C",
+          "text": "run.sh"
+        },
+        {
+          "id": "D",
+          "text": "alpha"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Three arguments. $0 is run.sh .",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X06",
+      "week": 4,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "With arr=(a b c d e) , what does echo ${arr[@]:1:3} print?",
+      "options": [
+        {
+          "id": "A",
+          "text": "a b c"
+        },
+        {
+          "id": "B",
+          "text": "b c d"
+        },
+        {
+          "id": "C",
+          "text": "b c"
+        },
+        {
+          "id": "D",
+          "text": "c d e"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Start at index 1 and take 3 elements: b c d.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X07",
+      "week": 4,
+      "source": "extra",
+      "type": "code",
+      "prompt": "Fix the bug: echo expr $x * $y``.",
+      "correctAnswers": [
+        "Escape the star: echo `expr $x \\* $y` (or use echo $(( x * y )) )."
+      ],
+      "explanation": "Escape the star: echo `expr $x \\* $y` (or use echo $(( x * y )) ).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X08",
+      "week": 4,
+      "source": "extra",
+      "type": "code",
+      "prompt": "Write a script that prints \"Big\" if its first argument is greater than 100 and \"Small\" otherwise, and prints a usage message if no argument is given.",
+      "correctAnswers": [
+        "bash if [ $# -eq 0 ]; then echo \"Usage: $0 number\"; exit 1; fi if [ $1 -gt 100 ]; then echo \"Big\"; else echo \"Small\"; fi"
+      ],
+      "explanation": "bash if [ $# -eq 0 ]; then echo \"Usage: $0 number\"; exit 1; fi if [ $1 -gt 100 ]; then echo \"Big\"; else echo \"Small\"; fi",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X09",
+      "week": 4,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "Every night you must copy all .log files from /var/app into a dated backup folder and delete the ones older than 7 days. Why is a shell script the right tool? Name two commands you'd use.",
+      "correctAnswers": [
+        "The task is repetitive and scheduled, which is exactly what automation is for. A script saves time, avoids manual mistakes, and can run unattended from a scheduler. Commands: mkdir -p /backup/$(date +%F) , cp /var/app/*.log /backup/$(date +%F)/ , find /backup -mtime +7 -delete ."
+      ],
+      "explanation": "The task is repetitive and scheduled, which is exactly what automation is for. A script saves time, avoids manual mistakes, and can run unattended from a scheduler. Commands: mkdir -p /backup/$(date +%F) , cp /var/app/*.log /backup/$(date +%F)/ , find /backup -mtime +7 -delete .",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W04-X10",
+      "week": 4,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Explain what happens to hard.txt and soft.txt after rm notes.txt in the live demo, and why.",
+      "correctAnswers": [
+        "hard.txt still shows \"Linux Learning\", because it's another name for the same inode. The link count drops from 2 to 1, and the data is freed only at 0. soft.txt fails (it's dangling), because it stores only the path notes.txt , which no longer exists."
+      ],
+      "explanation": "hard.txt still shows \"Linux Learning\", because it's another name for the same inode. The link count drops from 2 to 1, and the data is freed only at 0. soft.txt fails (it's dangling), because it stores only the path notes.txt , which no longer exists.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

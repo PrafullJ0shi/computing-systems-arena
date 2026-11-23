@@ -1,0 +1,1230 @@
+{
+  "week": 2,
+  "title": "Computer System Architecture (Memory and I/O)",
+  "learningGoals": [
+    "Explain locality of reference (spatial and temporal), the 80/20 rule, and how it shapes code (loop order, row-major arrays).",
+    "Compare SRAM vs DRAM, RAM vs ROM, and say where each sits in the hierarchy.",
+    "Explain primary vs secondary memory, memory-mapped I/O, buffer cache and swap space.",
+    "Compare block vs character devices with the 1024-byte example.",
+    "Compare HDD vs SSD, and NAND vs NOR flash, including erase-before-write and wear levelling.",
+    "Classify common I/O devices and explain why I/O is a privileged (kernel-mode) operation."
+  ],
+  "sirStressed": [
+    "\"Programs run faster when data stays close to the CPU.\" Data always moves closer to the CPU, and waiting time is the sum of the movement costs.",
+    "A faster CPU ≠ a faster program. Memory, I/O, locality and coordination set the limit.",
+    "The memory hierarchy exists because no single memory technology is best at everything.",
+    "The memory-access simulation activity: repeated data gets faster (a hit), and far-away data adds waiting (a miss). \"It's about thinking like the computer.\"",
+    "TA: in modern CPUs, L2 is usually private per core and L3 is shared. The processor keeps frequently used data in cache, and the cache exploits locality.",
+    "TA: spatial locality is a hardware/memory idea, not the same as a database index.",
+    "TA (exam question in chat): \"Is the examination theory based subjective or objective?\", answered \"Subjective\". Be ready to explain in words, not just pick options."
+  ],
+  "commonTraps": [
+    "Swapping spatial and temporal locality (the most common quiz mistake).",
+    "Saying DRAM is used for cache. Cache = SRAM; main memory = DRAM.",
+    "Forgetting that DRAM needs refresh because of its capacitor.",
+    "Thinking an SSD has seek time. It doesn't: access time is constant.",
+    "Thinking an SSD can overwrite a block in place. It needs an erase first, and wear levelling spreads the writes.",
+    "Mixing up NAND (storage, cheap, dense) with NOR (execute-in-place, firmware, bit-level writes).",
+    "Thinking user programs can read devices directly. All I/O is privileged, through the kernel.",
+    "Saying \"random access\" means random speed. It means the same access time for every location."
+  ],
+  "summary": [
+    "CPU computes or waits. Hierarchy analogy: desk (cache) / bookshelf (RAM) / storeroom (disk).",
+    "80/20 rule (loops). Temporal = reuse the same data soon. Spatial = use neighbouring data next. Transfers are blocks so later accesses hit.",
+    "Row-major arrays: loop i outside and j inside. Swapping them causes misses.",
+    "SRAM (transistors, no refresh, fast, hardware-controlled) is cache. DRAM (capacitor, refresh, slower, OS-controlled) is main memory. ROM: e.g. Mask ROM, written at manufacture.",
+    "Register (flip-flops) > cache (SRAM) > RAM (DRAM) in speed and cost per byte.",
+    "Byte < word < block (cache line). For example, 64-byte line / 8-byte word = 8 words.",
+    "Secondary memory is persistent. A miss there causes a context switch. Buffer cache / memory-mapped I/O: only the first byte of a block is real I/O. Swap space = virtual memory.",
+    "Character vs block: 1024 I/Os vs 1 I/O for 1024 bytes.",
+    "HDD: access = seek + rotational latency + transfer. SSD: constant access, reads ≫ writes, erase-before-write, wear levelling, accumulated writes.",
+    "NAND = storage. NOR = execute-in-place / firmware.",
+    "Devices: input, output, or both. All I/O is privileged, through the OS."
+  ],
+  "questions": [
+    {
+      "id": "W02-Q001",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement is TRUE with respect to spatial locality?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Use data stored adjacent to the last accessed data"
+        },
+        {
+          "id": "B",
+          "text": "Reuse the same data within a short time"
+        },
+        {
+          "id": "C",
+          "text": "Access memory randomly"
+        },
+        {
+          "id": "D",
+          "text": "Access memory in strictly increasing order"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "spatial = neighbouring addresses are likely next.",
+      "topicTags": [
+        "Locality of Reference"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q002",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement is TRUE with respect to temporal locality? (options as above, D = access sequentially)",
+      "options": [
+        {
+          "id": "A",
+          "text": "Use data stored adjacent to the last accessed data"
+        },
+        {
+          "id": "B",
+          "text": "Reuse the same data within a short time"
+        },
+        {
+          "id": "C",
+          "text": "Access memory randomly"
+        },
+        {
+          "id": "D",
+          "text": "Access sequentially"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "temporal = the same data is reused soon. (Your earlier attempt picked A, which is spatial. Don't swap them!)",
+      "topicTags": [
+        "Locality of Reference"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W02-Q003",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "In spatial locality, when one memory location is accessed, it's likely that:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The same location will be accessed soon"
+        },
+        {
+          "id": "B",
+          "text": "Far-away locations will be accessed"
+        },
+        {
+          "id": "C",
+          "text": "Nearby locations will be accessed soon"
+        },
+        {
+          "id": "D",
+          "text": "Only instructions will be accessed"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "nearby locations, which is the definition of spatial locality. Option A describes temporal locality.",
+      "topicTags": [
+        "Spatial Locality"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q004",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Cache memory systems exploit spatial locality by:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Storing only the most frequently accessed variable"
+        },
+        {
+          "id": "B",
+          "text": "Fetching an entire block of contiguous memory, not just one word"
+        },
+        {
+          "id": "C",
+          "text": "Storing instructions separately from data"
+        },
+        {
+          "id": "D",
+          "text": "Reducing the number of registers"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "bringing in a whole block means the neighbouring words are already in the cache when you need them.",
+      "topicTags": [
+        "Spatial Locality"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W02-Q005",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "The most recently accessed data is kept in registers to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Improve spatial locality"
+        },
+        {
+          "id": "B",
+          "text": "Improve temporal locality"
+        },
+        {
+          "id": "C",
+          "text": "Improve random access"
+        },
+        {
+          "id": "D",
+          "text": "Improve sequential access"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "recently used data is likely to be reused soon, so it's kept closest to the CPU.",
+      "topicTags": [
+        "Temporal Locality"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q006",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "For this code, which variable has the highest temporal locality and which has the least?",
+      "code": "int i, j, A[1024];\nA[0] = 0; A[1] = 1;\nfor (i = 2; i < 1024; i++) {\n    A[i] = A[i-1] + A[i-2];\n}",
+      "options": [
+        {
+          "id": "A",
+          "text": "i highest, j least"
+        },
+        {
+          "id": "B",
+          "text": "An element of A highest, j least"
+        },
+        {
+          "id": "C",
+          "text": "i highest, an element of A least"
+        },
+        {
+          "id": "D",
+          "text": "An element of A highest, A[0] least"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "i is used on every iteration (the condition, the increment and the indexes). j is declared but never used, so it has zero reuse.",
+      "topicTags": [
+        "Temporal Locality"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q007",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "The most recently accessed block is kept in the L1 cache to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Improve spatial locality"
+        },
+        {
+          "id": "B",
+          "text": "Improve temporal locality"
+        },
+        {
+          "id": "C",
+          "text": "Improve random access"
+        },
+        {
+          "id": "D",
+          "text": "Improve spatial and temporal locality"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "a block helps spatial locality (its neighbours come along), and keeping it recent helps temporal locality (reuse).",
+      "topicTags": [
+        "Importance of Locality of Reference in Programming"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q008",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "For the same Fibonacci-array code, which variable has the highest temporal and which has the highest spatial locality?",
+      "code": "int i, j, A[1024];\nA[0] = 0; A[1] = 1;\nfor (i = 2; i < 1024; i++) {\n    A[i] = A[i-1] + A[i-2];\n}",
+      "options": [
+        {
+          "id": "A",
+          "text": "i highest temporal, array A highest spatial"
+        },
+        {
+          "id": "B",
+          "text": "An element of A highest temporal, i highest spatial"
+        },
+        {
+          "id": "C",
+          "text": "i highest temporal, an element of A highest spatial"
+        },
+        {
+          "id": "D",
+          "text": "An element of A highest temporal, A[0] highest spatial"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "spatial locality is a property of the whole array walked in sequence, not of a single element. i is reused every iteration.",
+      "topicTags": [
+        "Importance of Locality of Reference in Programming"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q009",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which option best suits semiconductor memories?",
+      "options": [
+        {
+          "id": "A",
+          "text": "They take constant time to access data irrespective of location"
+        },
+        {
+          "id": "B",
+          "text": "Lower addresses are faster"
+        },
+        {
+          "id": "C",
+          "text": "Higher addresses are faster"
+        },
+        {
+          "id": "D",
+          "text": "All semiconductor memories are read-write"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "RAM is \"random access\", so every location takes the same time (unlike a disk). Option D is wrong because ROM is read-only.",
+      "topicTags": [
+        "Introduction to Primary Memory: RAM and ROM"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q010",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement is FALSE regarding RAM access time?",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 is faster than L3"
+        },
+        {
+          "id": "B",
+          "text": "Smaller RAM has less access time"
+        },
+        {
+          "id": "C",
+          "text": "RAM closer to the processor is faster"
+        },
+        {
+          "id": "D",
+          "text": "DRAM is faster than SRAM"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "SRAM (the cache) is faster than DRAM (main memory), so D is the false statement.",
+      "topicTags": [
+        "Introduction to Primary Memory: RAM and ROM"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q011",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) SRAMs are transparent to the OS. (ii) One SRAM bit takes less space than one DRAM bit.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "caches (SRAM) are hardware-managed and invisible to the OS. An SRAM cell uses about 6 transistors, so it's bigger than a DRAM cell (1 transistor + 1 capacitor).",
+      "topicTags": [
+        "SRAM"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q012",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) SRAMs follow the inclusive property. (ii) L3 has an equal or bigger block size than L2.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "L1 ⊂ L2 ⊂ L3 (inclusive), and block sizes grow as you go down the hierarchy.",
+      "topicTags": [
+        "SRAM"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q013",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) DRAMs are transparent to the OS. (ii) One DRAM bit takes less space than one SRAM bit.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "main memory (DRAM) is managed by the OS (paging, allocation), so it isn't transparent. A DRAM cell (1T + 1C) is smaller than an SRAM cell. worked out, not from the quiz review.",
+      "topicTags": [
+        "DRAM"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W02-Q014",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) DRAM needs refreshing at regular intervals to keep its data. (ii) DRAM has an equal or bigger block size than L2.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the capacitors leak, so they need refreshing. The block (page) size grows as you go lower in the hierarchy. worked out, not from the quiz review.",
+      "topicTags": [
+        "DRAM"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W02-Q015",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Dual-mode protection is for protecting ______.",
+      "options": [
+        {
+          "id": "A",
+          "text": "CPU"
+        },
+        {
+          "id": "B",
+          "text": "Memory"
+        },
+        {
+          "id": "C",
+          "text": "I/O devices"
+        },
+        {
+          "id": "D",
+          "text": "Clock"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "I/O instructions are privileged and run only in kernel mode, so user programs must go through the OS.",
+      "topicTags": [
+        "Introduction to Secondary Memory and I/O Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q016",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one is persistent data storage?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cache"
+        },
+        {
+          "id": "B",
+          "text": "Main memory"
+        },
+        {
+          "id": "C",
+          "text": "Hard disk"
+        },
+        {
+          "id": "D",
+          "text": "Registers"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "only secondary storage keeps its data without power.",
+      "topicTags": [
+        "Introduction to Secondary Memory and I/O Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q017",
+      "week": 2,
+      "source": "quiz",
+      "type": "multi",
+      "prompt": "How can block-device performance be improved? (The quiz marked two answers)",
+      "options": [
+        {
+          "id": "A",
+          "text": "Transferring data in bytes"
+        },
+        {
+          "id": "B",
+          "text": "Using a buffer cache"
+        },
+        {
+          "id": "C",
+          "text": "Transferring data in words"
+        },
+        {
+          "id": "D",
+          "text": "Converting block access to character access"
+        }
+      ],
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": "the buffer cache keeps a whole block in memory, so later byte reads are served from RAM. In effect, block access is converted into fast character-style access (only the first byte costs a real I/O).",
+      "topicTags": [
+        "Block Devices and Character Devices"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q018",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Block devices require ______ to be handled in main memory to improve performance.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buffer cache"
+        },
+        {
+          "id": "B",
+          "text": "Block cache"
+        },
+        {
+          "id": "C",
+          "text": "Device cache"
+        },
+        {
+          "id": "D",
+          "text": "Device buffer"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "\"buffer cache\" is the lecture's term.",
+      "topicTags": [
+        "Block Devices and Character Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q019",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(i) Zoned hard disks have a higher capacity than conventional ones. (ii) Within a zone, the outermost track has more sectors than the innermost track of that zone.",
+      "options": [
+        {
+          "id": "A",
+          "text": "T, T"
+        },
+        {
+          "id": "B",
+          "text": "T, F"
+        },
+        {
+          "id": "C",
+          "text": "F, T"
+        },
+        {
+          "id": "D",
+          "text": "F, F"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "zoning packs more sectors onto the outer zones, which raises capacity. But within one zone every track has the same number of sectors, so (ii) is false.",
+      "topicTags": [
+        "Secondary Memory: Hard Disk"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q020",
+      "week": 2,
+      "source": "quiz",
+      "type": "multi",
+      "prompt": "A raw (\"row\") partition is used by the OS for ______. (The quiz marked two answers)",
+      "options": [
+        {
+          "id": "A",
+          "text": "File system"
+        },
+        {
+          "id": "B",
+          "text": "Virtual memory"
+        },
+        {
+          "id": "C",
+          "text": "Loading the OS"
+        },
+        {
+          "id": "D",
+          "text": "Loading the bootstrap loader"
+        }
+      ],
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": "a raw partition has no file system. It's used for swap space (virtual memory) and the boot loader area.",
+      "topicTags": [
+        "Secondary Memory: Hard Disk"
+      ],
+      "difficulty": 2,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q021",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "The main drawback of SSDs compared with a hard disk is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Read performance"
+        },
+        {
+          "id": "B",
+          "text": "Random-access performance"
+        },
+        {
+          "id": "C",
+          "text": "Sequential-access performance"
+        },
+        {
+          "id": "D",
+          "text": "Wearing out of blocks"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "flash blocks survive only a limited number of erase/write cycles, which is why wear levelling exists.",
+      "topicTags": [
+        "Secondary Memory: SSD"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q022",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is NOT an advantage of SSDs?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Very good read performance"
+        },
+        {
+          "id": "B",
+          "text": "Random access"
+        },
+        {
+          "id": "C",
+          "text": "Constant access time"
+        },
+        {
+          "id": "D",
+          "text": "Good write performance"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "writes are slow (erase-before-write), so reads ≫ writes.",
+      "topicTags": [
+        "Secondary Memory: SSD"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q023",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which characteristic suits NOR flash?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Low cost per bit"
+        },
+        {
+          "id": "B",
+          "text": "High capacity"
+        },
+        {
+          "id": "C",
+          "text": "Doesn't require error-correcting code"
+        },
+        {
+          "id": "D",
+          "text": "High write speed"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "NOR is reliable, byte-addressable and execute-in-place (firmware), so it needs no ECC. It's costly and low-capacity, with slow writes.",
+      "topicTags": [
+        "SSD as Primary Memory vs Secondary Memory"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q024",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which characteristic suits NAND flash?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Code execution is easy"
+        },
+        {
+          "id": "B",
+          "text": "Low standby power"
+        },
+        {
+          "id": "C",
+          "text": "High density"
+        },
+        {
+          "id": "D",
+          "text": "High cost per bit"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "NAND = high density, cheap, used for bulk SSD storage.",
+      "topicTags": [
+        "SSD as Primary Memory vs Secondary Memory"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q025",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is NOT an input-output (both ways) device?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hard disk"
+        },
+        {
+          "id": "B",
+          "text": "Pen drive"
+        },
+        {
+          "id": "C",
+          "text": "Interactive projector"
+        },
+        {
+          "id": "D",
+          "text": "Printer"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "a printer is output-only. The others both read and write.",
+      "topicTags": [
+        "Other I/O Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-Q026",
+      "week": 2,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one is an input-output device?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Scanner"
+        },
+        {
+          "id": "B",
+          "text": "Speaker"
+        },
+        {
+          "id": "C",
+          "text": "Touch screen"
+        },
+        {
+          "id": "D",
+          "text": "Joystick"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "a touch screen displays (output) and senses touch (input). A scanner and a joystick are input only, and a speaker is output only. Note: a second partial \"Locality of Reference\" capture (from your own earlier attempt) duplicates Q2 of the first quiz above, so it isn't repeated.",
+      "topicTags": [
+        "Other I/O Devices"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W02-X01",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which statement describes temporal locality?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Using data stored next to the last accessed data"
+        },
+        {
+          "id": "B",
+          "text": "Reusing the same data within a short time"
+        },
+        {
+          "id": "C",
+          "text": "Accessing data in random order"
+        },
+        {
+          "id": "D",
+          "text": "Transferring data in blocks"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Reusing the same data soon is temporal. (a) describes spatial locality.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X02",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "L1, L2 and L3 caches are typically built from:",
+      "options": [
+        {
+          "id": "A",
+          "text": "DRAM"
+        },
+        {
+          "id": "B",
+          "text": "SRAM"
+        },
+        {
+          "id": "C",
+          "text": "NAND flash"
+        },
+        {
+          "id": "D",
+          "text": "Mask ROM"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "SRAM: fast, transistor-based, no refresh.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X03",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which memory needs periodic refreshing?",
+      "options": [
+        {
+          "id": "A",
+          "text": "SRAM"
+        },
+        {
+          "id": "B",
+          "text": "Registers"
+        },
+        {
+          "id": "C",
+          "text": "DRAM"
+        },
+        {
+          "id": "D",
+          "text": "NOR flash"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "DRAM. Its capacitor leaks charge.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X04",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Reading 1024 bytes from a keyboard versus from a disk file (block size ≥ 1024 bytes) needs how many I/O operations respectively?",
+      "options": [
+        {
+          "id": "A",
+          "text": "1 and 1"
+        },
+        {
+          "id": "B",
+          "text": "1024 and 1"
+        },
+        {
+          "id": "C",
+          "text": "1 and 1024"
+        },
+        {
+          "id": "D",
+          "text": "1024 and 1024"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "A character device needs one I/O per byte (1024 mode switches). A block device needs one I/O, and the rest come from the buffer cache.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X05",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which flash type supports execute-in-place and is used mainly for firmware/ROM?",
+      "options": [
+        {
+          "id": "A",
+          "text": "NAND"
+        },
+        {
+          "id": "B",
+          "text": "NOR"
+        },
+        {
+          "id": "C",
+          "text": "DRAM"
+        },
+        {
+          "id": "D",
+          "text": "SSD controller"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "NOR flash: bit-level writes, fast reads, execute-in-place.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X06",
+      "week": 2,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The SSD technique that spreads writes evenly across blocks is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Memory-mapped I/O"
+        },
+        {
+          "id": "B",
+          "text": "Wear levelling"
+        },
+        {
+          "id": "C",
+          "text": "Write-invalidate"
+        },
+        {
+          "id": "D",
+          "text": "Swapping"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Wear levelling keeps the write counts even so no part wears out early.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X07",
+      "week": 2,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why does swapping the loops ( j outer, i inner) when filling A[1024] [1024] in C slow the program down?",
+      "correctAnswers": [
+        "C arrays are row-major. With i inside, each access jumps a whole row (1024 elements), landing in a different block every time. That destroys spatial locality and causes many cache misses."
+      ],
+      "explanation": "C arrays are row-major. With i inside, each access jumps a whole row (1024 elements), landing in a different block every time. That destroys spatial locality and causes many cache misses.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X08",
+      "week": 2,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give two reasons why we don't build all memory from SRAM.",
+      "correctAnswers": [
+        "SRAM is too expensive per GB and too power-hungry. Its density is too low for gigabytes. (The hierarchy exists because no single technology wins everywhere.)"
+      ],
+      "explanation": "SRAM is too expensive per GB and too power-hungry. Its density is too low for gigabytes. (The hierarchy exists because no single technology wins everywhere.)",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X09",
+      "week": 2,
+      "source": "extra",
+      "type": "short",
+      "prompt": "A disk spins at 6000 RPM. Find the average rotational latency.",
+      "correctAnswers": [
+        "One rotation takes 60/6000 s = 10 ms. The average latency is half a rotation, 5 ms."
+      ],
+      "explanation": "One rotation takes 60/6000 s = 10 ms. The average latency is half a rotation, 5 ms.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W02-X10",
+      "week": 2,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why must every I/O access go through the operating system?",
+      "correctAnswers": [
+        "I/O instructions are privileged (dual-mode protection). Only the kernel can run them, which protects devices and data from misuse. User programs make requests through the OS."
+      ],
+      "explanation": "I/O instructions are privileged (dual-mode protection). Only the kernel can run them, which protects devices and data from misuse. User programs make requests through the OS.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

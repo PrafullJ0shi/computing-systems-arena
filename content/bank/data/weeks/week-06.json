@@ -1,0 +1,587 @@
+{
+  "week": 6,
+  "title": "Virtual Environments and Isolation",
+  "learningGoals": [
+    "Define abstraction (interface vs implementation) and give computing examples: OS, system calls, command shell, API, ABI, device drivers, ISA.",
+    "Distinguish abstraction from virtualisation.",
+    "Explain process virtualisation and process VMs, with their use cases (debugger, emulator) and the idea of isolation.",
+    "Explain the OS as a resource manager, resource virtualisation and resource provisioning, which lead to system VMs.",
+    "Explain HLL VMs (JVM, Python venv) and the K + N vs K × N translator argument.",
+    "Compare VMs vs containers on overhead, isolation and use cases, and know when to use each."
+  ],
+  "sirStressed": [
+    "\"If the OS already isolates processes, why do we need more isolation?\" Because of dependency conflicts, different OSes, safe experimentation, security and the cloud.",
+    "Abstraction and virtualisation are entirely different concepts. Abstraction hides; virtualisation simulates and creates controlled environments.",
+    "The level of virtualisation decides how much control, safety and isolation you get. A VM has its own kernel (full isolation, heavy). A container packages the app + dependencies (light).",
+    "Containers and virtual environments are \"very, very, very important and very much used in the current scenario\".",
+    "(From the synchronisation recap) Don't create unlimited threads, because they add load. Use threads for light tasks with quick switching, and processes for isolation or heavy independent work. Synchronisation is everywhere: e-commerce sales, traffic signals (without coordination you get deadlock and chaos)."
+  ],
+  "commonTraps": [
+    "Calling a container a lightweight VM with its own OS. It shares the host kernel; there's no guest OS.",
+    "Saying a Python venv is a VM or a container. It's neither: it isolates packages only.",
+    "JVM = system VM? No. The JVM is a process VM (specifically an HLL VM). VMware and VirtualBox are system VMs.",
+    "Treating abstraction and virtualisation as the same thing.",
+    "K × N vs K + N: the intermediate language reduces the count to K + N.",
+    "Saying containers give stronger isolation than VMs. They're weaker, but cheaper.",
+    "Emulator vs debugger: both are process VMs. An emulator imitates another ISA; a debugger steps through a program and lets you inspect it."
+  ],
+  "summary": [
+    "Abstraction = interface (what) vs implementation (how), like driving a car without knowing the engine. In computers: OS, system calls (like procedure calls), command shell (routine admin tasks), API, ABI (binary/assembly level), device drivers, ISA (Intel and AMD both implement x86).",
+    "Virtualisation = virtual versions of resources (simulating or changing the implementation): memory as a CD-ROM, one NIC as two (split by time or size). Goal: efficient resource use + isolation.",
+    "Process VM = virtualising software on top of the OS providing a process abstraction (JVM, CLR, Python debugger). Isolation = programs are unaware of each other. Use cases: debugger (step, pause, inspect memory, repeat) and emulator (run M4's ISA on M3).",
+    "OS = resource manager (memory, storage, CPU time; interleaving). Resource management + virtual provisioning = system VM, which provides an OS abstraction and multiple isolated OSes (VMware, VirtualBox, Virtual PC on Mac). Hypervisor → guest OS.",
+    "HLL VM: intermediate bytecode turns K × N compilers into K + N (100 languages × 10 machines: 1000 → 110). JVM (\"write once, run anywhere\"); Python venv ( python -m venv path ) isolates packages.",
+    "Overhead: virtualising software runs at runtime and slows programs. Accept it for isolation.",
+    "Containers = shared kernel, Docker/LXC, light, fast, weaker isolation. VMs = own kernel, heavy, slow, strong isolation. Use VMs for different OSes, kernel testing, security and legacy systems; use containers for microservices, CI/CD, cloud scaling and consistent environments."
+  ],
+  "questions": [
+    {
+      "id": "W06-Q001",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about abstraction is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A thread is an abstraction provided by the OS"
+        },
+        {
+          "id": "B",
+          "text": "A system call is an abstraction provided by the OS"
+        },
+        {
+          "id": "C",
+          "text": "Hardware is an abstraction provided by the OS"
+        },
+        {
+          "id": "D",
+          "text": "A driver is an abstraction of hardware"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "hardware is the real thing the OS abstracts over. The OS doesn't create it.",
+      "topicTags": [
+        "Abstraction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W06-Q002",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is an interface?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It enables the use of an abstraction"
+        },
+        {
+          "id": "B",
+          "text": "…of the implementation"
+        },
+        {
+          "id": "C",
+          "text": "…of hardware"
+        },
+        {
+          "id": "D",
+          "text": "…of organisation"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the interface is the \"what\" (the steering wheel). It lets you use the abstraction without knowing the implementation (the engine).",
+      "topicTags": [
+        "Abstraction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W06-Q003",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about virtual memory is FALSE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Virtual memory is an example of virtualisation in the OS"
+        },
+        {
+          "id": "B",
+          "text": "Virtual memory is larger than physical memory"
+        },
+        {
+          "id": "C",
+          "text": "Physical memory can be on the hard disk"
+        },
+        {
+          "id": "D",
+          "text": "With virtual memory, programmers needn't worry about the physical memory size"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "physical memory is the RAM chips. Parts of the virtual address space can sit on disk (swap), but that doesn't make the disk \"physical memory\". A, B and D are the standard benefits of virtual memory. answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Abstraction and Virtualisation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W06-Q004",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the difference between abstraction and virtualisation?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Abstraction hides details; virtualisation may change details"
+        },
+        {
+          "id": "B",
+          "text": "The reverse"
+        },
+        {
+          "id": "C",
+          "text": "Both hide details"
+        },
+        {
+          "id": "D",
+          "text": "Both may change details"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "this is the lecture's definition. Abstraction hides the implementation behind an interface. Virtualisation creates a virtual version that can simulate or change the implementation (memory as a CD-ROM, one NIC as two). answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Abstraction and Virtualisation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W06-Q005",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about a process virtual machine is TRUE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It runs inside the OS"
+        },
+        {
+          "id": "B",
+          "text": "It directly accesses hardware"
+        },
+        {
+          "id": "C",
+          "text": "It increases development time"
+        },
+        {
+          "id": "D",
+          "text": "It lets a user program run in isolation from other programs"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "isolation is the key feature of a process VM: programs don't know about each other. (It runs on top of the OS as a process, not inside the kernel, and it never touches the hardware directly.)",
+      "topicTags": [
+        "Process Virtualisation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W06-Q006",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is NOT a process VM?",
+      "options": [
+        {
+          "id": "A",
+          "text": "JVM"
+        },
+        {
+          "id": "B",
+          "text": "Python debugger"
+        },
+        {
+          "id": "C",
+          "text": "Python Virtual Machine"
+        },
+        {
+          "id": "D",
+          "text": "VMware GSX (\"VM Ware GSM\" in the quiz)"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "VMware GSX virtualises a whole machine for guest OSes, so it's a system VM. The other three each run one process's environment.",
+      "topicTags": [
+        "Process Virtualisation"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W06-Q007",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is a system virtual machine? (same options)",
+      "options": [
+        {
+          "id": "A",
+          "text": "JVM"
+        },
+        {
+          "id": "B",
+          "text": "Python debugger"
+        },
+        {
+          "id": "C",
+          "text": "Python Virtual Machine"
+        },
+        {
+          "id": "D",
+          "text": "VMware GSX (\"VM Ware GSM\" in the quiz)"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "it hosts complete operating systems.",
+      "topicTags": [
+        "System VMs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W06-Q008",
+      "week": 6,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which statement about VMs is TRUE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A process VM talks to hardware"
+        },
+        {
+          "id": "B",
+          "text": "A system VM talks to hardware"
+        },
+        {
+          "id": "C",
+          "text": "A process VM provides an OS as an abstraction"
+        },
+        {
+          "id": "D",
+          "text": "A process VM can run multiple copies of an OS on one machine"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "a system VM (hypervisor) manages the real hardware and provides guest OSes. A process VM provides only a process abstraction on top of an OS.",
+      "topicTags": [
+        "System VMs"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W06-X01",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Intel and AMD processors run the same programs because they share the same:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Processor organisation"
+        },
+        {
+          "id": "B",
+          "text": "Instruction Set Architecture"
+        },
+        {
+          "id": "C",
+          "text": "Device drivers"
+        },
+        {
+          "id": "D",
+          "text": "Kernel"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Same ISA (x86) with different organisation (circuits). That's abstraction at the industry level.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X02",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The Java Virtual Machine is an example of a:",
+      "options": [
+        {
+          "id": "A",
+          "text": "System VM"
+        },
+        {
+          "id": "B",
+          "text": "Hypervisor"
+        },
+        {
+          "id": "C",
+          "text": "High-level-language process VM"
+        },
+        {
+          "id": "D",
+          "text": "Container"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "The JVM provides a process abstraction for Java bytecode, so it's a process VM (HLL VM), not a system VM.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X03",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which statement about containers is TRUE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Each container runs its own guest kernel"
+        },
+        {
+          "id": "B",
+          "text": "Containers share the host OS kernel"
+        },
+        {
+          "id": "C",
+          "text": "Containers give stronger isolation than VMs"
+        },
+        {
+          "id": "D",
+          "text": "Containers boot more slowly than VMs"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "The shared-kernel approach: lighter, faster, but weaker isolation.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X04",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "With 20 languages and 5 machine architectures, how many translators does an intermediate-language (HLL VM) approach need?",
+      "options": [
+        {
+          "id": "A",
+          "text": "100"
+        },
+        {
+          "id": "B",
+          "text": "25"
+        },
+        {
+          "id": "C",
+          "text": "4"
+        },
+        {
+          "id": "D",
+          "text": "15"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "K + N = 20 + 5 = 25 (instead of 100).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X05",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Software that lets you run instructions of a processor still being designed on an existing processor is called a(n):",
+      "options": [
+        {
+          "id": "A",
+          "text": "Debugger"
+        },
+        {
+          "id": "B",
+          "text": "Emulator"
+        },
+        {
+          "id": "C",
+          "text": "Container engine"
+        },
+        {
+          "id": "D",
+          "text": "Device driver"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "An emulator (Apple running the M4 ISA on M3 hardware).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X06",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "System VM = resource management + ______.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Resource provisioning (virtualisation)"
+        },
+        {
+          "id": "B",
+          "text": "Thread pooling"
+        },
+        {
+          "id": "C",
+          "text": "Paging"
+        },
+        {
+          "id": "D",
+          "text": "Compilation"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Resource provisioning (virtualised resources) on top of resource management.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X07",
+      "week": 6,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give two differences between abstraction and virtualisation, with one example of each.",
+      "correctAnswers": [
+        "Abstraction hides complexity behind a stable interface (for example, a system call or the x86 ISA). Virtualisation can change or simulate the implementation and create isolated environments (for example, one NIC presented as two, or memory presented as a CD-ROM)."
+      ],
+      "explanation": "Abstraction hides complexity behind a stable interface (for example, a system call or the x86 ISA). Virtualisation can change or simulate the implementation and create isolated environments (for example, one NIC presented as two, or memory presented as a CD-ROM).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X08",
+      "week": 6,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "Your team must test an application on Windows Server 2012, Ubuntu 18 and Ubuntu 24 using one laptop. VMs or containers? Why?",
+      "correctAnswers": [
+        "VMs. You need different operating systems, including Windows, and containers share the host kernel, so you can't run a Windows kernel on a Linux host. VMs give each OS its own kernel and full isolation."
+      ],
+      "explanation": "VMs. You need different operating systems, including Windows, and containers share the host kernel, so you can't run a Windows kernel on a Linux host. VMs give each OS its own kernel and full isolation.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X09",
+      "week": 6,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "You deploy 50 small microservices that must scale up within seconds during a sale. VMs or containers? Why?",
+      "correctAnswers": [
+        "Containers. They start almost instantly, are lightweight, use resources efficiently and suit microservices, scaling and CI/CD. VMs would boot slowly and waste memory."
+      ],
+      "explanation": "Containers. They start almost instantly, are lightweight, use resources efficiently and suit microservices, scaling and CI/CD. VMs would boot slowly and waste memory.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W06-X10",
+      "week": 6,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Project A needs numpy 1.21 and Project B needs numpy 2.0 on the same machine. What's the simplest isolation tool, and how do you set it up?",
+      "correctAnswers": [
+        "A Python virtual environment for each project: python3 -m venv envA , then source envA/bin/activate and pip install numpy==1.21 . Do the same with envB and numpy==2.0 . Each environment's packages are isolated."
+      ],
+      "explanation": "A Python virtual environment for each project: python3 -m venv envA , then source envA/bin/activate and pip install numpy==1.21 . Do the same with envB and numpy==2.0 . Each environment's packages are isolated.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

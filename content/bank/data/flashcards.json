@@ -1,0 +1,1439 @@
+{
+  "cards": [
+    {
+      "id": "FC-W01-S01",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 1",
+      "back": "System = CPU (ALU + control unit + registers) + memory subsystem (L1/L2/L3/RAM) + I/O, with storage as secondary memory."
+    },
+    {
+      "id": "FC-W01-S02",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 2",
+      "back": "Hierarchy: smaller = faster. Inclusive (L1 ⊂ L2 ⊂ L3 ⊂ RAM). Transfers are blocks (different sizes per level), and L1↔CPU moves words. Blocks exist because of locality of reference."
+    },
+    {
+      "id": "FC-W01-S03",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 3",
+      "back": "von Neumann / stored program: programs and data are in memory and execute from memory. Bottleneck: a unified cache can't serve fetch and data access together under pipelining."
+    },
+    {
+      "id": "FC-W01-S04",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 4",
+      "back": "Harvard: split I/D caches at all levels, which helps pipelining. But no balancing and no on-the-fly instruction modification."
+    },
+    {
+      "id": "FC-W01-S05",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 5",
+      "back": "Modified Harvard: split L1, unified L2 and below. Gets the best of both, and it's used today."
+    },
+    {
+      "id": "FC-W01-S06",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 6",
+      "back": "Multi-core: private split L1 per core, shared unified L2/L3. On an L1 miss, search the other L1s first. Look-through is the standard; look-aside is faster but needs cancellation signals."
+    },
+    {
+      "id": "FC-W01-S07",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 7",
+      "back": "Coherence: write-invalidate for many writes, write-update for few writes."
+    },
+    {
+      "id": "FC-W01-S08",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 8",
+      "back": "Multiprocessor: tightly coupled (shared memory, NUMA; homogeneous at ISA or frequency level, or heterogeneous) vs loosely coupled (network, message passing, NORMA)."
+    },
+    {
+      "id": "FC-W01-S09",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 9",
+      "back": "Intel: i3 = HT, i5 = turbo, i7 = HT + turbo, i9 = multiple turbo levels. P ∝ V²FC, so lower V and F save power."
+    },
+    {
+      "id": "FC-W01-S10",
+      "week": 1,
+      "kind": "weekly-summary",
+      "front": "Week 1 summary, point 10",
+      "back": "HT vs cores: HT duplicates registers and interrupt logic only; a core duplicates everything."
+    },
+    {
+      "id": "FC-W02-S01",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 1",
+      "back": "CPU computes or waits. Hierarchy analogy: desk (cache) / bookshelf (RAM) / storeroom (disk)."
+    },
+    {
+      "id": "FC-W02-S02",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 2",
+      "back": "80/20 rule (loops). Temporal = reuse the same data soon. Spatial = use neighbouring data next. Transfers are blocks so later accesses hit."
+    },
+    {
+      "id": "FC-W02-S03",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 3",
+      "back": "Row-major arrays: loop i outside and j inside. Swapping them causes misses."
+    },
+    {
+      "id": "FC-W02-S04",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 4",
+      "back": "SRAM (transistors, no refresh, fast, hardware-controlled) is cache. DRAM (capacitor, refresh, slower, OS-controlled) is main memory. ROM: e.g. Mask ROM, written at manufacture."
+    },
+    {
+      "id": "FC-W02-S05",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 5",
+      "back": "Register (flip-flops) > cache (SRAM) > RAM (DRAM) in speed and cost per byte."
+    },
+    {
+      "id": "FC-W02-S06",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 6",
+      "back": "Byte < word < block (cache line). For example, 64-byte line / 8-byte word = 8 words."
+    },
+    {
+      "id": "FC-W02-S07",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 7",
+      "back": "Secondary memory is persistent. A miss there causes a context switch. Buffer cache / memory-mapped I/O: only the first byte of a block is real I/O. Swap space = virtual memory."
+    },
+    {
+      "id": "FC-W02-S08",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 8",
+      "back": "Character vs block: 1024 I/Os vs 1 I/O for 1024 bytes."
+    },
+    {
+      "id": "FC-W02-S09",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 9",
+      "back": "HDD: access = seek + rotational latency + transfer. SSD: constant access, reads ≫ writes, erase-before-write, wear levelling, accumulated writes."
+    },
+    {
+      "id": "FC-W02-S10",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 10",
+      "back": "NAND = storage. NOR = execute-in-place / firmware."
+    },
+    {
+      "id": "FC-W02-S11",
+      "week": 2,
+      "kind": "weekly-summary",
+      "front": "Week 2 summary, point 11",
+      "back": "Devices: input, output, or both. All I/O is privileged, through the OS."
+    },
+    {
+      "id": "FC-W03-S01",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 1",
+      "back": "OS = resource manager and interface between user and hardware. Layered (hardware = layer 0). Abstracts the hardware. In UNIX, everything is a file; you deal with files and processes."
+    },
+    {
+      "id": "FC-W03-S02",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 2",
+      "back": "You → terminal → shell → program/process → system calls → kernel → hardware. Apps use APIs and libraries that wrap system calls."
+    },
+    {
+      "id": "FC-W03-S03",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 3",
+      "back": "GUI is visual and one-off. CLI is precise, repetitive, remote and automatable. Ctrl+Alt+T opens a terminal."
+    },
+    {
+      "id": "FC-W03-S04",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 4",
+      "back": "argv[0] = program name; all arguments are strings; atoi and atof stop at the first invalid character."
+    },
+    {
+      "id": "FC-W03-S05",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 5",
+      "back": "Navigation: pwd , ls (-a -A -l -h -R -t -S -r -1), cd ( cd , cd .. ), mkdir -p , absolute vs relative paths."
+    },
+    {
+      "id": "FC-W03-S06",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 6",
+      "back": "passwd (-l lock, -u unlock, -d delete, -e expire). man (sections 1–9) is crisp; info is detailed and hyperlinked. date (-u, -s, -d), cal (-j Julian, -m Monday)."
+    },
+    {
+      "id": "FC-W03-S07",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 7",
+      "back": "cat , cp (copy), mv (cut/rename), rm (-i -I -r -f), chmod 755/644, u+x."
+    },
+    {
+      "id": "FC-W03-S08",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 8",
+      "back": "Redirection > , >> , < , << , 2> . Filters wc (-l -w -c -m -L), sort (-n -r -M -h -u -c -m -o), head / tail (10 lines by default, -n, tail -f )."
+    },
+    {
+      "id": "FC-W03-S09",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 9",
+      "back": "grep (-i -v -w -x -c -n -l -o -r -E -F), find (-name -type f/d/l -mtime). Pipes | (FIFO), tee , sort | uniq ."
+    },
+    {
+      "id": "FC-W03-S10",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 10",
+      "back": "Inode = metadata. Hard link = same inode, files only, survives deletion. Symlink = shortcut, works for directories too, can dangle."
+    },
+    {
+      "id": "FC-W03-S11",
+      "week": 3,
+      "kind": "weekly-summary",
+      "front": "Week 3 summary, point 11",
+      "back": "Processes: & , jobs , ps , kill PID ."
+    },
+    {
+      "id": "FC-W04-S01",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 1",
+      "back": "Shell = translator between you and the OS. Script = commands in a file that run in sequence, like a batch. It saves time and reduces errors. Not for GUIs."
+    },
+    {
+      "id": "FC-W04-S02",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 2",
+      "back": "Run with sh file.sh , or chmod +x then ./file.sh . #!/bin/bash is the shebang; # is a comment."
+    },
+    {
+      "id": "FC-W04-S03",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 3",
+      "back": "$0 (script name), $1 .. (arguments), $# (count), $@ (all), $? (exit status). read var takes input."
+    },
+    {
+      "id": "FC-W04-S04",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 4",
+      "back": "`expr $a + $b` : backticks, \\* for multiplication, integer only. $(( )) is the modern form."
+    },
+    {
+      "id": "FC-W04-S05",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 5",
+      "back": "Variables are untyped and case-sensitive; no spaces around = . System variables are UPPERCASE ( PATH , HOME , PWD , USER , SHELL ). export makes a variable environment-wide."
+    },
+    {
+      "id": "FC-W04-S06",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 6",
+      "back": "0 = true. test / [ ] : numeric -eq -ne -lt -le -gt -ge ; string = != -n -z ; file -s -f -d -r -w -x ."
+    },
+    {
+      "id": "FC-W04-S07",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 7",
+      "back": "if … then … elif … else … fi ; case $v in pat) …;; *) …;; esac ."
+    },
+    {
+      "id": "FC-W04-S08",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 8",
+      "back": "for i in list; do … done ; for (( i=0; i<n; i++ )) ; while [ cond ]; do … done ; break , continue ."
+    },
+    {
+      "id": "FC-W04-S09",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 9",
+      "back": "Files: head -$end | tail -$num , or while read line … done < file ."
+    },
+    {
+      "id": "FC-W04-S10",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 10",
+      "back": "Arrays: ${a[i]} , ${a[@]} , ${#a[@]} , ${#a[i]} , ${a[@]:3:2} , ${a[i]:0:4} , ${a[@]/old/new} , unset a[i] ."
+    },
+    {
+      "id": "FC-W04-S11",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 11",
+      "back": "Programs: reverse ( %10 , *10+ , /10 ), perfect number (divisors up to n/2), pattern (nested while, echo -n ), even/odd, digit sum, menu calculator, palindromes."
+    },
+    {
+      "id": "FC-W04-S12",
+      "week": 4,
+      "kind": "weekly-summary",
+      "front": "Week 4 summary, point 12",
+      "back": "Links: hard = inode, same FS, survives deletion. Soft = path, can cross filesystems, dangles."
+    },
+    {
+      "id": "FC-W05-S01",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 1",
+      "back": "Program = passive; process = a program in execution (active). Multiprogramming switches on I/O or exit; multitasking also switches on time-slice expiry."
+    },
+    {
+      "id": "FC-W05-S02",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 2",
+      "back": "Memory layout: code (read-only) | data (initialised globals) | bss (uninitialised globals) | heap ( malloc → brk ) | stack (locals) | argc/argv."
+    },
+    {
+      "id": "FC-W05-S03",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 3",
+      "back": "States: New → Ready (long-term scheduler) → Running (short-term scheduler) → Waiting (I/O) → Ready; Running → Ready (time slice or interrupt); Running → Terminated. A context switch is overhead."
+    },
+    {
+      "id": "FC-W05-S04",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 4",
+      "back": "PCB = identification (PID, PPID, UID, GID, SID) + processor state (registers, SP, PC) + control information (state, priority, scheduling)."
+    },
+    {
+      "id": "FC-W05-S05",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 5",
+      "back": "fork() : 0 in the child, child PID in the parent, < 0 on error. PIDs 2–32767 (32-bit); 0 = swapper, 1 = init. n forks give 2ⁿ processes."
+    },
+    {
+      "id": "FC-W05-S06",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 6",
+      "back": "Exit: close files → children to init → status to parent → zombie until wait → scheduler runs. Orphan = parent died first."
+    },
+    {
+      "id": "FC-W05-S07",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 7",
+      "back": "wait = any one child (returns its PID). waitpid : −1 any, < −1 group |pid|, 0 same group, > 0 that child. Signals: SIGSTOP/SIGCONT; watch the timing on multi-core."
+    },
+    {
+      "id": "FC-W05-S08",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 8",
+      "back": "Thread = lightweight process, the unit of CPU execution. Shared: code, globals, heap, files, signal handlers, CWD, UID/GID. Private: stack, registers, signal mask, priority."
+    },
+    {
+      "id": "FC-W05-S09",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 9",
+      "back": "Benefits: responsiveness, resource sharing, economy, scalability. Chrome = multi-process + multi-thread."
+    },
+    {
+      "id": "FC-W05-S10",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 10",
+      "back": "User threads (Pthreads, Java, Win32 libraries) vs kernel threads (scheduled by the OS). Mapping: many-to-one (blocks everything), one-to-one (Linux, Windows), many-to-many, two-level."
+    },
+    {
+      "id": "FC-W05-S11",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 11",
+      "back": "pthreads: create (runs the start routine), attr_init , joinable (the default, join ) vs detached; SCHED_OTHER / RR / FIFO; self , equal , exit ."
+    },
+    {
+      "id": "FC-W05-S12",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 12",
+      "back": "Thread pool (pre-create and reuse), zeroed-out threads (clear the data, keep the structure), cancellation (asynchronous vs deferred, the Linux default)."
+    },
+    {
+      "id": "FC-W05-S13",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 13",
+      "back": "Race condition (X++ / X-- can give −1, 0 or 1). Critical section: mutual exclusion, progress, bounded waiting. Peterson (software) → test-and-set and swap (hardware) → semaphores (wait/signal; spin vs blocking)."
+    },
+    {
+      "id": "FC-W05-S14",
+      "week": 5,
+      "kind": "weekly-summary",
+      "front": "Week 5 summary, point 14",
+      "back": "Problems: producer-consumer (mutex, empty = n, full = 0), readers-writers (readcount, wrt; readers dominate), dining philosophers (deadlock risk)."
+    },
+    {
+      "id": "FC-W06-S01",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 1",
+      "back": "Abstraction = interface (what) vs implementation (how), like driving a car without knowing the engine. In computers: OS, system calls (like procedure calls), command shell (routine admin tasks), API, ABI (binary/assembly level), device drivers, ISA (Intel and AMD both implement x86)."
+    },
+    {
+      "id": "FC-W06-S02",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 2",
+      "back": "Virtualisation = virtual versions of resources (simulating or changing the implementation): memory as a CD-ROM, one NIC as two (split by time or size). Goal: efficient resource use + isolation."
+    },
+    {
+      "id": "FC-W06-S03",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 3",
+      "back": "Process VM = virtualising software on top of the OS providing a process abstraction (JVM, CLR, Python debugger). Isolation = programs are unaware of each other. Use cases: debugger (step, pause, inspect memory, repeat) and emulator (run M4's ISA on M3)."
+    },
+    {
+      "id": "FC-W06-S04",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 4",
+      "back": "OS = resource manager (memory, storage, CPU time; interleaving). Resource management + virtual provisioning = system VM, which provides an OS abstraction and multiple isolated OSes (VMware, VirtualBox, Virtual PC on Mac). Hypervisor → guest OS."
+    },
+    {
+      "id": "FC-W06-S05",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 5",
+      "back": "HLL VM: intermediate bytecode turns K × N compilers into K + N (100 languages × 10 machines: 1000 → 110). JVM (\"write once, run anywhere\"); Python venv ( python -m venv path ) isolates packages."
+    },
+    {
+      "id": "FC-W06-S06",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 6",
+      "back": "Overhead: virtualising software runs at runtime and slows programs. Accept it for isolation."
+    },
+    {
+      "id": "FC-W06-S07",
+      "week": 6,
+      "kind": "weekly-summary",
+      "front": "Week 6 summary, point 7",
+      "back": "Containers = shared kernel, Docker/LXC, light, fast, weaker isolation. VMs = own kernel, heavy, slow, strong isolation. Use VMs for different OSes, kernel testing, security and legacy systems; use containers for microservices, CI/CD, cloud scaling and consistent environments."
+    },
+    {
+      "id": "FC-W07-S01",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 1",
+      "back": "Repository = a central record of a team's code. Check-out = a local copy; check-in = submit, with old and new versions time-stamped. Conflicts are detected by diff/WinDiff; different regions merge automatically and the same line needs a human."
+    },
+    {
+      "id": "FC-W07-S02",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 2",
+      "back": "Modular design (car, phone) → modular programming → separate compilation of each compilation unit, then link. extern marks an external symbol. Python uses import ; script mode vs module mode ( __name__ )."
+    },
+    {
+      "id": "FC-W07-S03",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 3",
+      "back": "Requirements change → versions: major for features, minor (3.1, 3.2) for bug fixes. Store diffs between versions. Branching (v1→v2 restaurants, v1→v3 toll-free)."
+    },
+    {
+      "id": "FC-W07-S04",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 4",
+      "back": "Repositories and versioning are one tool: you package a version in one place, and they share diff."
+    },
+    {
+      "id": "FC-W07-S05",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 5",
+      "back": "Centralised (SVN): one server, needs the network, easy access control, real-time collaboration, one organisation. Distributed (Git, Mercurial): full local copies, fast, redundant, suits open source and distributed teams."
+    },
+    {
+      "id": "FC-W07-S06",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 6",
+      "back": "Git (Linus Torvalds, open source) vs GitHub (Microsoft, hosting platform, the \"origin\")."
+    },
+    {
+      "id": "FC-W07-S07",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 7",
+      "back": "Three states: working directory → (add) → staging → (commit) → Git directory."
+    },
+    {
+      "id": "FC-W07-S08",
+      "week": 7,
+      "kind": "weekly-summary",
+      "front": "Week 7 summary, point 8",
+      "back": "Commands: clone , branch , checkout , status , add , commit -m , pull origin master , merge , push origin master , log , diff , fetch . Fork + pull request for contributing."
+    },
+    {
+      "id": "FC-W08-S01",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 1",
+      "back": "Compiler (C/C++): whole program → machine-code executable ahead of time. Fast. Interpreter: line by line, on demand, with no machine-code file. Flexible but slower. Python = compiled to bytecode (.pyc) + interpreted by the PVM (portable). JIT compiles hot code at run time."
+    },
+    {
+      "id": "FC-W08-S02",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 2",
+      "back": "Compile time = static (code as a file); run time = dynamic (the code is a running process)."
+    },
+    {
+      "id": "FC-W08-S03",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 3",
+      "back": "Errors: compile-time (syntax: missing colon, wrong name; no bytecode), run-time / exceptions (divide by zero, missing file, memory full; the program stops at that line), logical (wrong output). Handle exceptions with try/except ."
+    },
+    {
+      "id": "FC-W08-S04",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 4",
+      "back": "Profiling = where the time and resources go, to find bottlenecks. Profile first, then optimise. Static (pylint, radon): cyclomatic complexity, style, standards, comments, with no timing. Dynamic (cProfile + pstats, memory_profiler): time, calls, memory, spikes. Loops took 3.8 s vs NumPy 0.002 s."
+    },
+    {
+      "id": "FC-W08-S05",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 5",
+      "back": "cProfile columns: ncalls, tottime (self), percall, cumtime (including sub-calls)."
+    },
+    {
+      "id": "FC-W08-S06",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 6",
+      "back": "Debugging = find + fix. Print/logging (the apartment-register analogy, log files) → debugger: breakpoint (pause), watch, call stack, step over (F10), step into (F11), step out, continue, inspect or set values."
+    },
+    {
+      "id": "FC-W08-S07",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 7",
+      "back": "Bugs seen: range(1,5) → use range(1,6) ; len(marks)-1 → use len(marks) ."
+    },
+    {
+      "id": "FC-W08-S08",
+      "week": 8,
+      "kind": "weekly-summary",
+      "front": "Week 8 summary, point 8",
+      "back": "pdb: b , c , n , s , r , p , l , w , q . gdb for C: break , run , next , step , finish , print , set var , x , bt ."
+    },
+    {
+      "id": "FC-W09-S01",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 1",
+      "back": "CPU = few powerful cores for varied and control tasks. GPU = thousands of simple cores for the same operation on huge data. VRAM is GPU memory. Uses: AI/ML/DL, graphics and gaming, video, science, self-driving cars, GPU-as-a-Service."
+    },
+    {
+      "id": "FC-W09-S02",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 2",
+      "back": "Co-processor model (heterogeneous): the CPU = host (brain/manager); the GPU = device (specialist). Workflow: prepare in RAM → copy to VRAM → launch the kernel → copy results back. Parallelism requires independent tasks."
+    },
+    {
+      "id": "FC-W09-S03",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 3",
+      "back": "Transfers: PCIe (tens of GB/s) and NVLink (faster). Transfers are a bottleneck. Batch, keep data on the GPU, overlap, use PyTorch, TensorFlow or CuPy."
+    },
+    {
+      "id": "FC-W09-S04",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 4",
+      "back": "Hierarchy: thread (smallest unit) → block (programmer, shares shared memory) → grid (all blocks). Hardware: warp = 32 threads (NVIDIA) or wavefront = 64 (AMD), run on SMs (limited registers and shared memory)."
+    },
+    {
+      "id": "FC-W09-S05",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 5",
+      "back": "Shared memory = fast on-chip memory, like a cache. VRAM = global and slow."
+    },
+    {
+      "id": "FC-W09-S06",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 6",
+      "back": "Kernel = a GPU function (CUDA). Global index = blockIdx.x * blockDim.x + threadIdx.x ."
+    },
+    {
+      "id": "FC-W09-S07",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 7",
+      "back": "Warps: 256 threads/block → 8 warps. 100 blocks → 800 warps."
+    },
+    {
+      "id": "FC-W09-S08",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 8",
+      "back": "SIMD = one instruction on multiple data (rigid). SIMT = threads with their own PC and registers that can branch (modern GPUs). Divergence costs time."
+    },
+    {
+      "id": "FC-W09-S09",
+      "week": 9,
+      "kind": "weekly-summary",
+      "front": "Week 9 summary, point 9",
+      "back": "Performance: occupancy, memory access pattern (coalesced), divergence, latency hiding (warp switching), throughput. Time ≈ operations ÷ effective throughput. 1M additions: CPU with 8 cores ≈ 125 ms vs GPU with 10k cores ≈ 0.1 ms (plus transfer)."
+    },
+    {
+      "id": "FC-W10-S01",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 1",
+      "back": "Tuning matters: core occupancy, choice of memory, number of transfers."
+    },
+    {
+      "id": "FC-W10-S02",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 2",
+      "back": "Pyramid: registers (per thread, KB, 1 cycle) → shared/L1 (per block, ~5) → constant/texture (read-only) → L2 (chip-wide, ~50 MB, 50–100) → global VRAM (off-chip, 400–800) → host RAM (thousands, via PCIe/NVLink)."
+    },
+    {
+      "id": "FC-W10-S03",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 3",
+      "back": "1 cycle at 1.5 GHz ≈ 0.67 ns. Data-hungry cores sit idle if data is late."
+    },
+    {
+      "id": "FC-W10-S04",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 4",
+      "back": "Rules: move big chunks once; reuse data; compute more, move less."
+    },
+    {
+      "id": "FC-W10-S05",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 5",
+      "back": "Matmul: naive = repeated global reads. Tiled = load tiles (for example 16×16 of 1024×1024) into shared memory, reuse them across the block's threads, one block per output tile, sync, then a multi-fold (10×+) speed-up."
+    },
+    {
+      "id": "FC-W10-S06",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 6",
+      "back": "NN: neuron = weighted sum + bias + activation. Operations: element-wise (bias/activation, one thread per element; the JEE grace-marks analogy), reduction (sum → one value), dot product (multiply pairs and add). GPUs do layers in ms, enabling real-time AI (live translation, self-driving)."
+    },
+    {
+      "id": "FC-W10-S07",
+      "week": 10,
+      "kind": "weekly-summary",
+      "front": "Week 10 summary, point 7",
+      "back": "Metrics: kernel time, bandwidth, occupancy, efficiency, speed-up. Profilers: Nsight, PyTorch profiler."
+    },
+    {
+      "id": "FC-W11-S01",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 1",
+      "back": "Distributed system: many networked nodes acting as one. Needed because of the limits on data, computation and load spikes, and for fault tolerance. Gains: scalability, reliability, availability, performance, maintainability."
+    },
+    {
+      "id": "FC-W11-S02",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 2",
+      "back": "What gets distributed: computation, data, control. No shared memory, so communication is by message passing, sockets, APIs, RPC and queues (Kafka)."
+    },
+    {
+      "id": "FC-W11-S03",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 3",
+      "back": "Multi-process (across nodes, isolation, CPU-heavy): Hadoop MapReduce, Kubernetes. Multi-threaded (one node, shared memory, light I/O): web servers, thread pools. Microservices: login, cart and payment as separate processes."
+    },
+    {
+      "id": "FC-W11-S04",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 4",
+      "back": "Challenges: network failures, partial failures (IRCTC payment), consistency, debugging."
+    },
+    {
+      "id": "FC-W11-S05",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 5",
+      "back": "Client–server: HTTP/HTTPS, TCP/IP (connection-oriented), UDP, FTP. RPC = a local-looking remote call (ATM verifyPIN , game score). gRPC = Google, protocol buffers (Uber, Gemini pipelines, Netflix). Request–response: synchronous or asynchronous (Amazon cart stored on the server)."
+    },
+    {
+      "id": "FC-W11-S06",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 6",
+      "back": "Scaling: horizontal (add nodes) vs vertical (upgrade). Load balancer spreads requests (sales, viral reels, IPL)."
+    },
+    {
+      "id": "FC-W11-S07",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 7",
+      "back": "Attributes: throughput (requests/s), response time (arrival → first response), reliability (failure rate), availability (% uptime, 99.9%)."
+    },
+    {
+      "id": "FC-W11-S08",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 8",
+      "back": "Server = machine; service = functionality. One server can host many services; one service can run on many servers. WhatsApp = all of these together."
+    },
+    {
+      "id": "FC-W11-S09",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 9",
+      "back": "Clusters: homogeneous (same configuration, Spark, HPC) vs heterogeneous (GPU + CPU). Compute (split a job) vs scale-out (add nodes; Flipkart, Uber). Economies of scale. YouTube: storage, processing, recommendation and streaming clusters."
+    },
+    {
+      "id": "FC-W11-S10",
+      "week": 11,
+      "kind": "weekly-summary",
+      "front": "Week 11 summary, point 10",
+      "back": "Data: partitioning (split; parallel; uneven load, cross-partition queries) vs replication (copies; fault tolerance; consistency overhead). Hybrid. HDFS 128 MB blocks × 3 replicas. The search back end queries partitions in parallel and returns results in ms."
+    },
+    {
+      "id": "FC-W12-S01",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 1",
+      "back": "Cloud = on-demand compute, storage, networking and software over the internet, pay-as-you-go. Models: IaaS (VMs), PaaS (platform), SaaS (apps). Everyday examples: WhatsApp, Gmail, UPI, Aadhaar, IRCTC, Hotstar."
+    },
+    {
+      "id": "FC-W12-S02",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 2",
+      "back": "Technical needs: performance, elasticity, global distribution (low latency), high availability (redundancy, auto-failover, disaster recovery)."
+    },
+    {
+      "id": "FC-W12-S03",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 3",
+      "back": "Business needs: no upfront cost, pay per use, less maintenance, faster time to market, scale without losing customers."
+    },
+    {
+      "id": "FC-W12-S04",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 4",
+      "back": "Virtualisation: software computers on shared hardware. Hypervisor/VMM. Type 1 bare-metal (ESXi, Hyper-V, Xen; data centres; fast; secure; complex) vs Type 2 hosted (VirtualBox, VMware Workstation; development and learning; slower)."
+    },
+    {
+      "id": "FC-W12-S05",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 5",
+      "back": "VM pros: cost, isolation, full OS control, different OSes, migration. Cons: full OS each, overhead, slow boot."
+    },
+    {
+      "id": "FC-W12-S06",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 6",
+      "back": "Provisioning: static (fixed) vs dynamic (by load, auto-scaling). Multi-tenancy (Netflix and Airbnb on AWS). Consolidation (low-use apps on one VM)."
+    },
+    {
+      "id": "FC-W12-S07",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 7",
+      "back": "Scalability (the ability to grow, may be manual) vs elasticity (automatic up and down, pay only for the spike). Measured by scaling time, utilisation %, cost efficiency."
+    },
+    {
+      "id": "FC-W12-S08",
+      "week": 12,
+      "kind": "weekly-summary",
+      "front": "Week 12 summary, point 8",
+      "back": "Containers: app + libraries, shared kernel, Docker (create and run) and Kubernetes (orchestrate). Start in seconds, MB-sized, high density, process-level isolation, same-OS only. VMs: minutes, GBs, OS-level isolation, any OS. Use containers for microservices (Netflix); VMs for banking, ERP, legacy and mixed OSes. Containers don't replace VMs."
+    },
+    {
+      "id": "FC-W13-S01",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 1",
+      "back": "Mobile (phones, tablets, watches; the most-used platform) and embedded (computing inside appliances, medical devices, IoT, Samsung Bespoke AI). Edge / on-device AI: privacy, low latency, offline (blur, face detection). Training stays in the cloud."
+    },
+    {
+      "id": "FC-W13-S02",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 2",
+      "back": "Constraints: battery (the screen and radios use the most; control background apps), form factor (no fan, fixed RAM), thermal (throttling, app kill, shutdown), memory (4–12 GB, limited swap, memory budget, OS kills apps), compute (ARM, few big cores, small caches), network (variable 2G–5G and Wi-Fi, switching). Optimise for the constraints."
+    },
+    {
+      "id": "FC-W13-S03",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 3",
+      "back": "Phone = a computer. SoC: CPU (ARM), GPU (shader cores; the CPU sends commands), NPU/TPU, DSP (audio/video), ISP (camera), modem, PMU. Snapdragon, Apple A-series, Exynos, Google Tensor (TPU, Mali GPU, Titan security)."
+    },
+    {
+      "id": "FC-W13-S04",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 4",
+      "back": "ARM big.LITTLE: big performance + LITTLE efficiency cores, lower clock speeds, for balance."
+    },
+    {
+      "id": "FC-W13-S05",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 5",
+      "back": "Android: apps (Java/Kotlin) → framework → ART (bytecode) → HAL → Linux kernel (mobile-optimised). Sandboxed processes, limited background resources, the OS kills apps when RAM is full. Input: touch, voice, sensors (GPS, gyroscope, accelerometer, proximity, NFC), camera, microphone, Bluetooth."
+    },
+    {
+      "id": "FC-W13-S06",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 6",
+      "back": "Mobile as a client: login → auth server → API gateway → back end. REST or gRPC, HTTP GET/POST/DELETE, JSON, HTTPS encryption (defeats MITM), stateless calls. The cloud provides scaling and elasticity (Uber surge after flights land)."
+    },
+    {
+      "id": "FC-W13-S07",
+      "week": 13,
+      "kind": "weekly-summary",
+      "front": "Week 13 summary, point 7",
+      "back": "Problems: delay, weak signal, overload, packet loss, battery and data drain. Fixes: retry, caching, batching, fewer background processes. Responsiveness: background threads, a light UI thread, asynchronous programming (Kotlin coroutines)."
+    },
+    {
+      "id": "FC-NUM-01",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "CMOS power",
+      "back": "P ∝ V² × F × C: lowering the voltage and frequency saves power"
+    },
+    {
+      "id": "FC-NUM-02",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Locality rule",
+      "back": "80/20: about 80% of the time is spent in about 20% of the code (loops)"
+    },
+    {
+      "id": "FC-NUM-03",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Character vs block I/O for 1024 bytes",
+      "back": "1024 I/Os vs 1 I/O"
+    },
+    {
+      "id": "FC-NUM-04",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "HDD access time",
+      "back": "seek + rotational latency + transfer"
+    },
+    {
+      "id": "FC-NUM-05",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "chmod",
+      "back": "r = 4, w = 2, x = 1. 755 = rwxr-xr-x; 644 = rw-r--r--"
+    },
+    {
+      "id": "FC-NUM-06",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "head / tail default",
+      "back": "10 lines"
+    },
+    {
+      "id": "FC-NUM-07",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "fork() return value",
+      "back": "0 in the child, child PID in the parent, < 0 on error. n forks → 2ⁿ processes"
+    },
+    {
+      "id": "FC-NUM-08",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "PID 0 / PID 1",
+      "back": "swapper / init"
+    },
+    {
+      "id": "FC-NUM-09",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "HLL VM compilers",
+      "back": "K × N → K + N (100 × 10 = 1000 → 110)"
+    },
+    {
+      "id": "FC-NUM-10",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Loops vs NumPy (Week 8 demo)",
+      "back": "3.8 s vs 0.002 s"
+    },
+    {
+      "id": "FC-NUM-11",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "NVIDIA warp / AMD wavefront",
+      "back": "32 / 64 threads"
+    },
+    {
+      "id": "FC-NUM-12",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Warps per block",
+      "back": "threads per block ÷ 32 (256 → 8)"
+    },
+    {
+      "id": "FC-NUM-13",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "GPU global thread index",
+      "back": "blockIdx.x * blockDim.x + threadIdx.x"
+    },
+    {
+      "id": "FC-NUM-14",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "GPU memory cycles (H100, lecture)",
+      "back": "registers 1, shared/L1 ~5, L2 50–100, global 400–800, host thousands"
+    },
+    {
+      "id": "FC-NUM-15",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Cycle time",
+      "back": "1 / f. At 1.5 GHz that's 0.67 ns"
+    },
+    {
+      "id": "FC-NUM-16",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "GPU execution time",
+      "back": "≈ total operations ÷ effective throughput"
+    },
+    {
+      "id": "FC-NUM-17",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "1M additions",
+      "back": "CPU with 8 cores ≈ 125 ms; GPU with 10k cores ≈ 0.1 ms (plus transfers)"
+    },
+    {
+      "id": "FC-NUM-18",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "HDFS",
+      "back": "128 MB blocks, replication factor 3"
+    },
+    {
+      "id": "FC-NUM-19",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Availability",
+      "back": "99.9% ≈ 8.76 h of downtime a year"
+    },
+    {
+      "id": "FC-NUM-20",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "Mobile RAM",
+      "back": "about 4–12 GB (16 GB on some high-end phones)"
+    },
+    {
+      "id": "FC-NUM-21",
+      "week": null,
+      "kind": "cheat-sheet-number",
+      "front": "VM vs container startup",
+      "back": "minutes vs seconds"
+    },
+    {
+      "id": "FC-CMP-01",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "von Neumann vs Harvard",
+      "back": "Unified vs split instruction and data paths. Modified Harvard = split L1, unified below (used today)"
+    },
+    {
+      "id": "FC-CMP-02",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Look-through vs Look-aside",
+      "back": "Searched in sequence (standard) vs in parallel (faster, needs cancellation)"
+    },
+    {
+      "id": "FC-CMP-03",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Write-invalidate vs Write-update",
+      "back": "For many writes vs for few writes"
+    },
+    {
+      "id": "FC-CMP-04",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Hyper-threading vs Multi-core",
+      "back": "Duplicates registers and interrupt logic only vs duplicates the whole core"
+    },
+    {
+      "id": "FC-CMP-05",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "NUMA (tightly coupled) vs NORMA (loosely coupled)",
+      "back": "Shared memory vs message passing over a network"
+    },
+    {
+      "id": "FC-CMP-06",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "SRAM vs DRAM",
+      "back": "Transistors, no refresh, fast cache vs capacitor, refresh, main memory"
+    },
+    {
+      "id": "FC-CMP-07",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "NAND vs NOR",
+      "back": "Storage (SSD) vs execute-in-place (firmware)"
+    },
+    {
+      "id": "FC-CMP-08",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "HDD vs SSD",
+      "back": "Mechanical seek and rotation vs constant access, erase-before-write, wear levelling"
+    },
+    {
+      "id": "FC-CMP-09",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Spatial locality vs Temporal locality",
+      "back": "Neighbouring data next vs the same data again soon"
+    },
+    {
+      "id": "FC-CMP-10",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Hard link vs Soft link",
+      "back": "Same inode, files only, survives deletion vs a path, directories too, can dangle"
+    },
+    {
+      "id": "FC-CMP-11",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "CLI vs GUI",
+      "back": "Precise, automatable, remote vs visual, one-off"
+    },
+    {
+      "id": "FC-CMP-12",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Process vs Thread",
+      "back": "Own address space vs shares code, data, heap and files (has its own stack and registers)"
+    },
+    {
+      "id": "FC-CMP-13",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Zombie vs Orphan",
+      "back": "Dead, parent hasn't called wait yet vs parent died, adopted by init"
+    },
+    {
+      "id": "FC-CMP-14",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "User threads vs Kernel threads",
+      "back": "Library-managed vs OS-scheduled. Linux and Windows map one-to-one"
+    },
+    {
+      "id": "FC-CMP-15",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Asynchronous cancellation vs Deferred cancellation",
+      "back": "Immediate vs at cancellation points (the Linux default)"
+    },
+    {
+      "id": "FC-CMP-16",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Abstraction vs Virtualisation",
+      "back": "Hide the implementation behind an interface vs create virtual versions of resources (efficiency + isolation)"
+    },
+    {
+      "id": "FC-CMP-17",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Process VM vs System VM",
+      "back": "One process's environment (JVM, debugger, emulator) vs a whole OS (VMware, VirtualBox)"
+    },
+    {
+      "id": "FC-CMP-18",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "VM vs Container",
+      "back": "Own guest OS, strong isolation, GBs, minutes vs shared kernel, process isolation, MBs, seconds"
+    },
+    {
+      "id": "FC-CMP-19",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Type 1 hypervisor vs Type 2 hypervisor",
+      "back": "On the hardware (ESXi, Hyper-V, Xen; data centres) vs on a host OS (VirtualBox; development)"
+    },
+    {
+      "id": "FC-CMP-20",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Centralised VCS (SVN) vs Distributed VCS (Git)",
+      "back": "One server, needs the network vs a full local copy, offline, fast"
+    },
+    {
+      "id": "FC-CMP-21",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Git vs GitHub",
+      "back": "The tool vs the hosting platform"
+    },
+    {
+      "id": "FC-CMP-22",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Compiler vs Interpreter",
+      "back": "Whole program ahead of time, fast vs line by line, flexible. Python = bytecode + PVM"
+    },
+    {
+      "id": "FC-CMP-23",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Static profiling vs Dynamic profiling",
+      "back": "pylint/radon (code quality) vs cProfile/memory_profiler (runtime)"
+    },
+    {
+      "id": "FC-CMP-24",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Step over vs Step into",
+      "back": "Run the function call as one step vs go inside the function"
+    },
+    {
+      "id": "FC-CMP-25",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "CPU vs GPU",
+      "back": "Few powerful cores for varied work vs thousands of simple cores for data parallelism"
+    },
+    {
+      "id": "FC-CMP-26",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Thread block vs Warp",
+      "back": "Programmer-defined vs hardware-defined (32)"
+    },
+    {
+      "id": "FC-CMP-27",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Shared memory vs Global memory (VRAM)",
+      "back": "Small, on-chip, per block, ~5 cycles vs large, off-chip, 400–800 cycles"
+    },
+    {
+      "id": "FC-CMP-28",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "SIMD vs SIMT",
+      "back": "Rigid, no branching vs each thread has its own PC and registers and can branch"
+    },
+    {
+      "id": "FC-CMP-29",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Naive matmul vs Tiled matmul",
+      "back": "Repeated global reads vs tiles reused from shared memory (10×+ faster)"
+    },
+    {
+      "id": "FC-CMP-30",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Element-wise vs Reduction",
+      "back": "One thread per element vs many values combined into one"
+    },
+    {
+      "id": "FC-CMP-31",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Multi-process vs Multi-thread (distributed)",
+      "back": "Across nodes, isolation vs within one node, shared memory (web servers)"
+    },
+    {
+      "id": "FC-CMP-32",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Horizontal scaling vs Vertical scaling",
+      "back": "Add machines vs upgrade one machine"
+    },
+    {
+      "id": "FC-CMP-33",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Throughput vs Response time",
+      "back": "Requests per second vs arrival → first response"
+    },
+    {
+      "id": "FC-CMP-34",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Reliability vs Availability",
+      "back": "How often it fails vs % of time it's up"
+    },
+    {
+      "id": "FC-CMP-35",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Homogeneous cluster vs Heterogeneous cluster",
+      "back": "Same configuration vs mixed (GPU + CPU)"
+    },
+    {
+      "id": "FC-CMP-36",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Compute cluster vs Scale-out cluster",
+      "back": "Split a big job vs add nodes as the load grows"
+    },
+    {
+      "id": "FC-CMP-37",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Partitioning vs Replication",
+      "back": "Split data (parallel, uneven load) vs copy data (fault tolerance, consistency cost)"
+    },
+    {
+      "id": "FC-CMP-38",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Scalability vs Elasticity",
+      "back": "Ability to grow (may be manual) vs automatic up and down"
+    },
+    {
+      "id": "FC-CMP-39",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Static provisioning vs Dynamic provisioning",
+      "back": "Fixed per VM vs by load (auto-scaling)"
+    },
+    {
+      "id": "FC-CMP-40",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Multi-tenancy vs Server consolidation",
+      "back": "Many tenants share the infrastructure vs many low-load apps on one server"
+    },
+    {
+      "id": "FC-CMP-41",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "IaaS / PaaS / SaaS vs —",
+      "back": "VMs (EC2) / platform (App Engine) / app (Gmail)"
+    },
+    {
+      "id": "FC-CMP-42",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "Cloud computing vs Edge computing",
+      "back": "Process in the data centre vs process locally on the device"
+    },
+    {
+      "id": "FC-CMP-43",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "ISP / DSP / NPU vs —",
+      "back": "Camera / audio-video signals / AI"
+    },
+    {
+      "id": "FC-CMP-44",
+      "week": null,
+      "kind": "cheat-sheet-comparison",
+      "front": "big cores vs LITTLE cores",
+      "back": "Performance vs efficiency (ARM big.LITTLE)"
+    },
+    {
+      "id": "FC-CMD-01",
+      "week": null,
+      "kind": "cheat-sheet-commands",
+      "front": "Linux (W3)",
+      "back": "ls -la; cd ..; pwd; mkdir -p a/b; cp f1 f2; mv f1 dir/; rm -r dir\nchmod 755 s.sh; chmod u+x s.sh; cat f | grep -i \"err\" | sort | uniq -c | sort -nr | head -5\nfind . -name \"*.log\" -type f -mtime -7; ln f hard; ln -s f soft; ls -i\ncmd > out 2> err; cmd >> out; wc -l < f; ps; jobs; kill PID; tail -f log | tee copy"
+    },
+    {
+      "id": "FC-CMD-02",
+      "week": null,
+      "kind": "cheat-sheet-commands",
+      "front": "Shell script (W4)",
+      "back": "#!/bin/bash\nsum=0; for n in \"$@\"; do sum=`expr $sum + $n`; done; echo \"Args: $# Sum: $sum\"\nif [ -f \"$1\" ]; then echo file; elif [ -d \"$1\" ]; then echo dir; else echo none; fi"
+    },
+    {
+      "id": "FC-CMD-03",
+      "week": null,
+      "kind": "cheat-sheet-commands",
+      "front": "Git (W7)",
+      "back": "git clone URL; git status; git add .; git commit -m \"msg\"; git branch feat\ngit checkout feat; git merge feat; git pull origin master; git push origin master; git log; git diff"
+    },
+    {
+      "id": "FC-CMD-04",
+      "week": null,
+      "kind": "cheat-sheet-commands",
+      "front": "Python profiling and debugging (W8)",
+      "back": "python -m cProfile -s cumtime prog.py ; python -m pdb prog.py   # b, n, s, c, p x, q"
+    },
+    {
+      "id": "FC-CMD-05",
+      "week": null,
+      "kind": "cheat-sheet-commands",
+      "front": "Python virtual environment (W6)",
+      "back": "python -m venv myenv && source myenv/bin/activate"
+    },
+    {
+      "id": "FC-ONE-01",
+      "week": 1,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 1 in one line",
+      "back": "Architecture: von Neumann/Harvard/modified Harvard, multi-core caches and coherence, HT vs cores, NUMA/NORMA, i3–i9, P ∝ V²FC."
+    },
+    {
+      "id": "FC-ONE-02",
+      "week": 2,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 2 in one line",
+      "back": "Memory and I/O: locality, SRAM/DRAM/ROM, block vs character, HDD timing, SSD (NAND, wear levelling)."
+    },
+    {
+      "id": "FC-ONE-03",
+      "week": 3,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 3 in one line",
+      "back": "Linux: OS, kernel, shell, system calls; commands, redirection, filters, pipes; inodes and links; processes."
+    },
+    {
+      "id": "FC-ONE-04",
+      "week": 4,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 4 in one line",
+      "back": "Scripting: $1 $# $@ $? , expr, test [ ] , if/case, loops, arrays, read ."
+    },
+    {
+      "id": "FC-ONE-05",
+      "week": 5,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 5 in one line",
+      "back": "Processes and threads: layout, 5 states, PCB, fork/wait/zombie/orphan, threads and pthreads, race condition → critical section → semaphores, the classic problems."
+    },
+    {
+      "id": "FC-ONE-06",
+      "week": 6,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 6 in one line",
+      "back": "Virtualisation: abstraction layers, process VMs vs system VMs, HLL VM K+N, venv, VMs vs containers."
+    },
+    {
+      "id": "FC-ONE-07",
+      "week": 7,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 7 in one line",
+      "back": "Git: repositories, versioning and branching, centralised vs distributed, the three states, commands, fork and PR."
+    },
+    {
+      "id": "FC-ONE-08",
+      "week": 8,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 8 in one line",
+      "back": "Execution: compiler/interpreter/bytecode/JIT, 3 error types, profiling static vs dynamic, debugger stepping, pdb/gdb."
+    },
+    {
+      "id": "FC-ONE-09",
+      "week": 9,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 9 in one line",
+      "back": "GPUs: CPU vs GPU, host–device flow, PCIe/NVLink bottleneck, thread/block/grid/warp/SM, shared memory, kernel, SIMD/SIMT, performance factors."
+    },
+    {
+      "id": "FC-ONE-10",
+      "week": 10,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 10 in one line",
+      "back": "GPU tuning: the memory pyramid and cycles, minimise data movement, tiled matmul, NN operations, metrics."
+    },
+    {
+      "id": "FC-ONE-11",
+      "week": 11,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 11 in one line",
+      "back": "Distributed: why, multi-process vs multi-thread, microservices, client–server/RPC/gRPC, scaling and load balancing, 4 attributes, clusters, partition and replicate, HDFS."
+    },
+    {
+      "id": "FC-ONE-12",
+      "week": 12,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 12 in one line",
+      "back": "Cloud: IaaS/PaaS/SaaS, technical and business needs, hypervisor types, provisioning, multi-tenancy, consolidation, elasticity, VMs vs containers (Docker, Kubernetes)."
+    },
+    {
+      "id": "FC-ONE-13",
+      "week": 13,
+      "kind": "cheat-sheet-one-line",
+      "front": "Week 13 in one line",
+      "back": "Mobile: edge AI, constraints, SoC, big.LITTLE, Android stack and sandboxing, mobile client (REST, JSON, HTTPS, retry, cache, async)."
+    }
+  ]
+}

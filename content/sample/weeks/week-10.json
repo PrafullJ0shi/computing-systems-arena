@@ -1,0 +1,184 @@
+{
+  "week": 10,
+  "questions": [
+    {
+      "id": "w10-q01",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "FCFS can suffer a convoy effect when",
+      "options": [
+        "A long job reaches the CPU first and short jobs wait behind it",
+        "Every job has the same burst",
+        "The quantum is one cycle",
+        "Aging is enabled"
+      ],
+      "answer": 0,
+      "explanation": "First-come first-served does not look at burst length. One long job at the head of the queue delays everyone who arrived just after it.",
+      "tags": [
+        "fcfs"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w10-q02",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Non-preemptive shortest-job-first",
+      "options": [
+        "Picks the ready job with the smallest burst, and can starve a long job",
+        "Always matches FCFS",
+        "Needs no idea of the burst length",
+        "Is preemptive by definition"
+      ],
+      "answer": 0,
+      "explanation": "If bursts are known, SJF minimizes average waiting time for a given arrival set. A long job can wait forever if short jobs keep arriving.",
+      "tags": [
+        "sjf"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "The average-wait claim needs burst knowledge or an estimate."
+      ]
+    },
+    {
+      "id": "w10-q03",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "If a round-robin quantum becomes tiny",
+      "options": [
+        "Context-switch overhead eats the time jobs should have been running",
+        "Waiting time is always zero",
+        "The policy turns into FCFS",
+        "Starvation becomes impossible at no cost"
+      ],
+      "answer": 0,
+      "explanation": "Each switch saves and restores state. If the quantum is shorter than that work, the CPU spends itself switching.",
+      "tags": [
+        "rr"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w10-q04",
+      "week": 10,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which policies can preempt a running job?",
+      "options": [
+        "Round robin, when the quantum expires",
+        "Preemptive priority, when a more urgent job becomes ready",
+        "FCFS",
+        "Non-preemptive SJF"
+      ],
+      "answer": [
+        0,
+        1
+      ],
+      "explanation": "FCFS and non-preemptive SJF run the chosen job to completion. Round robin and preemptive priority take the CPU back.",
+      "tags": [
+        "scheduling"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w10-q05",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Turnaround time of a job is",
+      "options": [
+        "Completion time minus arrival time",
+        "Only the time spent waiting, with the burst excluded",
+        "The quantum",
+        "The number of context switches in the whole system"
+      ],
+      "answer": 0,
+      "explanation": "Turnaround includes both waiting and running. Waiting time leaves the burst out. They are not synonyms.",
+      "tags": [
+        "scheduling"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Using waiting time when the question says turnaround."
+      ]
+    },
+    {
+      "id": "w10-q06",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Aging, as a fix for priority scheduling,",
+      "options": [
+        "Gradually improves the priority of jobs that have waited",
+        "Deletes long jobs",
+        "Disables the clock",
+        "Sets every quantum to zero"
+      ],
+      "answer": 0,
+      "explanation": "A job that sits in the queue gets a better priority over time, so a stream of urgent jobs cannot postpone it forever.",
+      "tags": [
+        "priority"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w10-q07",
+      "week": 10,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "Jobs P and Q arrive at time 0. P’s burst is 1 and Q’s burst is 10. FCFS runs P then Q. What is Q’s waiting time?",
+      "options": [
+        "1",
+        "0",
+        "10",
+        "11"
+      ],
+      "answer": 0,
+      "explanation": "Q waits only while P runs, so the wait is 1. Q’s turnaround is 11, which is a different question.",
+      "tags": [
+        "fcfs",
+        "scheduling"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Reporting turnaround (11) when the question asks for waiting time."
+      ]
+    },
+    {
+      "id": "w10-q08",
+      "week": 10,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "An I/O-bound process",
+      "options": [
+        "Spends most of its life waiting for devices, with short CPU bursts",
+        "Computes for a long time between tiny I/O waits",
+        "Never enters the waiting state",
+        "Cannot be scheduled by round robin"
+      ],
+      "answer": 0,
+      "explanation": "The opposite is CPU-bound: a long compute stretch between I/O. I/O-bound jobs leave the CPU idle from their point of view while the device works.",
+      "tags": [
+        "scheduling"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w10-q09",
+      "week": 10,
+      "source": "mock",
+      "type": "short",
+      "prompt": "Why is “use the smallest possible quantum” not a free win for round robin?",
+      "options": [],
+      "answer": "Each switch has a cost in saved registers and cold caches. A tiny quantum spends the CPU on switching.",
+      "explanation": "The quantum should be large next to the switch cost and small enough that interactive jobs still get the CPU promptly.",
+      "tags": [
+        "rr"
+      ],
+      "difficulty": 3
+    }
+  ]
+}
