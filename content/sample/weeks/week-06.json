@@ -1,0 +1,189 @@
+{
+  "week": 6,
+  "questions": [
+    {
+      "id": "w06-q01",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Reading a[0], then a[1], then a[2] is mainly an example of",
+      "options": [
+        "Spatial locality",
+        "A pipeline hazard",
+        "Thrashing",
+        "An interrupt"
+      ],
+      "answer": 0,
+      "explanation": "Nearby addresses are used close together. Temporal locality would be reading the same address again soon.",
+      "tags": [
+        "locality"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w06-q02",
+      "week": 6,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which are the three classic cache-miss reasons?",
+      "options": [
+        "Compulsory: this block has not been requested yet",
+        "Capacity: the working set does not fit",
+        "Conflict: the wanted block maps to a set that is already full",
+        "Ethical: the program has not been reviewed"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Every miss is a first touch, a capacity problem, or a mapping collision. The names are compulsory, capacity, and conflict.",
+      "tags": [
+        "misses"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w06-q03",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A direct-mapped cache has 8 lines and one word per block. Address 19 maps to which line if line = address mod 8?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": 2,
+      "explanation": "19 = 2 × 8 + 3, so the line index is 3 and the tag is 2.",
+      "tags": [
+        "mapping"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Keeping the quotient (the tag) and throwing away the remainder."
+      ]
+    },
+    {
+      "id": "w06-q04",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A write-back cache",
+      "options": [
+        "Updates the line and marks it dirty; memory is written when the line is evicted",
+        "Writes memory on every store and never keeps a dirty bit",
+        "Ignores stores",
+        "Clears the cache after each instruction"
+      ],
+      "answer": 0,
+      "explanation": "Write-through updates memory on the store. Write-back waits, which saves traffic and needs a dirty bit so the eviction is not lost.",
+      "tags": [
+        "write-policy"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Swapping the names write-back and write-through."
+      ]
+    },
+    {
+      "id": "w06-q05",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In the simple model hit time + miss rate × miss penalty, average memory access time grows when",
+      "options": [
+        "The miss rate or the miss penalty grows",
+        "Hit time shrinks and nothing else changes",
+        "The program stops touching memory",
+        "The word size becomes one byte, with no other change to the formula"
+      ],
+      "answer": 0,
+      "explanation": "The second term is the extra time you pay on misses. Raising either factor raises the average.",
+      "tags": [
+        "performance"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w06-q06",
+      "week": 6,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Making cache blocks larger, and changing nothing else, usually",
+      "options": [
+        "Captures spatial locality, but moves more data on a miss",
+        "Removes the need for a tag",
+        "Turns every access into a hit",
+        "Makes the cache the same size as main memory"
+      ],
+      "answer": 0,
+      "explanation": "A bigger block brings in neighbors the program may use next. The cost is a larger miss penalty and fewer blocks for the same capacity.",
+      "tags": [
+        "locality"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w06-q07",
+      "week": 6,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Raising a cache from direct-mapped to 2-way set associative, at the same capacity, mainly cuts",
+      "options": [
+        "Conflict misses",
+        "Compulsory misses on the first touch of a block",
+        "The number of bits in an address",
+        "Disk seek time"
+      ],
+      "answer": 0,
+      "explanation": "A set with two ways gives a block a second place to live, so two hot blocks that share an index can coexist. The first touch of a block is still compulsory.",
+      "tags": [
+        "mapping",
+        "misses"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "Associativity does not erase the first-touch miss."
+      ]
+    },
+    {
+      "id": "w06-q08",
+      "week": 6,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Direct-mapped, 4 lines, one word per line, initially empty. Accesses: 0, 4, 0. How many misses?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "0"
+      ],
+      "answer": 2,
+      "explanation": "0 misses into line 0. 4 maps to the same line and replaces it, a second miss. 0 is no longer present, so the third access misses too.",
+      "tags": [
+        "cache"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "Calling the third access a hit because “0 was seen earlier”, after 4 has evicted it."
+      ]
+    },
+    {
+      "id": "w06-q09",
+      "week": 6,
+      "source": "extra",
+      "type": "short",
+      "prompt": "A cache is much smaller than RAM. Why does it still speed up ordinary programs?",
+      "options": [],
+      "answer": "Programs reuse a small set of addresses and the addresses next to them, so a small fast store captures most accesses.",
+      "explanation": "Temporal locality rewards keeping a recently used block. Spatial locality rewards bringing its neighbors along. That is the whole bet.",
+      "tags": [
+        "locality",
+        "cache"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

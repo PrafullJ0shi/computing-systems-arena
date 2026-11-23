@@ -1,0 +1,186 @@
+{
+  "bosses": [
+    {
+      "id": "boss-w01",
+      "week": 1,
+      "title": "The Cold Start",
+      "prompt": "Explain how a stored-program machine runs one instruction that already sits in memory. Name the pieces of hardware that touch it.",
+      "rubric": [
+        "Name the program counter and say it holds an address, not the instruction bits.",
+        "Describe the fetch: address goes out, the word comes back into the instruction register, and the PC advances.",
+        "Say what decode means: the control unit turns the opcode into signals.",
+        "Describe execute with one concrete instruction, such as a load or an add, and where the result lands.",
+        "Close with the stored-program point: a different bit pattern in memory is a different program."
+      ],
+      "sampleStub": "Outline: PC → memory → IR, PC+1, control signals, then one sentence on the ALU or memory write. End by saying the program is data."
+    },
+    {
+      "id": "boss-w02",
+      "week": 2,
+      "title": "The Sign Flip",
+      "prompt": "Add the 4-bit two’s-complement values 0101 and 1101. State the bit result and whether a signed overflow happened.",
+      "rubric": [
+        "Rewrite both values in decimal before you add.",
+        "Show the 4-bit sum, including what happens to a carry out of the top bit.",
+        "Interpret the sum as a signed value.",
+        "Decide overflow from the two sign bits and the result sign, not from the carry alone.",
+        "Give one sentence on why the same bits could be read as unsigned."
+      ],
+      "sampleStub": "0101 is +5, 1101 is −3. The sum bits are 0010, which is +2. Signs differ, so there is no signed overflow. As unsigned, the same add is 5+13 with a carry."
+    },
+    {
+      "id": "boss-w03",
+      "week": 3,
+      "title": "The Door Alarm",
+      "prompt": "A buzzer should sound when the door is open AND it is night, unless the override switch is on. Give a boolean expression and a gate-level reading of it.",
+      "rubric": [
+        "Define the three variables in words.",
+        "Write the expression, including the NOT on override.",
+        "Say which gate computes the AND of door and night.",
+        "Say how override disables the buzzer.",
+        "Give the output for one concrete input row, such as door open, night, override off."
+      ],
+      "sampleStub": "Let D, N, O be door, night, override. Buzzer = D AND N AND NOT O. One AND combines D and N; a second AND mixes in the inverted override. D=1,N=1,O=0 sounds."
+    },
+    {
+      "id": "boss-w04",
+      "week": 4,
+      "title": "One Cycle, Named",
+      "prompt": "Trace a LOAD of a memory word into a register, then an ADD of that register with a second register. Name PC, MAR, MDR, IR, and the ALU at the moment each matters.",
+      "rubric": [
+        "Separate the two instructions instead of blending them.",
+        "For LOAD, walk fetch: PC to MAR, word to MDR and IR, PC increments.",
+        "For LOAD, walk execute: the address operand goes to MAR and the data word lands in the register.",
+        "For ADD, note that fetch looks the same and the ALU is the part that executes.",
+        "State one fact that is easy to miss: the PC already points at the next instruction before execute finishes."
+      ],
+      "sampleStub": "LOAD fetch uses PC, MAR, MDR, IR. LOAD execute reads the data address. ADD fetch repeats that pattern. ADD execute is the ALU. Mention the early PC increment."
+    },
+    {
+      "id": "boss-w05",
+      "week": 5,
+      "title": "Three Lines",
+      "prompt": "A program does MOV R0, 4 / ADD R0, R1 / STORE R0, 8, and R1 starts at 3. State the final registers you can know, the value stored, and one addressing idea used.",
+      "rubric": [
+        "Give R0 after the MOV.",
+        "Give R0 after the ADD, and say you assumed R1 was already 3.",
+        "Say what address 8 receives.",
+        "Name the addressing idea for the 4 (immediate) and for the 8 (a direct memory address).",
+        "Note one thing the program does not tell you, such as the old value of R0."
+      ],
+      "sampleStub": "R0 becomes 4, then 7. Memory[8] becomes 7. The 4 is immediate. The 8 is a direct address. R1 stays 3."
+    },
+    {
+      "id": "boss-w06",
+      "week": 6,
+      "title": "Four Lines, Empty",
+      "prompt": "A direct-mapped cache has 4 lines and one-word blocks. It starts empty. Trace accesses 0, 1, 4, 0. For each access say hit or miss, and name the line.",
+      "rubric": [
+        "State the index rule (address mod 4).",
+        "Classify 0 and 1 as compulsory misses in different lines.",
+        "Show that 4 maps to the same line as 0 and replaces it.",
+        "Classify the final 0 as a conflict miss, not a hit.",
+        "Name the miss kinds you used: compulsory and conflict."
+      ],
+      "sampleStub": "Line = address mod 4. 0 misses in line 0, 1 misses in line 1, 4 misses and evicts line 0, 0 misses again. Two compulsory, then a conflict."
+    },
+    {
+      "id": "boss-w07",
+      "week": 7,
+      "title": "Who Goes First",
+      "prompt": "A timer interrupt handler is running. A disk interrupt (higher priority) and a keyboard interrupt (lower priority, currently masked) arrive. Explain what the CPU should do, and what it had to save to come back.",
+      "rubric": [
+        "Say that the mask keeps the keyboard waiting.",
+        "Say that a higher-priority disk interrupt can be taken if the timer handler has not masked that level.",
+        "Name two pieces of state saved for the interrupted context (PC and flags, at least).",
+        "Say where the handler address comes from (a vector).",
+        "Say what must be restored before the original program continues."
+      ],
+      "sampleStub": "Keyboard stays masked. Disk may preempt if its priority is enabled. Save PC and flags, index the vector, run the disk handler, then restore and return."
+    },
+    {
+      "id": "boss-w08",
+      "week": 8,
+      "title": "Read a File",
+      "prompt": "A user program wants the first bytes of a file. Describe the path from a library call into the kernel and back, including the mode switch.",
+      "rubric": [
+        "Separate the library call from the system call.",
+        "Name the trap and the switch into kernel mode.",
+        "Say that the kernel checks the descriptor and does the copy or the setup.",
+        "Mention that the return drops back to user mode.",
+        "Say how the program observes success or failure (a return value)."
+      ],
+      "sampleStub": "printf-style code formats in user space; read is the real trap. Mode becomes kernel, the descriptor is checked, bytes are copied, mode returns to user, and the return value says how many bytes or an error."
+    },
+    {
+      "id": "boss-w09",
+      "week": 9,
+      "title": "Share or Split",
+      "prompt": "Compare a process and a thread. Then list three PCB fields that a second thread does not each need a full private copy of.",
+      "rubric": [
+        "Define a process as a program in execution with its own resources.",
+        "Define a thread as a schedulable flow inside that process.",
+        "Name the address space as shared.",
+        "Name two more shared things, such as open files and the code.",
+        "Name something a thread keeps private, such as its stack and registers, so the contrast is honest."
+      ],
+      "sampleStub": "A process owns the address space and resources. A thread is a PC plus registers and a stack inside it. Shared: address space, open files, code. Private: stack, registers, PC."
+    },
+    {
+      "id": "boss-w10",
+      "week": 10,
+      "title": "The Short Job",
+      "prompt": "Four jobs arrive together with bursts 8, 2, 4, and 1. Argue why non-preemptive SJF beats FCFS (in the listed order) on average waiting time, and name one risk of SJF.",
+      "rubric": [
+        "Compute or describe the FCFS waiting times in the listed order.",
+        "Give the SJF order (shortest first).",
+        "Compare the two average waits, even if you only argue the direction.",
+        "State the assumption: burst lengths are known.",
+        "Name starvation of a long job if short jobs keep arriving."
+      ],
+      "sampleStub": "FCFS order 8,2,4,1 makes the short jobs wait behind 8. SJF runs 1,2,4,8 so short jobs finish first and the average wait drops. The risk is starvation, and the method needs to know the bursts."
+    },
+    {
+      "id": "boss-w11",
+      "week": 11,
+      "title": "Two Locks",
+      "prompt": "Process A holds lock 1 and wants lock 2. Process B holds lock 2 and wants lock 1. Name the four deadlock conditions in this scene, and one prevention rule that would have broken a specific condition.",
+      "rubric": [
+        "Identify the two resources and who holds them.",
+        "Point at mutual exclusion (a lock has one holder).",
+        "Point at hold-and-wait and at no preemption.",
+        "Point at the cycle.",
+        "Give one prevention rule and the condition it breaks, such as a global lock order breaking circular wait."
+      ],
+      "sampleStub": "Both locks are exclusive, each process holds one and waits, locks are not stolen, and the wait is a cycle. A global order “always take lock 1 before lock 2” breaks circular wait."
+    },
+    {
+      "id": "boss-w12",
+      "week": 12,
+      "title": "Three Frames",
+      "prompt": "A memory has 3 frames, initially empty. The reference string is 1, 2, 3, 2, 4, 1. Show the FIFO replacements and define a page fault in this trace.",
+      "rubric": [
+        "Define a fault as a reference whose page is not resident.",
+        "Show the first three references as fills.",
+        "Show that the second 2 is a hit.",
+        "Show that 4 replaces 1 under FIFO, and that the final 1 then faults.",
+        "State the fault count you got and which page was the victim for 4."
+      ],
+      "sampleStub": "1, 2, and 3 fill the frames (3 faults). The second 2 hits. FIFO then evicts 1 to store 4, and the final 1 faults. Fault count is 5, with page 1 as the victim for 4."
+    },
+    {
+      "id": "boss-w13",
+      "week": 13,
+      "title": "The File Grows",
+      "prompt": "A file grows from 2 blocks to 5. Compare contiguous allocation with indexed allocation for that growth.",
+      "rubric": [
+        "Say how contiguous placement looks at size 2.",
+        "Explain the failure mode: the following blocks may not be free.",
+        "Say what a growth step then costs (a copy into a larger hole).",
+        "Explain indexed growth: grab any free blocks and point at them.",
+        "Name the cost indexed pays on every random read (an index lookup)."
+      ],
+      "sampleStub": "Contiguous is one run of 2. Growing to 5 needs three free neighbors or a copy. Indexed adds three pointers to any free blocks and does not move the old ones. Reads consult the index."
+    }
+  ]
+}

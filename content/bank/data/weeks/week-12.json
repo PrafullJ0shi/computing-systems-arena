@@ -1,0 +1,836 @@
+{
+  "week": 12,
+  "title": "Introduction to Cloud Computing",
+  "learningGoals": [
+    "Define cloud computing, pay-as-you-go and the service models (IaaS, PaaS, SaaS).",
+    "Explain the technical reasons (performance, elasticity, global distribution, high availability and reliability) and the business reasons (no upfront cost, pay per use, faster time to market, less maintenance) for adopting the cloud.",
+    "Explain virtualisation, hypervisors (VMMs), and Type 1 (bare-metal) vs Type 2 (hosted), with the pros and cons of VMs.",
+    "Explain static vs dynamic provisioning, multi-tenancy, server consolidation, scalability vs elasticity, and how to measure elasticity.",
+    "Explain virtualisation overhead and compare VMs vs containers (Docker, Kubernetes): when to use each, and the Netflix microservices example."
+  ],
+  "sirStressed": [
+    "\"Not a single day goes by without us using the cloud.\" Know your everyday examples (UPI, Aadhaar, IRCTC Tatkal, Hotstar).",
+    "Both technical and business reasons: \"without monetary benefits nobody adopts the cloud.\" Pay-as-you-go, no upfront cost.",
+    "Type 1 (bare-metal, data centres, faster, more secure) vs Type 2 (hosted, local development, slower).",
+    "Multi-tenancy (Netflix and Airbnb on AWS, logically isolated). Static vs dynamic provisioning. Server consolidation.",
+    "Scalability vs elasticity: elasticity is automatic, up and down. Measure it by scaling time, utilisation %, and cost efficiency.",
+    "VMs vs containers: isolation (OS vs process), size, startup (minutes vs seconds). \"We cannot replace VMs with containers.\" Containers are for microservices; VMs are for security, legacy and different OSes."
+  ],
+  "commonTraps": [
+    "Type 1 runs on the hardware; Type 2 runs on a host OS. VirtualBox is Type 2.",
+    "Elasticity ≠ scalability. Elasticity is automatic and goes both ways.",
+    "Containers don't include an OS. They share the host kernel, so you can't run a Windows container on a Linux kernel.",
+    "Multi-tenancy means shared resources with logical isolation, not shared data.",
+    "Docker creates and runs containers; Kubernetes orchestrates many of them.",
+    "Server consolidation = fewer servers for low-load apps, not more.",
+    "The SaaS, PaaS and IaaS levels of control are often mixed up: IaaS gives the most control; SaaS gives the least."
+  ],
+  "summary": [
+    "Cloud = on-demand compute, storage, networking and software over the internet, pay-as-you-go. Models: IaaS (VMs), PaaS (platform), SaaS (apps). Everyday examples: WhatsApp, Gmail, UPI, Aadhaar, IRCTC, Hotstar.",
+    "Technical needs: performance, elasticity, global distribution (low latency), high availability (redundancy, auto-failover, disaster recovery).",
+    "Business needs: no upfront cost, pay per use, less maintenance, faster time to market, scale without losing customers.",
+    "Virtualisation: software computers on shared hardware. Hypervisor/VMM. Type 1 bare-metal (ESXi, Hyper-V, Xen; data centres; fast; secure; complex) vs Type 2 hosted (VirtualBox, VMware Workstation; development and learning; slower).",
+    "VM pros: cost, isolation, full OS control, different OSes, migration. Cons: full OS each, overhead, slow boot.",
+    "Provisioning: static (fixed) vs dynamic (by load, auto-scaling). Multi-tenancy (Netflix and Airbnb on AWS). Consolidation (low-use apps on one VM).",
+    "Scalability (the ability to grow, may be manual) vs elasticity (automatic up and down, pay only for the spike). Measured by scaling time, utilisation %, cost efficiency.",
+    "Containers: app + libraries, shared kernel, Docker (create and run) and Kubernetes (orchestrate). Start in seconds, MB-sized, high density, process-level isolation, same-OS only. VMs: minutes, GBs, OS-level isolation, any OS. Use containers for microservices (Netflix); VMs for banking, ERP, legacy and mixed OSes. Containers don't replace VMs."
+  ],
+  "questions": [
+    {
+      "id": "W12-Q001",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Cloud computing is mainly known for which feature?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Offline-only computation"
+        },
+        {
+          "id": "B",
+          "text": "Mandatory hardware upgrades"
+        },
+        {
+          "id": "C",
+          "text": "Elasticity"
+        },
+        {
+          "id": "D",
+          "text": "Fixed, rigid allocation"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "resources grow and shrink automatically with demand. That's the cloud's signature feature. answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W12-Q002",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which best represents a technical motivation for cloud adoption?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Eliminating all local hardware"
+        },
+        {
+          "id": "B",
+          "text": "Free software for all"
+        },
+        {
+          "id": "C",
+          "text": "A guarantee of zero failures"
+        },
+        {
+          "id": "D",
+          "text": "On-demand access to scalable compute power"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "the cloud doesn't remove all hardware, isn't free, and doesn't promise zero failures (it promises high availability). answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out"
+    },
+    {
+      "id": "W12-Q003",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "(The stem wasn't captured. From the options, it was \"What is the main purpose of cloud computing?\")",
+      "options": [
+        {
+          "id": "A",
+          "text": "To provide centralised computational resources to users"
+        },
+        {
+          "id": "B",
+          "text": "To replace all machines with mobiles"
+        },
+        {
+          "id": "C",
+          "text": "To avoid virtualisation"
+        },
+        {
+          "id": "D",
+          "text": "To ensure users never run out of local storage"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the lecture defined cloud computing as the centralised delivery of computing services over the internet. (It actually relies on virtualisation, so C is wrong.) answer worked out, not from the quiz review.",
+      "topicTags": [
+        "Module Introduction"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "worked_out",
+      "needsReview": true
+    },
+    {
+      "id": "W12-Q004",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which technical limitation motivates cloud adoption?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Limited local processing power"
+        },
+        {
+          "id": "B",
+          "text": "Plenty of unused supercomputers"
+        },
+        {
+          "id": "C",
+          "text": "Falling need for computation"
+        },
+        {
+          "id": "D",
+          "text": "No software dependencies"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Why Cloud Computing Is Needed"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q005",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Cloud computing helps organisations by:",
+      "options": [
+        {
+          "id": "A",
+          "text": "A private data centre for each user"
+        },
+        {
+          "id": "B",
+          "text": "Hardware that never fails"
+        },
+        {
+          "id": "C",
+          "text": "Allowing scalability based on demand"
+        },
+        {
+          "id": "D",
+          "text": "No storage systems needed"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Why Cloud Computing Is Needed"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q006",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why do businesses adopt cloud computing?",
+      "options": [
+        {
+          "id": "A",
+          "text": "No network use"
+        },
+        {
+          "id": "B",
+          "text": "To cut costs by paying only for what they use"
+        },
+        {
+          "id": "C",
+          "text": "Same computer for everyone"
+        },
+        {
+          "id": "D",
+          "text": "Slower development"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "pay-as-you-go, with no upfront cost (the business reason).",
+      "topicTags": [
+        "Why Cloud Computing Is Needed"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q007",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Virtual machines are created using:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Virtualisation"
+        },
+        {
+          "id": "B",
+          "text": "Physical cloning"
+        },
+        {
+          "id": "C",
+          "text": "Routing"
+        },
+        {
+          "id": "D",
+          "text": "Thermal management"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "specifically, by a hypervisor (VMM).",
+      "topicTags": [
+        "Virtualisation and Resource Provisioning"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q008",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Multi-tenancy means:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Multiple users share the same physical hardware securely"
+        },
+        {
+          "id": "B",
+          "text": "A dedicated server each"
+        },
+        {
+          "id": "C",
+          "text": "No isolation"
+        },
+        {
+          "id": "D",
+          "text": "Local storage only"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "for example, Netflix and Airbnb on AWS, logically isolated.",
+      "topicTags": [
+        "Virtualisation and Resource Provisioning"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q009",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "A key advantage of virtualisation is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Replacing all CPU cores"
+        },
+        {
+          "id": "B",
+          "text": "Infinite compute"
+        },
+        {
+          "id": "C",
+          "text": "Multiple isolated OS instances on one machine"
+        },
+        {
+          "id": "D",
+          "text": "No memory needed"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Virtualisation and Resource Provisioning"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q010",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why do containers launch faster than VMs?",
+      "options": [
+        {
+          "id": "A",
+          "text": "They share the host OS kernel"
+        },
+        {
+          "id": "B",
+          "text": "A full OS per container"
+        },
+        {
+          "id": "C",
+          "text": "More memory"
+        },
+        {
+          "id": "D",
+          "text": "They bypass resource controls"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "there's no guest OS to boot, so they start in seconds instead of minutes.",
+      "topicTags": [
+        "Virtual Machines vs Containers"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q011",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Virtual machines provide:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Container-level abstraction"
+        },
+        {
+          "id": "B",
+          "text": "Zero overhead"
+        },
+        {
+          "id": "C",
+          "text": "Kernel sharing"
+        },
+        {
+          "id": "D",
+          "text": "Strong hardware-level isolation"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "each VM has its own OS and kernel.",
+      "topicTags": [
+        "Virtual Machines vs Containers"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q012",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Containers are preferred when:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hardware virtualisation is mandatory"
+        },
+        {
+          "id": "B",
+          "text": "Rapid deployment and lightweight execution are needed"
+        },
+        {
+          "id": "C",
+          "text": "Full OS isolation is needed"
+        },
+        {
+          "id": "D",
+          "text": "The system must boot its own kernel"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "microservices and CI/CD. A, C and D are VM situations.",
+      "topicTags": [
+        "Virtual Machines vs Containers"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q013",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Cloud elasticity refers to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "More hardware complexity"
+        },
+        {
+          "id": "B",
+          "text": "Running without a network"
+        },
+        {
+          "id": "C",
+          "text": "Automatically scaling resources up and down with demand"
+        },
+        {
+          "id": "D",
+          "text": "Mandatory containers"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q014",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Virtualisation supports cloud computing by:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Allowing multiple virtual OS instances on one machine"
+        },
+        {
+          "id": "B",
+          "text": "Needing more physical servers"
+        },
+        {
+          "id": "C",
+          "text": "Avoiding multi-tenancy"
+        },
+        {
+          "id": "D",
+          "text": "No networking"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Summary"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-Q015",
+      "week": 12,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Containers differ from VMs because:",
+      "options": [
+        {
+          "id": "A",
+          "text": "No isolation"
+        },
+        {
+          "id": "B",
+          "text": "Slower start"
+        },
+        {
+          "id": "C",
+          "text": "Full hardware stacks"
+        },
+        {
+          "id": "D",
+          "text": "They share the host OS kernel"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "containers do have isolation, just at process level, so A is a trap.",
+      "topicTags": [
+        "Summary"
+      ],
+      "difficulty": 1,
+      "trapTags": [
+        "containers do have isolation, just at process level, so A is a trap."
+      ],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W12-X01",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which hypervisor type runs directly on the hardware and is used in cloud data centres?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Type 2"
+        },
+        {
+          "id": "B",
+          "text": "Type 1 (bare-metal)"
+        },
+        {
+          "id": "C",
+          "text": "A container engine"
+        },
+        {
+          "id": "D",
+          "text": "An emulator"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Type 1 (bare-metal), for example ESXi, Hyper-V or Xen.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X02",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Oracle VirtualBox on your laptop is a:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Type 1 hypervisor"
+        },
+        {
+          "id": "B",
+          "text": "Type 2 hypervisor"
+        },
+        {
+          "id": "C",
+          "text": "Container"
+        },
+        {
+          "id": "D",
+          "text": "PaaS"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Type 2 (hosted on a host OS).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X03",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Resources automatically scaling up during a sale and down after it is called:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Static provisioning"
+        },
+        {
+          "id": "B",
+          "text": "Elasticity"
+        },
+        {
+          "id": "C",
+          "text": "Server consolidation"
+        },
+        {
+          "id": "D",
+          "text": "Vertical scaling only"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Elasticity (automatic, both ways).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X04",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Netflix and Airbnb running on the same AWS infrastructure but logically isolated is an example of:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Multi-tenancy"
+        },
+        {
+          "id": "B",
+          "text": "Partitioning"
+        },
+        {
+          "id": "C",
+          "text": "A Type 2 hypervisor"
+        },
+        {
+          "id": "D",
+          "text": "SaaS only"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Multi-tenancy.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X05",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which statement about containers is TRUE?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Each container has its own full OS"
+        },
+        {
+          "id": "B",
+          "text": "Containers share the host OS kernel and start in seconds"
+        },
+        {
+          "id": "C",
+          "text": "Containers give stronger isolation than VMs"
+        },
+        {
+          "id": "D",
+          "text": "A Linux host can run a Windows container natively"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Containers have no guest OS, so they use a shared kernel and are fast.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X06",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Gmail is an example of:",
+      "options": [
+        {
+          "id": "A",
+          "text": "IaaS"
+        },
+        {
+          "id": "B",
+          "text": "PaaS"
+        },
+        {
+          "id": "C",
+          "text": "SaaS"
+        },
+        {
+          "id": "D",
+          "text": "A hypervisor"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "SaaS.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X07",
+      "week": 12,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give two technical and two business reasons for a start-up to use the cloud instead of its own servers.",
+      "correctAnswers": [
+        "Technical: elasticity (auto-scale for spikes), global distribution (low latency), high availability and failover, and access to heavy compute such as GPUs. Business: no upfront hardware cost (pay-as-you-go), less maintenance and staff, and faster time to market (live in minutes)."
+      ],
+      "explanation": "Technical: elasticity (auto-scale for spikes), global distribution (low latency), high availability and failover, and access to heavy compute such as GPUs. Business: no upfront hardware cost (pay-as-you-go), less maintenance and staff, and faster time to market (live in minutes).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X08",
+      "week": 12,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Distinguish scalability from elasticity, and name the three parameters used to measure elasticity.",
+      "correctAnswers": [
+        "Scalability = the system's ability to grow capacity for more load, which can be manual or planned (adding servers). Elasticity = automatic, dynamic scaling up and down with demand in real time, so you pay only for what you use. Elasticity is measured by scaling time (up or down), resource utilisation %, and cost efficiency."
+      ],
+      "explanation": "Scalability = the system's ability to grow capacity for more load, which can be manual or planned (adding servers). Elasticity = automatic, dynamic scaling up and down with demand in real time, so you pay only for what you use. Elasticity is measured by scaling time (up or down), resource utilisation %, and cost efficiency.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X09",
+      "week": 12,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "A bank must run a legacy core-banking application that needs a specific Windows Server version with strict isolation. It also wants to launch a new mobile-app back end made of 20 microservices that must scale within seconds. Recommend VMs or containers for each, and justify your choice.",
+      "correctAnswers": [
+        "Legacy core banking → VMs. They need a specific OS (Windows Server), strong OS-level isolation and security, and they're legacy. A container can't provide a different OS and gives only process-level isolation. Microservices back end → containers (Docker, orchestrated by Kubernetes, typically on cloud VMs). They're lightweight, start in seconds, scale out quickly, package each service with its dependencies, and give high density. That's the Netflix-style microservices pattern."
+      ],
+      "explanation": "Legacy core banking → VMs. They need a specific OS (Windows Server), strong OS-level isolation and security, and they're legacy. A container can't provide a different OS and gives only process-level isolation. Microservices back end → containers (Docker, orchestrated by Kubernetes, typically on cloud VMs). They're lightweight, start in seconds, scale out quickly, package each service with its dependencies, and give high density. That's the Netflix-style microservices pattern.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W12-X10",
+      "week": 12,
+      "source": "extra",
+      "type": "short",
+      "prompt": "What is server consolidation, and why does it save cost? How is it different from multi-tenancy?",
+      "correctAnswers": [
+        "Server consolidation = putting several low-usage applications onto one (powerful) VM or server instead of giving each its own, which raises utilisation and cuts hardware, power and licence costs. Multi-tenancy = many different customers (tenants) sharing the same infrastructure with logical isolation (Netflix and Airbnb on AWS). Consolidation is about packing workloads efficiently; multi-tenancy is about sharing infrastructure between separate users."
+      ],
+      "explanation": "Server consolidation = putting several low-usage applications onto one (powerful) VM or server instead of giving each its own, which raises utilisation and cuts hardware, power and licence costs. Multi-tenancy = many different customers (tenants) sharing the same infrastructure with logical isolation (Netflix and Airbnb on AWS). Consolidation is about packing workloads efficiently; multi-tenancy is about sharing infrastructure between separate users.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

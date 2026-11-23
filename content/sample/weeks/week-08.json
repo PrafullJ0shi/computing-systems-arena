@@ -1,0 +1,185 @@
+{
+  "week": 8,
+  "questions": [
+    {
+      "id": "w08-q01",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Dual-mode operation exists so that",
+      "options": [
+        "The OS can run privileged instructions that ordinary programs cannot",
+        "The CPU can skip fetch",
+        "Every process shares one stack",
+        "Compilers can emit interrupts directly into the ALU"
+      ],
+      "answer": 0,
+      "explanation": "User mode is a cage. Kernel mode is allowed to change page tables, talk to devices, and the like. A trap is the door between them.",
+      "tags": [
+        "protection"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w08-q02",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A system call enters the kernel by",
+      "options": [
+        "A controlled trap that switches to kernel mode and jumps to a known entry",
+        "An ordinary store into the kernel’s memory",
+        "Restarting the machine",
+        "Editing the interrupt vector from user mode"
+      ],
+      "answer": 0,
+      "explanation": "The instruction raises a trap. Hardware flips the privilege level and vectors to the OS entry, which checks the request.",
+      "tags": [
+        "syscall"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "A normal function call does not change privilege."
+      ]
+    },
+    {
+      "id": "w08-q03",
+      "week": 8,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which requests need a system call on a typical OS?",
+      "options": [
+        "Read bytes from an open file",
+        "Create a new process",
+        "Add two values that are already in registers",
+        "End the current process"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "File transfer, process creation, and exit cross into the kernel. Adding two registers stays in user mode.",
+      "tags": [
+        "syscall"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Assuming every library call, including pure arithmetic, is a system call."
+      ]
+    },
+    {
+      "id": "w08-q04",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which instruction should be rejected in user mode?",
+      "options": [
+        "One that disables interrupts",
+        "One that adds two registers",
+        "One that jumps inside the program",
+        "One that shifts a register by one"
+      ],
+      "answer": 0,
+      "explanation": "Interrupt masking, I/O, and page-table writes are privileged. Arithmetic and local jumps are the program’s own business.",
+      "tags": [
+        "protection"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w08-q05",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A C library call such as a formatted print is",
+      "options": [
+        "Often a user-space wrapper that eventually makes a write system call",
+        "Itself the kernel",
+        "Illegal in user mode",
+        "A cache-control instruction"
+      ],
+      "answer": 0,
+      "explanation": "The library can format the string in user space. Moving the bytes to a terminal still goes through a system call such as write.",
+      "tags": [
+        "syscall"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Treating the library name and the system call as the same boundary."
+      ]
+    },
+    {
+      "id": "w08-q06",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The shell you type commands into is",
+      "options": [
+        "A user-space process that creates other processes",
+        "A part of the ALU",
+        "The interrupt controller",
+        "The page-replacement algorithm"
+      ],
+      "answer": 0,
+      "explanation": "The shell is an ordinary program. It reads a line, then asks the kernel to create and run another process.",
+      "tags": [
+        "os-structure"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w08-q07",
+      "week": 8,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Compared with a monolithic kernel, a microkernel tries to",
+      "options": [
+        "Keep the privileged core small and run more services outside it",
+        "Remove the need for system calls",
+        "Put every driver in the ALU",
+        "Forbid processes"
+      ],
+      "answer": 0,
+      "explanation": "Monolithic kernels run file systems and many drivers in kernel mode. A microkernel pushes more of that into separate servers. Both still use a mode switch.",
+      "tags": [
+        "os-structure"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "w08-q08",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The privilege level changes during a system call so that",
+      "options": [
+        "The processor may legally execute the kernel’s privileged instructions",
+        "The cache is flushed to disk",
+        "The program counter stops incrementing forever",
+        "User registers are discarded on purpose"
+      ],
+      "answer": 0,
+      "explanation": "The mode bit, or the equivalent privilege level, is what makes the kernel’s instructions legal. On the way back it must be user mode again.",
+      "tags": [
+        "protection",
+        "syscall"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w08-q09",
+      "week": 8,
+      "source": "extra",
+      "type": "short",
+      "prompt": "What has to be true again when a system call returns normally?",
+      "options": [],
+      "answer": "The CPU is back in user mode, the caller can see a return value, and execution resumes after the trap.",
+      "explanation": "The kernel may have changed kernel data structures. The caller should not come back still privileged, and it needs its registers restored.",
+      "tags": [
+        "syscall"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

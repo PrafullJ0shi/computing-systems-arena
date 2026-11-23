@@ -1,0 +1,261 @@
+{
+  "rubric": {
+    "title": "The 5-step answer formula",
+    "instruction": "Use it for every subjective question.",
+    "steps": [
+      {
+        "step": 1,
+        "name": "DEFINE",
+        "check": "one crisp line: \"X is ...\""
+      },
+      {
+        "step": 2,
+        "name": "WHY",
+        "check": "why it exists / what problem it solves"
+      },
+      {
+        "step": 3,
+        "name": "COMPARE",
+        "check": "a small table vs the \"other\" option (A vs B)"
+      },
+      {
+        "step": 4,
+        "name": "EXAMPLE",
+        "check": "a real or lecture example (Big Billion Days, ATM verifyPIN, YouTube clusters...)"
+      },
+      {
+        "step": 5,
+        "name": "CONCLUDE",
+        "check": "answer the scenario: \"So for this case, choose ... because ...\""
+      }
+    ],
+    "workedExample": {
+      "prompt": "A start-up expects traffic to jump 50× during IPL. Should it use VMs or containers? Justify.",
+      "steps": [
+        {
+          "step": 1,
+          "text": "Define: a VM is a full virtual computer with its own guest OS, running on a hypervisor. A container packages an app and its libraries and shares the host kernel."
+        },
+        {
+          "step": 2,
+          "text": "Why: both let one physical machine run many isolated workloads, so resources are used efficiently."
+        },
+        {
+          "step": 3,
+          "text": "Compare (a mini table): isolation (OS-level vs process-level), size (GBs vs MBs), startup (minutes vs seconds), OS choice (any vs the same kernel)."
+        },
+        {
+          "step": 4,
+          "text": "Example: Netflix runs hundreds of microservice containers on Kubernetes, which scale out in seconds."
+        },
+        {
+          "step": 5,
+          "text": "Conclude: for a sudden IPL spike, use containers (Docker + Kubernetes) on cloud VMs with elastic auto-scaling, because they start in seconds and are cheap to add. Keep VMs underneath for isolation between tenants."
+        }
+      ]
+    }
+  },
+  "top25": [
+    {
+      "rank": 1,
+      "weeks": [
+        1
+      ],
+      "question": "Compare von Neumann, Harvard and modified Harvard. Which do modern CPUs use and why?",
+      "outline": "Unified vs split at all levels vs split L1 + unified below. von Neumann bottleneck (no pipelining). Harvard can't balance or modify instructions. Modified Harvard is used today. Draw a diagram"
+    },
+    {
+      "rank": 2,
+      "weeks": [
+        1
+      ],
+      "question": "How does a multi-core system handle an L1 miss? Look-through vs look-aside; write-update vs write-invalidate",
+      "outline": "Check the other cores' L1s first (coherence), then L2/L3/RAM. Look-through = sequential (standard); look-aside = parallel + cancel. Invalidate for many writes, update for few"
+    },
+    {
+      "rank": 3,
+      "weeks": [
+        2
+      ],
+      "question": "Explain spatial and temporal locality using a code snippet (the Fibonacci array)",
+      "outline": "i = temporal (every iteration); array A = spatial (sequential). Caches move blocks. 80/20 rule. Row-major loop order"
+    },
+    {
+      "rank": 4,
+      "weeks": [
+        2
+      ],
+      "question": "SRAM vs DRAM; NAND vs NOR; HDD vs SSD",
+      "outline": "Tables: refresh, speed, cell size, OS-transparent or not; density vs execute-in-place; seek + rotation vs constant access, wear levelling, slow writes"
+    },
+    {
+      "rank": 5,
+      "weeks": [
+        2
+      ],
+      "question": "Block vs character devices. Why a buffer cache?",
+      "outline": "1 I/O vs 1024 I/Os per 1 KB. The buffer cache keeps the block in RAM, so later bytes are memory reads"
+    },
+    {
+      "rank": 6,
+      "weeks": [
+        3
+      ],
+      "question": "Explain the OS as a resource manager, and the path user → shell → system call → kernel → hardware",
+      "outline": "Layers, privileged I/O (dual mode), why a CLI suits remote work, everything is a file"
+    },
+    {
+      "rank": 7,
+      "weeks": [
+        3
+      ],
+      "question": "A scenario on hard vs soft links (delete the original, then what happens?)",
+      "outline": "Same inode, survives deletion, no directories, same filesystem vs a path that can dangle, works across filesystems and for directories. Use ls -i"
+    },
+    {
+      "rank": 8,
+      "weeks": [
+        3
+      ],
+      "question": "Write a pipeline to find the top 5 error IPs in a log file",
+      "outline": "grep ERROR → cut -d' ' -f1 → sort → uniq -c → sort -nr → head -5 (joined with pipes; full command in Chapter 3). Explain each stage; pipes are FIFO"
+    },
+    {
+      "rank": 9,
+      "weeks": [
+        4
+      ],
+      "question": "Write a shell script with argument validation (prime, Fibonacci, file type, second largest)",
+      "outline": "Shebang, $# check, range check, loop with expr or $(( )) , output. See the Week 4 quiz solutions"
+    },
+    {
+      "rank": 10,
+      "weeks": [
+        5
+      ],
+      "question": "Trace a fork() program. Explain the process states, zombies and orphans",
+      "outline": "2ⁿ processes; 0 in the child and the PID in the parent; the 5-state diagram; zombie until wait; orphans go to init (PID 1)"
+    },
+    {
+      "rank": 11,
+      "weeks": [
+        5
+      ],
+      "question": "Threads vs processes: what's shared and what's private? Thread pools?",
+      "outline": "Shared: code, data, heap, files, signal handlers, CWD. Private: stack, registers, signal mask. Pools give a bound and avoid creation cost"
+    },
+    {
+      "rank": 12,
+      "weeks": [
+        5
+      ],
+      "question": "Race condition → critical section → semaphore; producer–consumer",
+      "outline": "count++ = load/add/store. 3 requirements. mutex = 1 , empty = n , full = 0 and the order of waits"
+    },
+    {
+      "rank": 13,
+      "weeks": [
+        6
+      ],
+      "question": "Abstraction vs virtualisation. Process VM vs system VM, with examples",
+      "outline": "Hide vs change details. JVM, debugger, emulator vs VMware GSX, VirtualBox. Isolation"
+    },
+    {
+      "rank": 14,
+      "weeks": [
+        6,
+        12
+      ],
+      "question": "VMs vs containers. When to use which? (Weeks 6 and 12)",
+      "outline": "The table plus the knife/cutter analogy; banking, legacy, mixed OS vs microservices; containers on VMs in the cloud"
+    },
+    {
+      "rank": 15,
+      "weeks": [
+        6
+      ],
+      "question": "HLL VMs and K+N; Python venv",
+      "outline": "Bytecode lets 100 languages × 10 machines need 110 compilers instead of 1000. venv isolates packages per project"
+    },
+    {
+      "rank": 16,
+      "weeks": [
+        7
+      ],
+      "question": "A Git team workflow and merge-conflict scenario. Centralised vs distributed",
+      "outline": "clone → branch → add → commit → pull → push → PR. A conflict on the same line needs a human. SVN vs Git table"
+    },
+    {
+      "rank": 17,
+      "weeks": [
+        8
+      ],
+      "question": "Compiler vs interpreter; how Python runs; JIT",
+      "outline": "Whole program vs line by line. .py → .pyc bytecode → PVM. JIT compiles hot code at run time"
+    },
+    {
+      "rank": 18,
+      "weeks": [
+        8
+      ],
+      "question": "Error types, plus how you'd profile and debug a slow, wrong program",
+      "outline": "Compile-time, run-time and logical errors. pylint/radon (static) vs cProfile/memory_profiler (dynamic). Breakpoints, step over/into, watch. The len-1 bug"
+    },
+    {
+      "rank": 19,
+      "weeks": [
+        9
+      ],
+      "question": "CPU vs GPU, and the host–device workflow",
+      "outline": "Few powerful cores vs thousands of simple ones. The 4 steps. The PCIe bottleneck. The physician/specialist analogy"
+    },
+    {
+      "rank": 20,
+      "weeks": [
+        9
+      ],
+      "question": "Thread/block/grid/warp calculations; SIMT and divergence",
+      "outline": "Warps = threads ÷ 32. A block is set by the programmer, a warp by the hardware. Divergence serialises the paths"
+    },
+    {
+      "rank": 21,
+      "weeks": [
+        10
+      ],
+      "question": "The GPU memory hierarchy and tiled matrix multiplication",
+      "outline": "Cycle table, 1 cycle = 1/f. Tiles in shared memory, reuse, sync, 10×+ faster"
+    },
+    {
+      "rank": 22,
+      "weeks": [
+        11
+      ],
+      "question": "Why distributed systems? Client–server, RPC, scaling, the 4 server attributes",
+      "outline": "Data, compute, spikes, fault tolerance. ATM RPC. Horizontal vs vertical + a load balancer. Throughput, response time, reliability, availability"
+    },
+    {
+      "rank": 23,
+      "weeks": [
+        11
+      ],
+      "question": "Partitioning vs replication; HDFS; a search-engine back end",
+      "outline": "Split vs copy, the hybrid. 128 MB × 3 (storage calculation). Parallel query across partitions"
+    },
+    {
+      "rank": 24,
+      "weeks": [
+        12
+      ],
+      "question": "Cloud: technical and business needs; Type 1 vs Type 2; elasticity vs scalability; multi-tenancy",
+      "outline": "Elasticity, global reach, availability; pay-as-you-go. ESXi vs VirtualBox. Automatic up and down. Netflix and Airbnb on AWS"
+    },
+    {
+      "rank": 25,
+      "weeks": [
+        13
+      ],
+      "question": "Mobile constraints, SoC, Android stack, the phone as a client",
+      "outline": "Battery, thermal, RAM, ARM big.LITTLE, NPU/ISP/DSP. Apps → framework → ART → HAL → kernel. REST/JSON/HTTPS, retry, cache, async"
+    }
+  ]
+}

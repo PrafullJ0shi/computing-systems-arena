@@ -1,0 +1,1015 @@
+{
+  "week": 3,
+  "title": "Introduction to an Operating System (Linux and UNIX Commands)",
+  "learningGoals": [
+    "Explain what an OS is (a resource manager and an interface between the user and the hardware), the layered design, system calls, and terminal vs shell vs kernel.",
+    "Compare GUI vs CLI and know when each fits.",
+    "Pass data to a C program through command-line arguments ( argv , atoi , atof ).",
+    "Use the basic commands: ls , pwd , cd , mkdir , passwd , man , info , date , cal .",
+    "Use the file and text commands: cat , cp , mv , rm , chmod , redirection, wc , sort , head , tail , grep , find , pipes and tee .",
+    "Explain inodes, hard links vs symbolic links, and basic process commands ( & , jobs , ps , kill )."
+  ],
+  "sirStressed": [
+    "\"Today's goal is not memorisation, it's exploration.\" \"We will never test you on how many commands or options you remember.\" You need the concepts: what the CLI is, where and why to use it, and how commands combine.",
+    "The command line is a mandatory skill (AI servers, the cloud, GPUs, Docker). \"Command line is not old. Command line is power.\"",
+    "Which interface fits the task? That's the right question, and sir called it very important.",
+    "Terminal ≠ OS, shell ≠ kernel. Commands become processes that make system calls.",
+    ". is the current directory and .. is the parent. Practise them.",
+    "Quizzes are multiple choice. Assessment components are quizzes + assignment + exams = 100 marks. Quiz 1 covered modules 1–3."
+  ],
+  "commonTraps": [
+    "ls -a shows . and .. ; ls -A doesn't.",
+    "> overwrites while >> appends. << is a here-document, not \"append input\".",
+    "ls > op | wc prints 0, because the output already went to the file.",
+    "grep searches contents; find searches file names/attributes. grep -c counts lines; wc -l counts lines of any input.",
+    "chmod digit order is user, group, others, and r = 4, w = 2, x = 1.",
+    "Hard links can't point to directories, and they survive deletion of the original. Symlinks break.",
+    "argv[0] is the program name, not the first user argument.",
+    "uniq needs sorted input. head -n 1 keeps the first line.",
+    "cp keeps the source and mv removes it. rm -i prompts for each file; rm -I prompts once."
+  ],
+  "summary": [
+    "OS = resource manager and interface between user and hardware. Layered (hardware = layer 0). Abstracts the hardware. In UNIX, everything is a file; you deal with files and processes.",
+    "You → terminal → shell → program/process → system calls → kernel → hardware. Apps use APIs and libraries that wrap system calls.",
+    "GUI is visual and one-off. CLI is precise, repetitive, remote and automatable. Ctrl+Alt+T opens a terminal.",
+    "argv[0] = program name; all arguments are strings; atoi and atof stop at the first invalid character.",
+    "Navigation: pwd , ls (-a -A -l -h -R -t -S -r -1), cd ( cd , cd .. ), mkdir -p , absolute vs relative paths.",
+    "passwd (-l lock, -u unlock, -d delete, -e expire). man (sections 1–9) is crisp; info is detailed and hyperlinked. date (-u, -s, -d), cal (-j Julian, -m Monday).",
+    "cat , cp (copy), mv (cut/rename), rm (-i -I -r -f), chmod 755/644, u+x.",
+    "Redirection > , >> , < , << , 2> . Filters wc (-l -w -c -m -L), sort (-n -r -M -h -u -c -m -o), head / tail (10 lines by default, -n, tail -f ).",
+    "grep (-i -v -w -x -c -n -l -o -r -E -F), find (-name -type f/d/l -mtime). Pipes | (FIFO), tee , sort | uniq .",
+    "Inode = metadata. Hard link = same inode, files only, survives deletion. Symlink = shortcut, works for directories too, can dangle.",
+    "Processes: & , jobs , ps , kill PID ."
+  ],
+  "questions": [
+    {
+      "id": "W03-Q001",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "The operating system acts as a ______.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Resource manager"
+        },
+        {
+          "id": "B",
+          "text": "Buffer cache"
+        },
+        {
+          "id": "C",
+          "text": "User-level library manager"
+        },
+        {
+          "id": "D",
+          "text": "Prefetch buffer"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the OS manages the CPU, memory, I/O and files. That's the lecture's key definition.",
+      "topicTags": [
+        "Working with Linux OS"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q002",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which of these is a general-purpose OS?",
+      "options": [
+        {
+          "id": "A",
+          "text": "VxWorks"
+        },
+        {
+          "id": "B",
+          "text": "Sprite"
+        },
+        {
+          "id": "C",
+          "text": "Linux"
+        },
+        {
+          "id": "D",
+          "text": "iOS"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "VxWorks is a real-time/embedded OS, Sprite was a research distributed OS, and iOS is tied to Apple's mobile devices. Linux runs everything from servers to desktops.",
+      "topicTags": [
+        "Working with Linux OS"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q003",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is true of the command-line interface?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Easy to use"
+        },
+        {
+          "id": "B",
+          "text": "Friendly interface"
+        },
+        {
+          "id": "C",
+          "text": "Very effective in direct interaction"
+        },
+        {
+          "id": "D",
+          "text": "Very efficient for connecting to remote systems"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "a CLI works over SSH with tiny bandwidth, which makes remote work easy. Ease of use and friendliness are GUI strengths.",
+      "topicTags": [
+        "Command Line Interface"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q004",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which shortcut opens a terminal in Linux?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Alt+Ctrl+Del"
+        },
+        {
+          "id": "B",
+          "text": "Ctrl+Alt+T"
+        },
+        {
+          "id": "C",
+          "text": "Ctrl+Alt+L"
+        },
+        {
+          "id": "D",
+          "text": "Alt+Tab"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "\"T\" for Terminal. Ctrl+Alt+L locks the screen.",
+      "topicTags": [
+        "Command Line Interface"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q005",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "A program is run as ./a.out Hi 5 . What is argv[0] ?",
+      "options": [
+        {
+          "id": "A",
+          "text": "a.out"
+        },
+        {
+          "id": "B",
+          "text": "./a.out"
+        },
+        {
+          "id": "C",
+          "text": "Hi"
+        },
+        {
+          "id": "D",
+          "text": "5"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "argv[0] is the program name exactly as typed, including ./ . argv[1] = \"Hi\" and argv[2] = \"5\" (a string!).",
+      "topicTags": [
+        "Taking Different Datatypes from the Command Line"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q006",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does atoi(\"12abc34\") return?",
+      "options": [
+        {
+          "id": "A",
+          "text": "0"
+        },
+        {
+          "id": "B",
+          "text": "1234"
+        },
+        {
+          "id": "C",
+          "text": "120"
+        },
+        {
+          "id": "D",
+          "text": "12"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "atoi converts digits until the first non-digit character and then stops.",
+      "topicTags": [
+        "Taking Different Datatypes from the Command Line"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q007",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which ls option sorts files by modification time?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-l"
+        },
+        {
+          "id": "B",
+          "text": "-i"
+        },
+        {
+          "id": "C",
+          "text": "-r"
+        },
+        {
+          "id": "D",
+          "text": "-t"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "-t = time (newest first). -r only reverses the order.",
+      "topicTags": [
+        "UNIX Commands: ls, pwd"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q008",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which ls option shows inode numbers?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-l"
+        },
+        {
+          "id": "B",
+          "text": "-i"
+        },
+        {
+          "id": "C",
+          "text": "-r"
+        },
+        {
+          "id": "D",
+          "text": "-s"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "-i = inode. That's useful for checking whether two names are hard links (same inode).",
+      "topicTags": [
+        "UNIX Commands: ls, pwd"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q009",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which cd option goes back to the previous working directory?",
+      "options": [
+        {
+          "id": "A",
+          "text": "cd .."
+        },
+        {
+          "id": "B",
+          "text": "cd /"
+        },
+        {
+          "id": "C",
+          "text": "cd -"
+        },
+        {
+          "id": "D",
+          "text": "cd ~"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "cd - toggles to the last directory. .. = parent, / = root, ~ = home.",
+      "topicTags": [
+        "UNIX Commands: cd, mkdir, passwd"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q010",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which passwd option makes an account passwordless?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-l"
+        },
+        {
+          "id": "B",
+          "text": "-d"
+        },
+        {
+          "id": "C",
+          "text": "-i"
+        },
+        {
+          "id": "D",
+          "text": "-f"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "-d = delete the password. ( -l locks and -u unlocks.)",
+      "topicTags": [
+        "UNIX Commands: cd, mkdir, passwd"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q011",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which man command shows exit as a system call?",
+      "options": [
+        {
+          "id": "A",
+          "text": "man 2 exit"
+        },
+        {
+          "id": "B",
+          "text": "man 3 exit"
+        },
+        {
+          "id": "C",
+          "text": "man 1 exit"
+        },
+        {
+          "id": "D",
+          "text": "man 4 exit"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "man section 1 = user commands, 2 = system calls, 3 = library functions.",
+      "topicTags": [
+        "UNIX Commands: man, info"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q012",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which command is best for exploring related topics?",
+      "options": [
+        {
+          "id": "A",
+          "text": "man"
+        },
+        {
+          "id": "B",
+          "text": "info"
+        },
+        {
+          "id": "C",
+          "text": "grep"
+        },
+        {
+          "id": "D",
+          "text": "find"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "info pages are hyperlinked, so you can jump between related nodes. man is crisp but flat.",
+      "topicTags": [
+        "UNIX Commands: man, info"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q013",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which command displays the date from some months ago? (The quiz stem says \"2 months ago\" but its marked option says \"3 months ago\". The quiz has a typo.)",
+      "options": [
+        {
+          "id": "A",
+          "text": "date -u"
+        },
+        {
+          "id": "B",
+          "text": "cal -3"
+        },
+        {
+          "id": "C",
+          "text": "date --date=\"3 months ago\""
+        },
+        {
+          "id": "D",
+          "text": "cal 2025"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "date -d / --date=\"N months ago\" prints a relative date. It's the only option that does this. For 2 months you'd write date --date=\"2 months ago\" .",
+      "topicTags": [
+        "UNIX Commands: date, cal"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q014",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which cal option shows Julian dates for the previous, current and next months?",
+      "options": [
+        {
+          "id": "A",
+          "text": "cal -j 2025"
+        },
+        {
+          "id": "B",
+          "text": "cal -3"
+        },
+        {
+          "id": "C",
+          "text": "cal -j"
+        },
+        {
+          "id": "D",
+          "text": "cal -j3"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "-j = Julian day numbers, and -3 = the three months. Combined, that's -j3 .",
+      "topicTags": [
+        "UNIX Commands: date, cal"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q015",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which command concatenates file1.txt, then text typed by the user, then file2.txt?",
+      "options": [
+        {
+          "id": "A",
+          "text": "cat file1.txt file2.txt"
+        },
+        {
+          "id": "B",
+          "text": "cat file1.txt < file2.txt"
+        },
+        {
+          "id": "C",
+          "text": "cat file1.txt -file2.txt"
+        },
+        {
+          "id": "D",
+          "text": "cat file2.txt file1.txt > file3.txt"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "a lone - means \"read standard input here\". Type your text, then press Ctrl+D.",
+      "topicTags": [
+        "Text Processing Commands: cat, cp"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q016",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which cp option creates hard links instead of copying?",
+      "options": [
+        {
+          "id": "A",
+          "text": "cp -l"
+        },
+        {
+          "id": "B",
+          "text": "cp -H"
+        },
+        {
+          "id": "C",
+          "text": "cp -L"
+        },
+        {
+          "id": "D",
+          "text": "cp -i"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "-l = link (hard). -i = interactive prompt. -H / -L are about following symlinks.",
+      "topicTags": [
+        "Text Processing Commands: cat, cp"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q017",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which mv option prompts before overwriting?",
+      "options": [
+        {
+          "id": "A",
+          "text": "mv -f"
+        },
+        {
+          "id": "B",
+          "text": "mv -i"
+        },
+        {
+          "id": "C",
+          "text": "mv -n"
+        },
+        {
+          "id": "D",
+          "text": "mv -u"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "-i = interactive, so it asks before overwriting. -n = no-clobber: it silently never overwrites and doesn't prompt. -f forces and -u updates only if the source is newer. The quiz marked both B and C. B is the real answer, worked out.",
+      "topicTags": [
+        "File Processing Commands: mv, rm, chmod"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz",
+      "needsReview": true
+    },
+    {
+      "id": "W03-Q018",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "file1.txt has read permission for user, group and other ( r--r--r-- ). Change it to read+execute for user, read for group, and nothing for other.",
+      "options": [
+        {
+          "id": "A",
+          "text": "chmod u+x,o-r file1.txt"
+        },
+        {
+          "id": "B",
+          "text": "chmod u+x file1.txt"
+        },
+        {
+          "id": "C",
+          "text": "chmod o-r file1.txt"
+        },
+        {
+          "id": "D",
+          "text": "chmod 740 file1.txt"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the target is r-xr----- (octal 540). Add x for the user and remove r from others, both at once. 740 would be rwxr----- (it adds write, which is wrong).",
+      "topicTags": [
+        "File Processing Commands: mv, rm, chmod"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q019",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does cat < file1.txt > file2.txt do?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Takes input from file1.txt and directs it to file2.txt"
+        },
+        {
+          "id": "B",
+          "text": "The reverse"
+        },
+        {
+          "id": "C",
+          "text": "Takes input from file2.txt and shows it"
+        },
+        {
+          "id": "D",
+          "text": "Takes input from file1.txt and shows it"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "< feeds file1 as input and > sends the output into file2. It's effectively a copy.",
+      "topicTags": [
+        "Text Processing Commands: I/O Redirection"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-Q020",
+      "week": 3,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which redirection appends to a file?",
+      "options": [
+        {
+          "id": "A",
+          "text": ">"
+        },
+        {
+          "id": "B",
+          "text": ">>"
+        },
+        {
+          "id": "C",
+          "text": "<"
+        },
+        {
+          "id": "D",
+          "text": "<<"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ">> appends and > overwrites. << is a here-document (input).",
+      "topicTags": [
+        "Text Processing Commands: I/O Redirection"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W03-X01",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which command lists hidden files but not . and .. ?",
+      "options": [
+        {
+          "id": "A",
+          "text": "ls -a"
+        },
+        {
+          "id": "B",
+          "text": "ls -A"
+        },
+        {
+          "id": "C",
+          "text": "ls -l"
+        },
+        {
+          "id": "D",
+          "text": "ls -R"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "-A is \"almost all\": hidden files, but without . and .. .",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X02",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "After chmod 640 report.txt , which statement is true?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Others can read"
+        },
+        {
+          "id": "B",
+          "text": "Group can read and write"
+        },
+        {
+          "id": "C",
+          "text": "Owner can read and write; group can read; others have no access"
+        },
+        {
+          "id": "D",
+          "text": "Owner can execute"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "6 = rw (owner), 4 = r (group), 0 = none (others).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X03",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "You delete file1.txt , which had a hard link h1.txt and a symbolic link s1.txt . What happens?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Both still show the content"
+        },
+        {
+          "id": "B",
+          "text": "h1.txt still shows the content; s1.txt becomes dangling"
+        },
+        {
+          "id": "C",
+          "text": "Both become dangling"
+        },
+        {
+          "id": "D",
+          "text": "s1.txt works; h1.txt is broken"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "A hard link shares the inode, so the data stays until the link count reaches 0. A symlink stores only the path, so it dangles.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X04",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Output of ls > op | wc :",
+      "options": [
+        {
+          "id": "A",
+          "text": "The number of files"
+        },
+        {
+          "id": "B",
+          "text": "0 0 0"
+        },
+        {
+          "id": "C",
+          "text": "An error"
+        },
+        {
+          "id": "D",
+          "text": "The content of op"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "The ls output went to the file op , so wc reads empty input.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X05",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which command counts how many lines of app.log contain \"ERROR\"?",
+      "options": [
+        {
+          "id": "A",
+          "text": "grep -v ERROR app.log"
+        },
+        {
+          "id": "B",
+          "text": "grep -c ERROR app.log"
+        },
+        {
+          "id": "C",
+          "text": "find ERROR app.log"
+        },
+        {
+          "id": "D",
+          "text": "wc ERROR app.log"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "grep -c counts matching lines. ( -v inverts the match.)",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X06",
+      "week": 3,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In ./a.out 45 hello , what is argv[1] ?",
+      "options": [
+        {
+          "id": "A",
+          "text": "./a.out"
+        },
+        {
+          "id": "B",
+          "text": "\"45\" (as a string)"
+        },
+        {
+          "id": "C",
+          "text": "the integer 45"
+        },
+        {
+          "id": "D",
+          "text": "\"hello\""
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "All arguments are strings. argv[0] is ./a.out and argv[1] is \"45\" ; convert it with atoi .",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X07",
+      "week": 3,
+      "source": "extra",
+      "type": "code",
+      "prompt": "Write one pipeline that shows the 3 most frequent distinct lines in server.log that contain \"ERROR\", with their counts.",
+      "correctAnswers": [
+        "grep ERROR server.log | sort | uniq -c | sort -rn | head -3"
+      ],
+      "explanation": "grep ERROR server.log | sort | uniq -c | sort -rn | head -3",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X08",
+      "week": 3,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give two differences between man and info .",
+      "correctAnswers": [
+        "man is crisp and gives a flat page per command with sections 1–9. info is more detailed, hierarchical and hyperlinked, easier to navigate, and exportable to HTML or PDF. It's better for learning a tool in depth."
+      ],
+      "explanation": "man is crisp and gives a flat page per command with sections 1–9. info is more detailed, hierarchical and hyperlinked, easier to navigate, and exportable to HTML or PDF. It's better for learning a tool in depth.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X09",
+      "week": 3,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Scenario: your training job runs on a headless cloud server abroad. Which interface do you use, and why?",
+      "correctAnswers": [
+        "The CLI over SSH. The server is remote and headless, a CLI needs far less bandwidth than a GUI, and it's precise and scriptable for repeated jobs."
+      ],
+      "explanation": "The CLI over SSH. The server is remote and headless, a CLI needs far less bandwidth than a GUI, and it's precise and scriptable for repeated jobs.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W03-X10",
+      "week": 3,
+      "source": "extra",
+      "type": "short",
+      "prompt": "What is an inode, and what does it contain?",
+      "correctAnswers": [
+        "An inode is the metadata block (file control block) of a file or directory, identified by an inode number. It holds the size, data-block locations, permissions, owner and group, and the created, modified and accessed times. It doesn't hold the file name."
+      ],
+      "explanation": "An inode is the metadata block (file control block) of a file or directory, identified by an inode number. It holds the size, data-block locations, permissions, owner and group, and the created, modified and accessed times. It doesn't hold the file name.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

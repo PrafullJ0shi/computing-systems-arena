@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question.schema.json",
+  "title": "Computing Systems Arena question",
+  "description": "One practice question for the Computing Systems course. Week files and the mock test store objects of this shape.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "week",
+    "source",
+    "type",
+    "prompt",
+    "correctAnswers",
+    "explanation",
+    "topicTags",
+    "difficulty",
+    "trapTags"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "W02-Q014 is quiz question 14 of week 2. W02-X03 is extra question 3. MOCK-17 is mock question 17.",
+      "pattern": "^(W(0[1-9]|1[0-3])-(Q\\d{3}|X\\d{2})|MOCK-\\d{2})$"
+    },
+    "week": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 13
+    },
+    "source": {
+      "enum": ["quiz", "extra", "mock"]
+    },
+    "type": {
+      "enum": ["mcq", "multi", "short", "scenario", "code"]
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "code": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Program or command block that belongs with the prompt, or the model solution for a code question."
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "text"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-D]$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "correctAnswers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Option ids for mcq and multi. The model answer text for short, scenario, and code."
+    },
+    "explanation": {
+      "type": "string",
+      "description": "The ebook's why, or an empty string when the ebook gave no separate explanation."
+    },
+    "topicTags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "description": "Derived from the question shape. The ebook does not rate difficulty. 1 is a single-answer MCQ with no code, 2 is multi-select, short answer, or an MCQ that traces code, 3 is a scenario or a code-writing question."
+    },
+    "trapTags": {
+      "type": "array",
+      "description": "Sentences in which this ebook marks an option or idea as a trap. Empty when it does not.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "answerSource": {
+      "enum": ["quiz", "worked_out"],
+      "description": "Present on quiz questions. quiz means the review showed the answer. worked_out means the answer was worked out rather than taken from the quiz review."
+    },
+    "needsReview": {
+      "const": true,
+      "description": "Set when the ebook's capture is ambiguous, reconstructed, or disagrees with itself."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "source": { "const": "quiz" } },
+        "required": ["source"]
+      },
+      "then": { "required": ["answerSource"] }
+    },
+    {
+      "if": {
+        "properties": { "type": { "enum": ["mcq", "multi"] } },
+        "required": ["type"]
+      },
+      "then": {
+        "required": ["options"],
+        "properties": {
+          "options": { "minItems": 2 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "mcq" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "correctAnswers": { "maxItems": 1, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "multi" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "correctAnswers": { "minItems": 2 }
+        }
+      }
+    }
+  ]
+}

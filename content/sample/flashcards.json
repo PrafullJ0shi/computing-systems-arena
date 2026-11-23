@@ -1,0 +1,368 @@
+{
+  "cards": [
+    {
+      "id": "fc-w01-1",
+      "week": 1,
+      "front": "What does the program counter hold?",
+      "back": "The address of the next instruction, not the instruction bits.",
+      "tags": []
+    },
+    {
+      "id": "fc-w01-2",
+      "week": 1,
+      "front": "Name the three classic bus groups.",
+      "back": "Address, data, and control.",
+      "tags": []
+    },
+    {
+      "id": "fc-w01-3",
+      "week": 1,
+      "front": "Stored-program idea, in one line.",
+      "back": "Instructions live in memory, so one machine runs many programs.",
+      "tags": []
+    },
+    {
+      "id": "fc-w01-4",
+      "week": 1,
+      "front": "Latency versus throughput.",
+      "back": "Latency is the wait for one job. Throughput is how many finish per unit time.",
+      "tags": []
+    },
+    {
+      "id": "fc-w02-1",
+      "week": 2,
+      "front": "8-bit two’s-complement range?",
+      "back": "−128 to 127.",
+      "tags": []
+    },
+    {
+      "id": "fc-w02-2",
+      "week": 2,
+      "front": "How do you negate a two’s-complement value?",
+      "back": "Invert the bits and add one.",
+      "tags": []
+    },
+    {
+      "id": "fc-w02-3",
+      "week": 2,
+      "front": "Little-endian byte order.",
+      "back": "The least significant byte sits at the lowest address.",
+      "tags": []
+    },
+    {
+      "id": "fc-w02-4",
+      "week": 2,
+      "front": "What is a biased exponent for?",
+      "back": "So a signed exponent can be stored and ordered as an unsigned field.",
+      "tags": []
+    },
+    {
+      "id": "fc-w03-1",
+      "week": 3,
+      "front": "De Morgan: NOT (A OR B).",
+      "back": "(NOT A) AND (NOT B).",
+      "tags": []
+    },
+    {
+      "id": "fc-w03-2",
+      "week": 3,
+      "front": "When is XOR equal to 1?",
+      "back": "When the two inputs differ.",
+      "tags": []
+    },
+    {
+      "id": "fc-w03-3",
+      "week": 3,
+      "front": "Why is NAND universal?",
+      "back": "It can build NOT, AND, and OR, hence any truth table.",
+      "tags": []
+    },
+    {
+      "id": "fc-w03-4",
+      "week": 3,
+      "front": "Combinational versus sequential.",
+      "back": "Combinational output depends only on current inputs. Sequential circuits remember state.",
+      "tags": []
+    },
+    {
+      "id": "fc-w04-1",
+      "week": 4,
+      "front": "MAR versus MDR.",
+      "back": "MAR holds the address. MDR holds the data word in flight.",
+      "tags": []
+    },
+    {
+      "id": "fc-w04-2",
+      "week": 4,
+      "front": "What does the control unit emit?",
+      "back": "Signals that steer the datapath for this opcode.",
+      "tags": []
+    },
+    {
+      "id": "fc-w04-3",
+      "week": 4,
+      "front": "What does CPI mean?",
+      "back": "Average cycles per instruction.",
+      "tags": []
+    },
+    {
+      "id": "fc-w04-4",
+      "week": 4,
+      "front": "Where is the instruction after fetch?",
+      "back": "In the instruction register.",
+      "tags": []
+    },
+    {
+      "id": "fc-w05-1",
+      "week": 5,
+      "front": "What is an ISA?",
+      "back": "The visible contract: instructions, registers, and their effects.",
+      "tags": []
+    },
+    {
+      "id": "fc-w05-2",
+      "week": 5,
+      "front": "Load/store rule.",
+      "back": "Arithmetic uses registers. Memory is only reached by load and store.",
+      "tags": []
+    },
+    {
+      "id": "fc-w05-3",
+      "week": 5,
+      "front": "What is an immediate?",
+      "back": "An operand value encoded in the instruction.",
+      "tags": []
+    },
+    {
+      "id": "fc-w05-4",
+      "week": 5,
+      "front": "What does a taken branch change?",
+      "back": "The program counter.",
+      "tags": []
+    },
+    {
+      "id": "fc-w06-1",
+      "week": 6,
+      "front": "Spatial versus temporal locality.",
+      "back": "Spatial: nearby addresses. Temporal: the same address again soon.",
+      "tags": []
+    },
+    {
+      "id": "fc-w06-2",
+      "week": 6,
+      "front": "Three miss kinds.",
+      "back": "Compulsory, capacity, and conflict.",
+      "tags": []
+    },
+    {
+      "id": "fc-w06-3",
+      "week": 6,
+      "front": "Write-back in one line.",
+      "back": "Update the cache, mark dirty, write memory on eviction.",
+      "tags": []
+    },
+    {
+      "id": "fc-w06-4",
+      "week": 6,
+      "front": "Direct-mapped index.",
+      "back": "A fixed function of the address, often address mod number of lines.",
+      "tags": []
+    },
+    {
+      "id": "fc-w07-1",
+      "week": 7,
+      "front": "Polling versus interrupt.",
+      "back": "Polling asks the device in a loop. An interrupt lets the device signal the CPU.",
+      "tags": []
+    },
+    {
+      "id": "fc-w07-2",
+      "week": 7,
+      "front": "What is a vector table?",
+      "back": "A table of handler addresses indexed by interrupt number.",
+      "tags": []
+    },
+    {
+      "id": "fc-w07-3",
+      "week": 7,
+      "front": "What does DMA avoid?",
+      "back": "The CPU copying every byte of a block transfer.",
+      "tags": []
+    },
+    {
+      "id": "fc-w07-4",
+      "week": 7,
+      "front": "Memory-mapped I/O.",
+      "back": "Device registers live at addresses you can load and store.",
+      "tags": []
+    },
+    {
+      "id": "fc-w08-1",
+      "week": 8,
+      "front": "Why have a kernel mode?",
+      "back": "So privileged instructions are illegal in ordinary programs.",
+      "tags": []
+    },
+    {
+      "id": "fc-w08-2",
+      "week": 8,
+      "front": "How does a system call enter the kernel?",
+      "back": "A trap that switches privilege and vectors to a known entry.",
+      "tags": []
+    },
+    {
+      "id": "fc-w08-3",
+      "week": 8,
+      "front": "Library call versus system call.",
+      "back": "The library runs in user mode and may wrap a real system call.",
+      "tags": []
+    },
+    {
+      "id": "fc-w08-4",
+      "week": 8,
+      "front": "What is the shell?",
+      "back": "A user-space process that asks the kernel to run other programs.",
+      "tags": []
+    },
+    {
+      "id": "fc-w09-1",
+      "week": 9,
+      "front": "Process versus program.",
+      "back": "A program is a file. A process is that program executing, with state.",
+      "tags": []
+    },
+    {
+      "id": "fc-w09-2",
+      "week": 9,
+      "front": "What do threads of one process share?",
+      "back": "The address space. Each thread has its own registers and stack.",
+      "tags": []
+    },
+    {
+      "id": "fc-w09-3",
+      "week": 9,
+      "front": "Name the waiting state.",
+      "back": "The process cannot run until an event, often I/O, completes.",
+      "tags": []
+    },
+    {
+      "id": "fc-w09-4",
+      "week": 9,
+      "front": "What is a zombie?",
+      "back": "A process that has exited and still needs its parent to collect the status.",
+      "tags": []
+    },
+    {
+      "id": "fc-w10-1",
+      "week": 10,
+      "front": "What is the FCFS convoy?",
+      "back": "A long job at the front delays shorter jobs behind it.",
+      "tags": []
+    },
+    {
+      "id": "fc-w10-2",
+      "week": 10,
+      "front": "What does SJF optimize, and what can it starve?",
+      "back": "Average waiting time, at the risk of starving long jobs.",
+      "tags": []
+    },
+    {
+      "id": "fc-w10-3",
+      "week": 10,
+      "front": "Turnaround versus waiting.",
+      "back": "Turnaround is completion minus arrival. Waiting excludes the burst.",
+      "tags": []
+    },
+    {
+      "id": "fc-w10-4",
+      "week": 10,
+      "front": "Why not use a tiny round-robin quantum?",
+      "back": "Context-switch cost eats the CPU.",
+      "tags": []
+    },
+    {
+      "id": "fc-w11-1",
+      "week": 11,
+      "front": "Four deadlock conditions.",
+      "back": "Mutual exclusion, hold and wait, no preemption, circular wait.",
+      "tags": []
+    },
+    {
+      "id": "fc-w11-2",
+      "week": 11,
+      "front": "Deadlock versus starvation.",
+      "back": "Deadlock cannot proceed. A starved job could run if it were chosen.",
+      "tags": []
+    },
+    {
+      "id": "fc-w11-3",
+      "week": 11,
+      "front": "What is a safe state?",
+      "back": "There exists an order in which every process can still finish.",
+      "tags": []
+    },
+    {
+      "id": "fc-w11-4",
+      "week": 11,
+      "front": "What does a mutex guarantee?",
+      "back": "Only one holder is inside the critical section.",
+      "tags": []
+    },
+    {
+      "id": "fc-w12-1",
+      "week": 12,
+      "front": "What is a page fault?",
+      "back": "The referenced page is not in a frame.",
+      "tags": []
+    },
+    {
+      "id": "fc-w12-2",
+      "week": 12,
+      "front": "What does the TLB cache?",
+      "back": "Recent virtual-to-physical translations.",
+      "tags": []
+    },
+    {
+      "id": "fc-w12-3",
+      "week": 12,
+      "front": "LRU versus OPT.",
+      "back": "LRU evicts the least recently used page. OPT evicts the one used farthest in the future.",
+      "tags": []
+    },
+    {
+      "id": "fc-w12-4",
+      "week": 12,
+      "front": "What is thrashing?",
+      "back": "The machine spends its time paging because working sets do not fit.",
+      "tags": []
+    },
+    {
+      "id": "fc-w13-1",
+      "week": 13,
+      "front": "Where does a file name live?",
+      "back": "In the directory entry. The inode holds metadata and block pointers.",
+      "tags": []
+    },
+    {
+      "id": "fc-w13-2",
+      "week": 13,
+      "front": "Contiguous allocation, one drawback.",
+      "back": "The file is hard to grow if the next blocks are taken.",
+      "tags": []
+    },
+    {
+      "id": "fc-w13-3",
+      "week": 13,
+      "front": "Why keep an index block?",
+      "back": "So block n can be found without walking the previous data blocks.",
+      "tags": []
+    },
+    {
+      "id": "fc-w13-4",
+      "week": 13,
+      "front": "What is a journal for?",
+      "back": "So a crash can finish or undo a partial metadata update.",
+      "tags": []
+    }
+  ]
+}

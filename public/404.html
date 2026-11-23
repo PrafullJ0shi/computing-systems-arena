@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Computing Systems Arena</title>
+    <script>
+      // GitHub Pages serves this file for unknown paths. Send the visitor
+      // back to the app and keep the path as a hash route.
+      (function () {
+        var base = '/computing-systems-arena'
+        var path = location.pathname.indexOf(base) === 0 ? location.pathname.slice(base.length) : location.pathname
+        if (!path || path === '/' || path === '/index.html' || path === '/404.html') {
+          location.replace(base + '/' + location.hash)
+          return
+        }
+        location.replace(base + '/#' + path + location.search)
+      })()
+    </script>
+    <meta http-equiv="refresh" content="0; url=/computing-systems-arena/" />
+  </head>
+  <body>
+    <p><a href="/computing-systems-arena/">Enter the Arena</a></p>
+  </body>
+</html>

@@ -1,0 +1,1193 @@
+{
+  "title": "Mock Test: 40 Mixed Questions",
+  "timeMinutes": 90,
+  "note": "A practice test written for this book. It isn't an official paper.",
+  "questions": [
+    {
+      "id": "MOCK-01",
+      "week": 1,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In a modified Harvard architecture:",
+      "options": [
+        {
+          "id": "A",
+          "text": "L1 is split into instruction and data caches; L2 and below are unified"
+        },
+        {
+          "id": "B",
+          "text": "Only the RAM is split"
+        },
+        {
+          "id": "C",
+          "text": "All cache levels are unified"
+        },
+        {
+          "id": "D",
+          "text": "There is no cache"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Answer-key grid: a.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-02",
+      "week": 1,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Hyper-threading duplicates:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The memory controller"
+        },
+        {
+          "id": "B",
+          "text": "The whole core"
+        },
+        {
+          "id": "C",
+          "text": "The L3 cache"
+        },
+        {
+          "id": "D",
+          "text": "Only the CPU state (registers) and interrupt logic"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "Answer-key grid: d.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-03",
+      "week": 2,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A loop that repeatedly reads the same variable total shows:",
+      "options": [
+        {
+          "id": "A",
+          "text": "No locality"
+        },
+        {
+          "id": "B",
+          "text": "NOR locality"
+        },
+        {
+          "id": "C",
+          "text": "Temporal locality"
+        },
+        {
+          "id": "D",
+          "text": "Spatial locality"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-04",
+      "week": 2,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which memory needs periodic refresh?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Registers"
+        },
+        {
+          "id": "B",
+          "text": "DRAM"
+        },
+        {
+          "id": "C",
+          "text": "SRAM"
+        },
+        {
+          "id": "D",
+          "text": "Mask ROM"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-05",
+      "week": 2,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which flash type is used for bulk SSD storage?",
+      "options": [
+        {
+          "id": "A",
+          "text": "SRAM"
+        },
+        {
+          "id": "B",
+          "text": "NAND"
+        },
+        {
+          "id": "C",
+          "text": "EEPROM only"
+        },
+        {
+          "id": "D",
+          "text": "NOR"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-06",
+      "week": 3,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "chmod 640 file gives:",
+      "options": [
+        {
+          "id": "A",
+          "text": "rwxr--r--"
+        },
+        {
+          "id": "B",
+          "text": "r--r-----"
+        },
+        {
+          "id": "C",
+          "text": "rw-rw-r--"
+        },
+        {
+          "id": "D",
+          "text": "rw-r-----"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "6 = rw-, 4 = r--, 0 = ---, so rw-r----- .",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-07",
+      "week": 3,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which command shows the last 10 lines of a log and keeps following new lines?",
+      "options": [
+        {
+          "id": "A",
+          "text": "cat -f"
+        },
+        {
+          "id": "B",
+          "text": "grep -f"
+        },
+        {
+          "id": "C",
+          "text": "tail -f"
+        },
+        {
+          "id": "D",
+          "text": "head -f"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-08",
+      "week": 3,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A hard link:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Can cross filesystems"
+        },
+        {
+          "id": "B",
+          "text": "Shares the same inode as the original file"
+        },
+        {
+          "id": "C",
+          "text": "Breaks when the original is deleted"
+        },
+        {
+          "id": "D",
+          "text": "Can point to a directory"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-09",
+      "week": 4,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In a shell script, $# gives:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The number of arguments"
+        },
+        {
+          "id": "B",
+          "text": "The last exit status"
+        },
+        {
+          "id": "C",
+          "text": "All arguments"
+        },
+        {
+          "id": "D",
+          "text": "The script name"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Answer-key grid: a.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-10",
+      "week": 4,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In shell test / [ ] , the numeric \"greater than\" operator is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "-g"
+        },
+        {
+          "id": "B",
+          "text": "-gt"
+        },
+        {
+          "id": "C",
+          "text": ">"
+        },
+        {
+          "id": "D",
+          "text": "gt"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-11",
+      "week": 5,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "fork() returns 0 to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The parent"
+        },
+        {
+          "id": "B",
+          "text": "init"
+        },
+        {
+          "id": "C",
+          "text": "The child"
+        },
+        {
+          "id": "D",
+          "text": "The kernel"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-12",
+      "week": 5,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A process that has finished but whose parent hasn't yet called wait() is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "A daemon"
+        },
+        {
+          "id": "B",
+          "text": "A zombie"
+        },
+        {
+          "id": "C",
+          "text": "Detached"
+        },
+        {
+          "id": "D",
+          "text": "An orphan"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-13",
+      "week": 5,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which is NOT shared among the threads of a process?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Global variables"
+        },
+        {
+          "id": "B",
+          "text": "Stack"
+        },
+        {
+          "id": "C",
+          "text": "Open files"
+        },
+        {
+          "id": "D",
+          "text": "Heap"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "The answer-key grid prints A (global variables). Week 5 of this ebook says the stack is private to each thread, while global variables, open files and the heap are shared, which matches option B.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "needsReview": true
+    },
+    {
+      "id": "MOCK-14",
+      "week": 5,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In the producer–consumer solution, the semaphore empty starts at:",
+      "options": [
+        {
+          "id": "A",
+          "text": "0"
+        },
+        {
+          "id": "B",
+          "text": "−1"
+        },
+        {
+          "id": "C",
+          "text": "n (the buffer size)"
+        },
+        {
+          "id": "D",
+          "text": "1"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "empty = n , full = 0 , mutex = 1 . The answer-key grid prints D. The brief reason in the same key says empty = n, full = 0, mutex = 1, which matches option C.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "needsReview": true
+    },
+    {
+      "id": "MOCK-15",
+      "week": 6,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A Python virtual environment ( venv ) mainly provides:",
+      "options": [
+        {
+          "id": "A",
+          "text": "A hypervisor"
+        },
+        {
+          "id": "B",
+          "text": "Isolated package and dependency sets per project"
+        },
+        {
+          "id": "C",
+          "text": "A new OS kernel"
+        },
+        {
+          "id": "D",
+          "text": "GPU access"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-16",
+      "week": 6,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "The HLL VM idea reduces K languages × N machines compilers to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "K × N"
+        },
+        {
+          "id": "B",
+          "text": "K + N"
+        },
+        {
+          "id": "C",
+          "text": "K − N"
+        },
+        {
+          "id": "D",
+          "text": "K²"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-17",
+      "week": 7,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In Git, git add moves changes from:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The working directory to the staging area"
+        },
+        {
+          "id": "B",
+          "text": "Staging to the remote"
+        },
+        {
+          "id": "C",
+          "text": "The repository to the working directory"
+        },
+        {
+          "id": "D",
+          "text": "The remote to local"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Answer-key grid: a.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-18",
+      "week": 7,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Git differs from SVN because Git is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Proprietary to Microsoft"
+        },
+        {
+          "id": "B",
+          "text": "Unable to branch"
+        },
+        {
+          "id": "C",
+          "text": "Centralised"
+        },
+        {
+          "id": "D",
+          "text": "Distributed: every clone has the full history"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "Answer-key grid: d.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-19",
+      "week": 8,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In a debugger, \"step into\" means:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Exit the program"
+        },
+        {
+          "id": "B",
+          "text": "Run to the next breakpoint"
+        },
+        {
+          "id": "C",
+          "text": "Enter the function being called on the current line"
+        },
+        {
+          "id": "D",
+          "text": "Skip over the function call"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-20",
+      "week": 8,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Which tool is a dynamic profiler?",
+      "options": [
+        {
+          "id": "A",
+          "text": "radon"
+        },
+        {
+          "id": "B",
+          "text": "cProfile"
+        },
+        {
+          "id": "C",
+          "text": "pylint"
+        },
+        {
+          "id": "D",
+          "text": "flake8"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "The answer-key grid prints A (radon). Week 8 of this ebook calls radon a static tool and cProfile the dynamic profiler, which matches option B.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "needsReview": true
+    },
+    {
+      "id": "MOCK-21",
+      "week": 9,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "How many warps are in a CUDA block of 512 threads?",
+      "options": [
+        {
+          "id": "A",
+          "text": "16"
+        },
+        {
+          "id": "B",
+          "text": "32"
+        },
+        {
+          "id": "C",
+          "text": "8"
+        },
+        {
+          "id": "D",
+          "text": "64"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "512 / 32 = 16.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-22",
+      "week": 9,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "The memory shared by all threads of a block, on-chip and fast, is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Global memory"
+        },
+        {
+          "id": "B",
+          "text": "Texture memory"
+        },
+        {
+          "id": "C",
+          "text": "Host RAM"
+        },
+        {
+          "id": "D",
+          "text": "Shared memory"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "Answer-key grid: d.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-23",
+      "week": 9,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "The main bottleneck in many GPU workloads is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The keyboard"
+        },
+        {
+          "id": "B",
+          "text": "Git merges"
+        },
+        {
+          "id": "C",
+          "text": "CPU↔GPU data transfer over PCIe"
+        },
+        {
+          "id": "D",
+          "text": "The OS shell"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-24",
+      "week": 10,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Tiled matrix multiplication is faster mainly because it:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Does fewer multiplications"
+        },
+        {
+          "id": "B",
+          "text": "Reuses data from shared memory, reducing global reads"
+        },
+        {
+          "id": "C",
+          "text": "Uses the CPU instead"
+        },
+        {
+          "id": "D",
+          "text": "Disables warps"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-25",
+      "week": 11,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Adding more servers during a flash sale is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Consolidation"
+        },
+        {
+          "id": "B",
+          "text": "Vertical scaling"
+        },
+        {
+          "id": "C",
+          "text": "Horizontal scaling"
+        },
+        {
+          "id": "D",
+          "text": "Replication"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-26",
+      "week": 11,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In HDFS (as in the lecture), a 512 MB file with the default settings uses how much raw storage?",
+      "options": [
+        {
+          "id": "A",
+          "text": "1.5 GB"
+        },
+        {
+          "id": "B",
+          "text": "4 GB"
+        },
+        {
+          "id": "C",
+          "text": "512 MB"
+        },
+        {
+          "id": "D",
+          "text": "1 GB"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "4 blocks × 128 MB × 3 replicas = 1.5 GB. The answer-key grid prints D (1 GB). The brief reason in the same key says 4 blocks × 128 MB × 3 replicas = 1.5 GB, which matches option A.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "needsReview": true
+    },
+    {
+      "id": "MOCK-27",
+      "week": 11,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "\"Percentage of time a service is operational\" is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Response time"
+        },
+        {
+          "id": "B",
+          "text": "Availability"
+        },
+        {
+          "id": "C",
+          "text": "Reliability"
+        },
+        {
+          "id": "D",
+          "text": "Throughput"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "The answer-key grid prints C (reliability). The cheat sheet in this ebook defines availability as the percentage of time a service is up, which matches option B.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "needsReview": true
+    },
+    {
+      "id": "MOCK-28",
+      "week": 12,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "VMware ESXi and Microsoft Hyper-V are:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Type 2 hypervisors"
+        },
+        {
+          "id": "B",
+          "text": "Type 1 (bare-metal) hypervisors"
+        },
+        {
+          "id": "C",
+          "text": "Container engines"
+        },
+        {
+          "id": "D",
+          "text": "SaaS"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Answer-key grid: b.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-29",
+      "week": 12,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Containers start faster than VMs because they:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Share the host OS kernel and don't boot a guest OS"
+        },
+        {
+          "id": "B",
+          "text": "Include a bigger OS"
+        },
+        {
+          "id": "C",
+          "text": "Run only on Windows"
+        },
+        {
+          "id": "D",
+          "text": "Use Type 1 hypervisors"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Answer-key grid: a.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-30",
+      "week": 13,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In Android, the layer that hides hardware details from the framework is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "The launcher"
+        },
+        {
+          "id": "B",
+          "text": "ART"
+        },
+        {
+          "id": "C",
+          "text": "HAL"
+        },
+        {
+          "id": "D",
+          "text": "JSON"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Answer-key grid: c.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-31",
+      "week": 1,
+      "source": "mock",
+      "type": "scenario",
+      "prompt": "Compare von Neumann and Harvard architectures, and explain why modern CPUs use modified Harvard.",
+      "correctAnswers": [
+        "von Neumann: a single (unified) memory and path for instructions and data (the stored-program concept), which makes the bus a bottleneck: you can't fetch an instruction and data together while pipelining. Harvard: separate instruction and data memories or caches, so fetch and data access happen in parallel. But the space can't be balanced between them, and instructions can't be modified on the fly. Modified Harvard: split I-cache and D-cache at L1 (parallel access for the pipeline), and unified L2/L3/RAM (flexible and simple). That's the best of both, which is why today's CPUs use it."
+      ],
+      "explanation": "von Neumann: a single (unified) memory and path for instructions and data (the stored-program concept), which makes the bus a bottleneck: you can't fetch an instruction and data together while pipelining. Harvard: separate instruction and data memories or caches, so fetch and data access happen in parallel. But the space can't be balanced between them, and instructions can't be modified on the fly. Modified Harvard: split I-cache and D-cache at L1 (parallel access for the pipeline), and unified L2/L3/RAM (flexible and simple). That's the best of both, which is why today's CPUs use it.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-32",
+      "week": 2,
+      "source": "mock",
+      "type": "short",
+      "prompt": "Explain spatial and temporal locality with one code example each, and say why caches transfer blocks.",
+      "correctAnswers": [
+        "Spatial: after accessing address x, nearby addresses are likely next, as in for i… sum += a[i] walking an array. Temporal: the same data is reused soon, such as sum or the loop counter i on every iteration. Caches move blocks (lines), so one miss brings in the neighbours (they'll hit next, thanks to spatial locality), and the block stays resident for reuse (temporal locality). The 80/20 rule: loops dominate the time."
+      ],
+      "explanation": "Spatial: after accessing address x, nearby addresses are likely next, as in for i… sum += a[i] walking an array. Temporal: the same data is reused soon, such as sum or the loop counter i on every iteration. Caches move blocks (lines), so one miss brings in the neighbours (they'll hit next, thanks to spatial locality), and the block stays resident for reuse (temporal locality). The 80/20 rule: loops dominate the time.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-33",
+      "week": 4,
+      "source": "mock",
+      "type": "code",
+      "prompt": "Write a shell script that takes a filename as an argument and prints whether it's a regular file, a directory, or doesn't exist. It should print a usage message if no argument is given.",
+      "code": "#!/bin/bash\nif [ $# -eq 0 ]; then echo \"Usage: $0 <name>\"; exit 1; fi\nif [ -f \"$1\" ]; then echo \"$1 is a regular file\"\nelif [ -d \"$1\" ]; then echo \"$1 is a directory\"\nelse echo \"$1 does not exist\"; fi",
+      "correctAnswers": [
+        "#!/bin/bash\nif [ $# -eq 0 ]; then echo \"Usage: $0 <name>\"; exit 1; fi\nif [ -f \"$1\" ]; then echo \"$1 is a regular file\"\nelif [ -d \"$1\" ]; then echo \"$1 is a directory\"\nelse echo \"$1 does not exist\"; fi"
+      ],
+      "explanation": "#!/bin/bash\nif [ $# -eq 0 ]; then echo \"Usage: $0 <name>\"; exit 1; fi\nif [ -f \"$1\" ]; then echo \"$1 is a regular file\"\nelif [ -d \"$1\" ]; then echo \"$1 is a directory\"\nelse echo \"$1 does not exist\"; fi",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-34",
+      "week": 5,
+      "source": "mock",
+      "type": "short",
+      "prompt": "Two threads each run count++ 1000 times on a shared variable. Explain why the final value may be below 2000, and how a semaphore or mutex fixes it.",
+      "correctAnswers": [
+        "count++ is really load → add → store. If the threads interleave (both load 5, both store 6), one update is lost. That's a race condition, so the result is ≤ 2000. Fix: make count++ a critical section with mutual exclusion: wait(mutex); count++; signal(mutex); with the semaphore mutex = 1 (or pthread_mutex_lock / unlock ). This guarantees mutual exclusion, progress and bounded waiting."
+      ],
+      "explanation": "count++ is really load → add → store. If the threads interleave (both load 5, both store 6), one update is lost. That's a race condition, so the result is ≤ 2000. Fix: make count++ a critical section with mutual exclusion: wait(mutex); count++; signal(mutex); with the semaphore mutex = 1 (or pthread_mutex_lock / unlock ). This guarantees mutual exclusion, progress and bounded waiting.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-35",
+      "week": 7,
+      "source": "mock",
+      "type": "scenario",
+      "prompt": "A team of 5 developers works on the same Python project from different cities. Explain the Git workflow they should use (clone/branch/commit/pull/push/PR), and how a merge conflict is resolved.",
+      "correctAnswers": [
+        "Host the repository on GitHub (the origin). Each developer runs git clone , then creates a feature branch ( git branch f; git checkout f ), edits, and runs git add → git commit -m (working → staging → repository). They regularly run git pull origin master to get the others' work, and git push origin f , then open a pull request for review and merge. Conflict: if two people change the same lines, Git marks the conflict ( <<<<<<< ======= >>>>>>> ). A human edits the file to the correct version, then runs git add and git commit to complete the merge. Changes in different regions merge automatically. A distributed VCS works offline, and every clone is a backup."
+      ],
+      "explanation": "Host the repository on GitHub (the origin). Each developer runs git clone , then creates a feature branch ( git branch f; git checkout f ), edits, and runs git add → git commit -m (working → staging → repository). They regularly run git pull origin master to get the others' work, and git push origin f , then open a pull request for review and merge. Conflict: if two people change the same lines, Git marks the conflict ( <<<<<<< ======= >>>>>>> ). A human edits the file to the correct version, then runs git add and git commit to complete the merge. Changes in different regions merge automatically. A distributed VCS works offline, and every clone is a backup.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-36",
+      "week": 8,
+      "source": "mock",
+      "type": "short",
+      "prompt": "A Python data pipeline is slow. Describe how you'd use profiling (static and dynamic) and debugging tools to find and fix the problem.",
+      "correctAnswers": [
+        "Static: run pylint or radon to check style, cyclomatic complexity and code smells without running the code. Dynamic: python -m cProfile -s cumtime to find functions with high cumtime/tottime/ncalls, and memory_profiler for memory spikes. Profile first, then optimise the hotspot (for example, replace Python loops with NumPy vectorisation: 3.8 s → 0.002 s in the lecture). For wrong output (logical errors), use logging or a debugger (pdb or the IDE): set breakpoints, step over or into, watch variables and inspect the call stack. That's how you catch errors such as len(marks)-1 . Handle run-time errors with try/except ."
+      ],
+      "explanation": "Static: run pylint or radon to check style, cyclomatic complexity and code smells without running the code. Dynamic: python -m cProfile -s cumtime to find functions with high cumtime/tottime/ncalls, and memory_profiler for memory spikes. Profile first, then optimise the hotspot (for example, replace Python loops with NumPy vectorisation: 3.8 s → 0.002 s in the lecture). For wrong output (logical errors), use logging or a debugger (pdb or the IDE): set breakpoints, step over or into, watch variables and inspect the call stack. That's how you catch errors such as len(marks)-1 . Handle run-time errors with try/except .",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-37",
+      "week": 9,
+      "source": "mock",
+      "type": "short",
+      "prompt": "Explain the CPU–GPU host–device workflow, and calculate the number of threads and warps for a grid of 200 blocks with 128 threads each.",
+      "correctAnswers": [
+        "Workflow: 1. The CPU (host) prepares the data in RAM. 2. It copies the data RAM → VRAM over PCIe/NVLink. 3. It launches the kernel, and the GPU threads compute in parallel. 4. The results are copied VRAM → RAM. The calculation: threads = 200 × 128 = 25,600. Warps = 128 / 32 = 4 per block, × 200 = 800 warps."
+      ],
+      "explanation": "Workflow: 1. The CPU (host) prepares the data in RAM. 2. It copies the data RAM → VRAM over PCIe/NVLink. 3. It launches the kernel, and the GPU threads compute in parallel. 4. The results are copied VRAM → RAM. The calculation: threads = 200 × 128 = 25,600. Warps = 128 / 32 = 4 per block, × 200 = 800 warps.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-38",
+      "week": 10,
+      "source": "mock",
+      "type": "short",
+      "prompt": "A GPU at 2 GHz needs data. Compare the time to fetch it from registers, shared memory and global memory (using the lecture's cycle counts), and explain what this means for writing GPU code.",
+      "correctAnswers": [
+        "At 2 GHz, a cycle is 0.5 ns. Registers: 1 cycle = 0.5 ns. Shared memory: ~5 cycles = 2.5 ns. Global memory: 400–800 cycles = 200–400 ns, about 100× slower than shared memory. Host RAM is thousands of cycles. Implication: keep data in registers and shared memory, reuse it (tiling), make coalesced global accesses, minimise RAM↔VRAM transfers (batch them and keep data on the GPU), and keep enough warps active (occupancy) so latency is hidden."
+      ],
+      "explanation": "At 2 GHz, a cycle is 0.5 ns. Registers: 1 cycle = 0.5 ns. Shared memory: ~5 cycles = 2.5 ns. Global memory: 400–800 cycles = 200–400 ns, about 100× slower than shared memory. Host RAM is thousands of cycles. Implication: keep data in registers and shared memory, reuse it (tiling), make coalesced global accesses, minimise RAM↔VRAM transfers (batch them and keep data on the GPU), and keep enough warps active (occupancy) so latency is hidden.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-39",
+      "week": 11,
+      "source": "mock",
+      "type": "scenario",
+      "prompt": "An online exam portal expects 10 lakh students on result day. Design a distributed or cloud solution covering scaling, load balancing, data partitioning or replication, and the attributes to monitor.",
+      "correctAnswers": [
+        "Cloud deployment with elastic, horizontal auto-scaling of web/app servers or containers (Kubernetes) behind a load balancer. A CDN or caching layer for static pages and cached result lookups. Partition the results database (for example by roll-number range or region) and replicate each partition (for example ×3) for fault tolerance and parallel reads. Use stateless request–response APIs. Pre-warm the capacity before the announcement, then scale down afterwards (elasticity: pay only for the spike). Monitor throughput (requests/s), response time, availability (an uptime target such as 99.9%) and reliability (error rate). This is like the university or UPSC result example. A vertical upgrade of one on-premises server is the weaker alternative."
+      ],
+      "explanation": "Cloud deployment with elastic, horizontal auto-scaling of web/app servers or containers (Kubernetes) behind a load balancer. A CDN or caching layer for static pages and cached result lookups. Partition the results database (for example by roll-number range or region) and replicate each partition (for example ×3) for fault tolerance and parallel reads. Use stateless request–response APIs. Pre-warm the capacity before the announcement, then scale down afterwards (elasticity: pay only for the spike). Monitor throughput (requests/s), response time, availability (an uptime target such as 99.9%) and reliability (error rate). This is like the university or UPSC result example. A vertical upgrade of one on-premises server is the weaker alternative.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "MOCK-40",
+      "week": 12,
+      "source": "mock",
+      "type": "scenario",
+      "prompt": "Compare VMs and containers. For each, give one scenario where it's the better choice, and explain how both appear together in a cloud such as AWS.",
+      "correctAnswers": [
+        "VMs have a full guest OS, strong OS-level isolation, can run different OSes, are GBs in size and start in minutes. Containers hold the app and its libraries, share the host kernel, are MBs in size, start in seconds, give high density and process-level isolation, and need the same OS kernel. VM scenario: a bank's legacy app needing Windows Server and strict isolation, or ERP systems. Container scenario: Netflix-style microservices or CI/CD pipelines that must scale within seconds. Together: on AWS, a Type 1 hypervisor runs VMs (EC2) for many tenants (multi-tenancy), and Docker containers orchestrated by Kubernetes run inside those VMs. Containers don't replace VMs; they sit on top of them."
+      ],
+      "explanation": "VMs have a full guest OS, strong OS-level isolation, can run different OSes, are GBs in size and start in minutes. Containers hold the app and its libraries, share the host kernel, are MBs in size, start in seconds, give high density and process-level isolation, and need the same OS kernel. VM scenario: a bank's legacy app needing Windows Server and strict isolation, or ERP systems. Container scenario: Netflix-style microservices or CI/CD pipelines that must scale within seconds. Together: on AWS, a Type 1 hypervisor runs VMs (EC2) for many tenants (multi-tenancy), and Docker containers orchestrated by Kubernetes run inside those VMs. Containers don't replace VMs; they sit on top of them.",
+      "topicTags": [
+        "mock test"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    }
+  ]
+}

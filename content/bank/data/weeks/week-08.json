@@ -1,0 +1,763 @@
+{
+  "week": 8,
+  "title": "Profiling and Debugging",
+  "learningGoals": [
+    "Compare compiler vs interpreter, and explain why Python is both (bytecode .pyc + the Python Virtual Machine), plus JIT.",
+    "Distinguish compile time (static) vs run time (dynamic), and compile-time errors vs run-time errors (exceptions) vs logical errors.",
+    "Define profiling, explain static vs dynamic profiling, and read cProfile output (ncalls, tottime, percall, cumtime). Know pylint/radon (static) and memory profilers.",
+    "Define debugging. Use print/logging, then a debugger: breakpoints, watch, call stack, step over / step into / step out / continue, inspecting and setting variables. Know pdb."
+  ],
+  "sirStressed": [
+    "Debugging is very, very important. Practise step over vs step into vs step out in VS Code. If you step over by mistake, you'll miss what happens inside the function.",
+    "A breakpoint pauses the program at run time; it doesn't stop it entirely. Then you watch the variables and the call stack.",
+    "Analogy: a teacher deducts marks because you subtracted instead of added. Logical errors like that happen in code too, and the debugger finds where.",
+    "\"Just attending the classes is not at all sufficient.\" Experiment with the given programs and modify them, using AI tools if you like.",
+    "Assignment rules: AI tools are allowed for brainstorming, but never submit AI-generated or copied screenshots. That's easy to detect and costs marks. Use screenshots of your own real investigation."
+  ],
+  "commonTraps": [
+    "Saying Python is only interpreted. Technically it's compiled to bytecode and then interpreted by the PVM.",
+    "Compile time = static; run time = dynamic. Don't swap them.",
+    "Treating divide-by-zero as a compile-time error. It's a run-time error (an exception).",
+    "Expecting a compiler or static profiler to measure time or memory. Only dynamic profiling can.",
+    "tottime vs cumtime: tottime excludes sub-calls; cumtime includes them.",
+    "Step out skips lines. Wrong: it executes them, just without pausing at each one.",
+    "Saying that a syntax error in Python still produces a .pyc . It doesn't.",
+    "Optimising before profiling."
+  ],
+  "summary": [
+    "Compiler (C/C++): whole program → machine-code executable ahead of time. Fast. Interpreter: line by line, on demand, with no machine-code file. Flexible but slower. Python = compiled to bytecode (.pyc) + interpreted by the PVM (portable). JIT compiles hot code at run time.",
+    "Compile time = static (code as a file); run time = dynamic (the code is a running process).",
+    "Errors: compile-time (syntax: missing colon, wrong name; no bytecode), run-time / exceptions (divide by zero, missing file, memory full; the program stops at that line), logical (wrong output). Handle exceptions with try/except .",
+    "Profiling = where the time and resources go, to find bottlenecks. Profile first, then optimise. Static (pylint, radon): cyclomatic complexity, style, standards, comments, with no timing. Dynamic (cProfile + pstats, memory_profiler): time, calls, memory, spikes. Loops took 3.8 s vs NumPy 0.002 s.",
+    "cProfile columns: ncalls, tottime (self), percall, cumtime (including sub-calls).",
+    "Debugging = find + fix. Print/logging (the apartment-register analogy, log files) → debugger: breakpoint (pause), watch, call stack, step over (F10), step into (F11), step out, continue, inspect or set values.",
+    "Bugs seen: range(1,5) → use range(1,6) ; len(marks)-1 → use len(marks) .",
+    "pdb: b , c , n , s , r , p , l , w , q . gdb for C: break , run , next , step , finish , print , set var , x , bt ."
+  ],
+  "questions": [
+    {
+      "id": "W08-Q001",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Just-in-time (JIT) compilation aims to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Interpret code line by line"
+        },
+        {
+          "id": "B",
+          "text": "Compile code at run time for faster execution"
+        },
+        {
+          "id": "C",
+          "text": "Optimise syntax errors"
+        },
+        {
+          "id": "D",
+          "text": "Convert bytecode to source code"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "JIT compiles the hot (frequently run) bytecode into machine code while the program runs.",
+      "topicTags": [
+        "Compiler and Interpreter"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q002",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which is TRUE about a compiler?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It converts one line at a time"
+        },
+        {
+          "id": "B",
+          "text": "It converts the entire source to machine code before execution"
+        },
+        {
+          "id": "C",
+          "text": "It's only for scripting languages"
+        },
+        {
+          "id": "D",
+          "text": "It doesn't generate intermediate files"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "converting the whole program ahead of time is the compiler's defining trait. Line by line is the interpreter.",
+      "topicTags": [
+        "Compiler and Interpreter"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q003",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which file extension stores Python bytecode?",
+      "options": [
+        {
+          "id": "A",
+          "text": ".py"
+        },
+        {
+          "id": "B",
+          "text": ".pyc"
+        },
+        {
+          "id": "C",
+          "text": ".class"
+        },
+        {
+          "id": "D",
+          "text": ".exe"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ".pyc (stored in __pycache__ ). .class is Java bytecode.",
+      "topicTags": [
+        "Compiler and Interpreter"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q004",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Static behaviour refers to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Decisions made before the program runs"
+        },
+        {
+          "id": "B",
+          "text": "Decisions made while running"
+        },
+        {
+          "id": "C",
+          "text": "Dynamically typed code"
+        },
+        {
+          "id": "D",
+          "text": "Memory freed after execution"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "static = compile time (the code as a file). Dynamic = run time (the running process).",
+      "topicTags": [
+        "Program Execution: Compile Time vs Run Time"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q005",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which one is a run-time error?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Missing parenthesis"
+        },
+        {
+          "id": "B",
+          "text": "Typo in a variable name"
+        },
+        {
+          "id": "C",
+          "text": "Division by zero"
+        },
+        {
+          "id": "D",
+          "text": "Missing colon in a for loop"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "the code is valid, but it fails only when it runs with a 0 divisor. A and D are syntax errors. (In Python, B is caught as a NameError at run time too, but the quiz treats it as a typo caught early.)",
+      "topicTags": [
+        "Program Execution: Compile Time vs Run Time"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q006",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Compile-time errors are detected:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Before the program starts executing"
+        },
+        {
+          "id": "B",
+          "text": "During execution"
+        },
+        {
+          "id": "C",
+          "text": "After output"
+        },
+        {
+          "id": "D",
+          "text": "When the CPU loads the code"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "the compiler (or Python's bytecode compiler) refuses to produce output until they're fixed.",
+      "topicTags": [
+        "Program Execution: Compile Time vs Run Time"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q007",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "pylint file.py is mainly used to:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Count execution time"
+        },
+        {
+          "id": "B",
+          "text": "Check coding-standard and style issues"
+        },
+        {
+          "id": "C",
+          "text": "Measure memory"
+        },
+        {
+          "id": "D",
+          "text": "Generate bytecode"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "pylint is static analysis: style, standards and smells, without running the code.",
+      "topicTags": [
+        "Profiling a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q008",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does profiling help you find?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Readability issues"
+        },
+        {
+          "id": "B",
+          "text": "Performance bottlenecks in time or memory"
+        },
+        {
+          "id": "C",
+          "text": "Syntax errors"
+        },
+        {
+          "id": "D",
+          "text": "Security risks"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "profiling shows where the time and memory go.",
+      "topicTags": [
+        "Profiling a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q009",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Dynamic profiling in the matrix-multiplication example shows that:",
+      "options": [
+        {
+          "id": "A",
+          "text": "NumPy runs faster and uses less memory"
+        },
+        {
+          "id": "B",
+          "text": "Pure Python is faster"
+        },
+        {
+          "id": "C",
+          "text": "Profiling changes the program logic"
+        },
+        {
+          "id": "D",
+          "text": "All versions use the same RAM"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "this was the lecture demo (loops took about 3.8 s vs about 0.002 s for NumPy).",
+      "topicTags": [
+        "Profiling a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q010",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which tool measures cyclomatic complexity in Python?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Radon"
+        },
+        {
+          "id": "B",
+          "text": "memory_profiler"
+        },
+        {
+          "id": "C",
+          "text": "traceroute"
+        },
+        {
+          "id": "D",
+          "text": "pyplot"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "radon reports complexity, a static metric. memory_profiler is a dynamic memory tool.",
+      "topicTags": [
+        "Profiling a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q011",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why is a debugger better than relying only on print statements?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It lets you pause, inspect variables and step through code easily"
+        },
+        {
+          "id": "B",
+          "text": "Prints fix errors permanently"
+        },
+        {
+          "id": "C",
+          "text": "Debuggers rewrite your program"
+        },
+        {
+          "id": "D",
+          "text": "Prints slow down the computer"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "breakpoints, watches and stepping, all without editing your code.",
+      "topicTags": [
+        "Debugging a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q012",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the most basic debugging method?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Print statements"
+        },
+        {
+          "id": "B",
+          "text": "AI code review"
+        },
+        {
+          "id": "C",
+          "text": "Profiling"
+        },
+        {
+          "id": "D",
+          "text": "Inspecting bytecode"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "print (or logging) is the simplest first step. The lecture's analogy was the apartment visitor register.",
+      "topicTags": [
+        "Debugging a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-Q013",
+      "week": 8,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does \"step into\" do?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Runs the whole program"
+        },
+        {
+          "id": "B",
+          "text": "Runs the next line without entering functions"
+        },
+        {
+          "id": "C",
+          "text": "Goes into a called function to debug it line by line"
+        },
+        {
+          "id": "D",
+          "text": "Stops debugging"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "step into enters the function (F11). Option B describes step over (F10).",
+      "topicTags": [
+        "Debugging a Program"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W08-X01",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which statement about Python is most accurate?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Purely compiled to machine code"
+        },
+        {
+          "id": "B",
+          "text": "Purely interpreted with no intermediate form"
+        },
+        {
+          "id": "C",
+          "text": "Compiled to bytecode, then interpreted by the Python VM"
+        },
+        {
+          "id": "D",
+          "text": "Only runs on x86"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Compiled to .pyc bytecode, then interpreted line by line by the PVM.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X02",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "print(10/0) in Python produces a:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Compile-time syntax error"
+        },
+        {
+          "id": "B",
+          "text": "Run-time error (exception)"
+        },
+        {
+          "id": "C",
+          "text": "Logical error"
+        },
+        {
+          "id": "D",
+          "text": "Linker error"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "ZeroDivisionError at run time. Lines before it do run.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X03",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which tool is a static profiling or analysis tool?",
+      "options": [
+        {
+          "id": "A",
+          "text": "cProfile"
+        },
+        {
+          "id": "B",
+          "text": "memory_profiler"
+        },
+        {
+          "id": "C",
+          "text": "pylint"
+        },
+        {
+          "id": "D",
+          "text": "pdb"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "pylint checks the code without running it (style, standards, complexity).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X04",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In cProfile output, the time spent in a function including all the functions it calls is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "ncalls"
+        },
+        {
+          "id": "B",
+          "text": "tottime"
+        },
+        {
+          "id": "C",
+          "text": "cumtime"
+        },
+        {
+          "id": "D",
+          "text": "percall"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "cumtime includes sub-calls; tottime is the function's own time.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X05",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "You're paused on a line that calls compute() , and you want to see what happens inside compute() . You press:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Step over"
+        },
+        {
+          "id": "B",
+          "text": "Step into"
+        },
+        {
+          "id": "C",
+          "text": "Step out"
+        },
+        {
+          "id": "D",
+          "text": "Continue"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Step into goes inside the called function.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X06",
+      "week": 8,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which of these cannot be found by the compiler?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Missing colon"
+        },
+        {
+          "id": "B",
+          "text": "Misspelt keyword"
+        },
+        {
+          "id": "C",
+          "text": "Opening a file that was deleted"
+        },
+        {
+          "id": "D",
+          "text": "Wrong indentation"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Whether the file exists is only known at run time.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X07",
+      "week": 8,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Explain the difference between static and dynamic profiling, with one tool each.",
+      "correctAnswers": [
+        "Static analyses the source without running it: complexity, style, standards (for example pylint or radon), but no time or memory figures. Dynamic runs the program and measures time per function, call counts and memory (for example cProfile or memory_profiler)."
+      ],
+      "explanation": "Static analyses the source without running it: complexity, style, standards (for example pylint or radon), but no time or memory figures. Dynamic runs the program and measures time per function, call counts and memory (for example cProfile or memory_profiler).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X08",
+      "week": 8,
+      "source": "extra",
+      "type": "code",
+      "prompt": "Find the bug and fix it:",
+      "code": "nums = [2, 4, 6]\ns = 0\nfor i in range(1, len(nums)):\n    s += nums[i]\nprint(s)   # expected 12",
+      "correctAnswers": [
+        "The loop starts at index 1, which skips nums[0] = 2 , so it prints 10. Fix: for i in range(len(nums)): (or range(0, len(nums)) , or just s = sum(nums) ). The result is 12."
+      ],
+      "explanation": "The loop starts at index 1, which skips nums[0] = 2 , so it prints 10. Fix: for i in range(len(nums)): (or range(0, len(nums)) , or just s = sum(nums) ). The result is 12.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X09",
+      "week": 8,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "Your data-pipeline script has become slow after new features were added. Describe the steps you'd take to fix it.",
+      "correctAnswers": [
+        "(1) Profile first with python -m cProfile -s cumtime script.py . (2) Look for the functions with high tottime/cumtime or huge ncalls, which are the hotspots. (3) Optimise those, for example by replacing Python loops with vectorised NumPy or pandas operations or removing repeated work. Check memory with memory_profiler. (4) Re-profile to confirm the improvement and that the output hasn't changed."
+      ],
+      "explanation": "(1) Profile first with python -m cProfile -s cumtime script.py . (2) Look for the functions with high tottime/cumtime or huge ncalls, which are the hotspots. (3) Optimise those, for example by replacing Python loops with vectorised NumPy or pandas operations or removing repeated work. Check memory with memory_profiler. (4) Re-profile to confirm the improvement and that the output hasn't changed.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W08-X10",
+      "week": 8,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why is a debugger better than print statements for a 20,000-line program? Name 3 debugger features.",
+      "correctAnswers": [
+        "Prints don't scale: you'd need thousands of them, editing and re-running each time. A debugger lets you pause anywhere (breakpoints), watch and inspect or change variables and memory, follow the call stack, and step over / into / out, localising the bug systematically without changing the code."
+      ],
+      "explanation": "Prints don't scale: you'd need thousands of them, editing and re-running each time. A debugger lets you pause anywhere (breakpoints), watch and inspect or change variables and memory, follow the call stack, and step over / into / out, localising the bug systematically without changing the code.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

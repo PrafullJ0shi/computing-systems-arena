@@ -1,0 +1,946 @@
+{
+  "week": 11,
+  "title": "Introduction to Distributed Systems",
+  "learningGoals": [
+    "Explain why we need distributed systems: one computer can't handle modern data or computation loads.",
+    "Explain the three things that can be distributed (computation, data, control) and how processes communicate without shared memory (message passing, RPC, queues).",
+    "Compare multi-process vs multi-threaded designs in a distributed system, and describe microservices.",
+    "Explain the client–server model, RPC/gRPC, the request–response model (synchronous or asynchronous), horizontal vs vertical scaling and load balancing.",
+    "Define throughput, response time, reliability and availability, and the difference between server and service.",
+    "Explain clusters: homogeneous vs heterogeneous, compute vs scale-out, economies of scale, and the YouTube example.",
+    "Compare data partitioning vs replication, the hybrid of the two, HDFS (128 MB blocks, replication factor 3), and the search-engine back end."
+  ],
+  "sirStressed": [
+    "\"A single computer cannot handle massive data or massive computation.\" Distributed = multiple computers working in tandem.",
+    "Fault tolerance is \"very, very, very important.\"",
+    "Distributed processes communicate by send/receive messages, not shared memory. Frameworks (Kafka, RPC, queues) hide the complexity.",
+    "Multi-process across nodes gives isolation. Multi-threading inside a node gives fast switching and shared memory (web server, one thread per request, thread pools).",
+    "RPC = it looks local but runs remotely (ATM verifyPIN ). gRPC = Google's RPC with protocol buffers.",
+    "The four server attributes (throughput, response time, reliability, availability), horizontal vs vertical scaling and the load balancer.",
+    "One server can host many services, and one service can be hosted on many servers.",
+    "Clusters: homogeneous vs heterogeneous, compute vs scale-out, YouTube's 4 clusters.",
+    "Partitioning vs replication. Companies use a hybrid. HDFS: 128 MB blocks, replication factor 3."
+  ],
+  "commonTraps": [
+    "Horizontal = add machines; vertical = upgrade one machine. Don't swap them.",
+    "Reliability (how often it fails) ≠ availability (% of time it's up).",
+    "Throughput (requests per second) ≠ response time (latency per request).",
+    "Partitioning improves scalability and parallelism; replication improves fault tolerance and read speed, but it costs consistency.",
+    "Threads can't span machines. Multi-threading is within one node.",
+    "HDFS default block = 128 MB; replication = 3. Storage used = 3 × the file size.",
+    "Heterogeneous = different node types (for example GPU + CPU), not \"different tasks only\".",
+    "Synchronous = the client waits; asynchronous = it doesn't."
+  ],
+  "summary": [
+    "Distributed system: many networked nodes acting as one. Needed because of the limits on data, computation and load spikes, and for fault tolerance. Gains: scalability, reliability, availability, performance, maintainability.",
+    "What gets distributed: computation, data, control. No shared memory, so communication is by message passing, sockets, APIs, RPC and queues (Kafka).",
+    "Multi-process (across nodes, isolation, CPU-heavy): Hadoop MapReduce, Kubernetes. Multi-threaded (one node, shared memory, light I/O): web servers, thread pools. Microservices: login, cart and payment as separate processes.",
+    "Challenges: network failures, partial failures (IRCTC payment), consistency, debugging.",
+    "Client–server: HTTP/HTTPS, TCP/IP (connection-oriented), UDP, FTP. RPC = a local-looking remote call (ATM verifyPIN , game score). gRPC = Google, protocol buffers (Uber, Gemini pipelines, Netflix). Request–response: synchronous or asynchronous (Amazon cart stored on the server).",
+    "Scaling: horizontal (add nodes) vs vertical (upgrade). Load balancer spreads requests (sales, viral reels, IPL).",
+    "Attributes: throughput (requests/s), response time (arrival → first response), reliability (failure rate), availability (% uptime, 99.9%).",
+    "Server = machine; service = functionality. One server can host many services; one service can run on many servers. WhatsApp = all of these together.",
+    "Clusters: homogeneous (same configuration, Spark, HPC) vs heterogeneous (GPU + CPU). Compute (split a job) vs scale-out (add nodes; Flipkart, Uber). Economies of scale. YouTube: storage, processing, recommendation and streaming clusters.",
+    "Data: partitioning (split; parallel; uneven load, cross-partition queries) vs replication (copies; fault tolerance; consistency overhead). Hybrid. HDFS 128 MB blocks × 3 replicas. The search back end queries partitions in parallel and returns results in ms."
+  ],
+  "questions": [
+    {
+      "id": "W11-Q001",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the purpose of a distributed system?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Less logic"
+        },
+        {
+          "id": "B",
+          "text": "Brighter screen"
+        },
+        {
+          "id": "C",
+          "text": "To let multiple computers work together"
+        },
+        {
+          "id": "D",
+          "text": "Avoid networking"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Introduction to Distributed Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q002",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Distributed systems mainly handle:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Very large computation and data loads"
+        },
+        {
+          "id": "B",
+          "text": "Wallpapers"
+        },
+        {
+          "id": "C",
+          "text": "Single-thread execution"
+        },
+        {
+          "id": "D",
+          "text": "Offline tasks"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Introduction to Distributed Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q003",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Which best defines a distributed system?",
+      "options": [
+        {
+          "id": "A",
+          "text": "One computer, many apps"
+        },
+        {
+          "id": "B",
+          "text": "Multiple computers acting as one logical system"
+        },
+        {
+          "id": "C",
+          "text": "No communication"
+        },
+        {
+          "id": "D",
+          "text": "Shared wallpaper"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "this is the definition to quote in a written answer.",
+      "topicTags": [
+        "Introduction to Distributed Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q004",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why divide computation across multiple computers?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Faster performance through parallel execution"
+        },
+        {
+          "id": "B",
+          "text": "Lower clock speed"
+        },
+        {
+          "id": "C",
+          "text": "Avoid multi-core"
+        },
+        {
+          "id": "D",
+          "text": "Save effort"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "The Need for a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q005",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why store data across multiple machines?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Avoid backups"
+        },
+        {
+          "id": "B",
+          "text": "Make data hard to find"
+        },
+        {
+          "id": "C",
+          "text": "No network traffic"
+        },
+        {
+          "id": "D",
+          "text": "To handle data sets too large for one machine"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "for example, Gmail's petabytes.",
+      "topicTags": [
+        "The Need for a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q006",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is a major motivation for distributed computing?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Less complexity"
+        },
+        {
+          "id": "B",
+          "text": "Scalability when one machine can't handle the load"
+        },
+        {
+          "id": "C",
+          "text": "Less energy"
+        },
+        {
+          "id": "D",
+          "text": "No communication"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "distribution actually adds complexity, so A is wrong. What Is \"Distributed\" in a Distributed System?",
+      "topicTags": [
+        "The Need for a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q007",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is typically distributed?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Screen layout"
+        },
+        {
+          "id": "B",
+          "text": "Keyboard input"
+        },
+        {
+          "id": "C",
+          "text": "Processes running on different machines"
+        },
+        {
+          "id": "D",
+          "text": "Wallpapers"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "computation (processes), data and control.",
+      "topicTags": [
+        "The Need for a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q008",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why do distributed systems use explicit communication?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Processes run on separate machines with no shared memory"
+        },
+        {
+          "id": "B",
+          "text": "Shared memory is illegal"
+        },
+        {
+          "id": "C",
+          "text": "Smaller programs"
+        },
+        {
+          "id": "D",
+          "text": "Networks replace memory"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "hence send/receive messages, RPC and Kafka.",
+      "topicTags": [
+        "The Need for a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q009",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "How does multi-process execution differ from multi-threading in distributed settings?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Threads can run across machines"
+        },
+        {
+          "id": "B",
+          "text": "Processes don't share memory and need communication"
+        },
+        {
+          "id": "C",
+          "text": "Threads replace communication"
+        },
+        {
+          "id": "D",
+          "text": "Processes share memory automatically"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "threads stay inside one node, with shared memory.",
+      "topicTags": [
+        "The Need for a Distributed System"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q010",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the client's role?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To send requests to the server"
+        },
+        {
+          "id": "B",
+          "text": "Store back-end data"
+        },
+        {
+          "id": "C",
+          "text": "Route traffic"
+        },
+        {
+          "id": "D",
+          "text": "Control server hardware"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Client–Server Distributed Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q011",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What does server scalability mean?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The ability to handle growing numbers of client requests"
+        },
+        {
+          "id": "B",
+          "text": "UI themes"
+        },
+        {
+          "id": "C",
+          "text": "Less network use"
+        },
+        {
+          "id": "D",
+          "text": "Less hardware"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "achieved by horizontal or vertical scaling plus load balancing.",
+      "topicTags": [
+        "Client–Server Distributed Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q012",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is the core idea of RPC?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mobile only"
+        },
+        {
+          "id": "B",
+          "text": "Remove execution"
+        },
+        {
+          "id": "C",
+          "text": "Disable communication"
+        },
+        {
+          "id": "D",
+          "text": "Call a function on another machine as if it were local"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "the ATM's verifyPIN() runs on the bank's server.",
+      "topicTags": [
+        "Client–Server Distributed Systems"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q013",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why use heterogeneous clusters?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To support diverse workloads using different hardware"
+        },
+        {
+          "id": "B",
+          "text": "Lower performance"
+        },
+        {
+          "id": "C",
+          "text": "Looks"
+        },
+        {
+          "id": "D",
+          "text": "Avoid networking"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "for example, GPU nodes for training plus CPU nodes for control.",
+      "topicTags": [
+        "Distributed Clusters"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q014",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is a homogeneous cluster?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Different wallpapers"
+        },
+        {
+          "id": "B",
+          "text": "A cluster where all nodes have similar configurations"
+        },
+        {
+          "id": "C",
+          "text": "Entirely different hardware"
+        },
+        {
+          "id": "D",
+          "text": "No inter-node communication"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Distributed Clusters"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q015",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What defines a distributed cluster?",
+      "options": [
+        {
+          "id": "A",
+          "text": "No coordination"
+        },
+        {
+          "id": "B",
+          "text": "One machine with all the data"
+        },
+        {
+          "id": "C",
+          "text": "Multiple nodes working together as a single system"
+        },
+        {
+          "id": "D",
+          "text": "No communication"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "",
+      "topicTags": [
+        "Distributed Clusters"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q016",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why partition data across nodes?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Make it harder to find"
+        },
+        {
+          "id": "B",
+          "text": "Less network use"
+        },
+        {
+          "id": "C",
+          "text": "To scale by splitting large data sets"
+        },
+        {
+          "id": "D",
+          "text": "Fewer servers"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "it also enables parallel access.",
+      "topicTags": [
+        "Data Distribution (Partitioning and Replication)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q017",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "What is a major challenge with replication?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Brightness"
+        },
+        {
+          "id": "B",
+          "text": "UI colours"
+        },
+        {
+          "id": "C",
+          "text": "Logos"
+        },
+        {
+          "id": "D",
+          "text": "Keeping data consistent across replicas"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "updating one copy means syncing all the others.",
+      "topicTags": [
+        "Data Distribution (Partitioning and Replication)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-Q018",
+      "week": 11,
+      "source": "quiz",
+      "type": "mcq",
+      "prompt": "Why replicate data across nodes?",
+      "options": [
+        {
+          "id": "A",
+          "text": "To improve reliability and availability"
+        },
+        {
+          "id": "B",
+          "text": "Cost without benefit"
+        },
+        {
+          "id": "C",
+          "text": "More latency"
+        },
+        {
+          "id": "D",
+          "text": "Avoid backups"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "for example, HDFS keeps 3 copies of each block.",
+      "topicTags": [
+        "Data Distribution (Partitioning and Replication)"
+      ],
+      "difficulty": 1,
+      "trapTags": [],
+      "answerSource": "quiz"
+    },
+    {
+      "id": "W11-X01",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Adding more servers to handle a festival sale is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Vertical scaling"
+        },
+        {
+          "id": "B",
+          "text": "Horizontal scaling"
+        },
+        {
+          "id": "C",
+          "text": "Partitioning"
+        },
+        {
+          "id": "D",
+          "text": "Replication"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Horizontal scaling (scale out).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X02",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "\"99.9% uptime\" in a cloud advert describes:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Throughput"
+        },
+        {
+          "id": "B",
+          "text": "Response time"
+        },
+        {
+          "id": "C",
+          "text": "Availability"
+        },
+        {
+          "id": "D",
+          "text": "Partitioning"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Availability.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X03",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "An ATM calling verifyPIN() , which actually runs on the bank's server, is an example of:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Shared memory"
+        },
+        {
+          "id": "B",
+          "text": "RPC"
+        },
+        {
+          "id": "C",
+          "text": "Replication"
+        },
+        {
+          "id": "D",
+          "text": "Vertical scaling"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "RPC.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X04",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The default HDFS block size and replication factor in the lecture are:",
+      "options": [
+        {
+          "id": "A",
+          "text": "64 MB, 2"
+        },
+        {
+          "id": "B",
+          "text": "128 MB, 3"
+        },
+        {
+          "id": "C",
+          "text": "256 MB, 3"
+        },
+        {
+          "id": "D",
+          "text": "128 MB, 5"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "128 MB, 3.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X05",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which is a major drawback of replication?",
+      "options": [
+        {
+          "id": "A",
+          "text": "No fault tolerance"
+        },
+        {
+          "id": "B",
+          "text": "Data-consistency (synchronisation) overhead"
+        },
+        {
+          "id": "C",
+          "text": "It's impossible to read in parallel"
+        },
+        {
+          "id": "D",
+          "text": "It needs shared memory"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Every copy must be kept in sync.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X06",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A cluster of 100 identical GPU servers used for training is:",
+      "options": [
+        {
+          "id": "A",
+          "text": "Heterogeneous"
+        },
+        {
+          "id": "B",
+          "text": "Homogeneous"
+        },
+        {
+          "id": "C",
+          "text": "Client–server only"
+        },
+        {
+          "id": "D",
+          "text": "Peer-to-peer"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Homogeneous (the same configuration).",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 1,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X07",
+      "week": 11,
+      "source": "extra",
+      "type": "short",
+      "prompt": "A 1 GB file is stored in HDFS with 128 MB blocks and a replication factor of 3. How many blocks, how many block copies, and how much raw storage is that?",
+      "correctAnswers": [
+        "1024 / 128 = 8 blocks. With 3 replicas that's 24 block copies, and 8 × 128 MB × 3 = 3 GB (3,072 MB) of raw storage."
+      ],
+      "explanation": "1024 / 128 = 8 blocks. With 3 replicas that's 24 block copies, and 8 × 128 MB × 3 = 3 GB (3,072 MB) of raw storage.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X08",
+      "week": 11,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Explain the difference between throughput and response time, with an example of each.",
+      "correctAnswers": [
+        "Throughput = how many requests are handled per unit time (for example, a UPI server processing 5,000 payments per second). Response time = the delay from a request arriving to the first response (for example, Zomato showing restaurants 200 ms after you search). A server can have high throughput but slow responses if it's queuing."
+      ],
+      "explanation": "Throughput = how many requests are handled per unit time (for example, a UPI server processing 5,000 payments per second). Response time = the delay from a request arriving to the first response (for example, Zomato showing restaurants 200 ms after you search). A server can have high throughput but slow responses if it's queuing.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X09",
+      "week": 11,
+      "source": "extra",
+      "type": "scenario",
+      "prompt": "A food-delivery start-up's single server crashes every time there's an IPL final. Propose an architecture using ideas from this week.",
+      "correctAnswers": [
+        "Use horizontal scaling on the cloud (auto-add nodes or containers during the spike) behind a load balancer. Split into microservices (login, menu, cart, payment, tracking) as separate processes on separate nodes, communicating through APIs or Kafka queues. Partition the data (for example by city or region) and replicate it (for example a factor of 3) for fault tolerance. Use thread pools in the web tier. Monitor availability (an uptime target) and response time."
+      ],
+      "explanation": "Use horizontal scaling on the cloud (auto-add nodes or containers during the spike) behind a load balancer. Split into microservices (login, menu, cart, payment, tracking) as separate processes on separate nodes, communicating through APIs or Kafka queues. Partition the data (for example by city or region) and replicate it (for example a factor of 3) for fault tolerance. Use thread pools in the web tier. Monitor availability (an uptime target) and response time.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 3,
+      "trapTags": []
+    },
+    {
+      "id": "W11-X10",
+      "week": 11,
+      "source": "extra",
+      "type": "short",
+      "prompt": "When would you choose multi-processing across nodes rather than multi-threading in a distributed system? Give one example of each.",
+      "correctAnswers": [
+        "Use multi-processing across nodes for CPU-heavy, independent, isolated work where one crash must not affect the others, for example Hadoop map/reduce tasks or Kubernetes microservices. Use multi-threading inside a node for light, I/O-bound, many small requests needing fast switching and shared memory, for example a web server using one thread per request from a thread pool."
+      ],
+      "explanation": "Use multi-processing across nodes for CPU-heavy, independent, isolated work where one crash must not affect the others, for example Hadoop map/reduce tasks or Kubernetes microservices. Use multi-threading inside a node for light, I/O-bound, many small requests needing fast switching and shared memory, for example a web server using one thread per request from a thread pool.",
+      "topicTags": [
+        "extra practice"
+      ],
+      "difficulty": 2,
+      "trapTags": []
+    }
+  ]
+}

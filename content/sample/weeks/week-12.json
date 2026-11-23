@@ -1,0 +1,184 @@
+{
+  "week": 12,
+  "questions": [
+    {
+      "id": "w12-q01",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Paging divides a virtual address space into",
+      "options": [
+        "Fixed-size pages that can sit in any free frames",
+        "One physical region that can never move",
+        "Files",
+        "Interrupts"
+      ],
+      "answer": 0,
+      "explanation": "A virtual address splits into a page number and an offset. The page table turns the page number into a frame number.",
+      "tags": [
+        "paging"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w12-q02",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A page fault means",
+      "options": [
+        "The referenced page is not currently in a physical frame",
+        "The ALU overflowed",
+        "The cache is write-back",
+        "The process has exited"
+      ],
+      "answer": 0,
+      "explanation": "The valid bit is clear, so the OS must bring the page in or signal the process. A fault is the mechanism, not automatically a bug.",
+      "tags": [
+        "page-fault"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Treating every page fault as a program crash."
+      ]
+    },
+    {
+      "id": "w12-q03",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The TLB caches",
+      "options": [
+        "Recent page-table translations",
+        "Whole files",
+        "The ready queue",
+        "Assembly source"
+      ],
+      "answer": 0,
+      "explanation": "A TLB hit avoids walking the page table. A TLB miss is not automatically a page fault: the translation may still be in memory.",
+      "tags": [
+        "tlb"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Equating a TLB miss with a page fault."
+      ]
+    },
+    {
+      "id": "w12-q04",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Classic paging avoids external fragmentation because",
+      "options": [
+        "Any free frame can hold any page",
+        "Every page has a different size that must fit a hole exactly",
+        "The disk is always contiguous",
+        "All processes share one frame"
+      ],
+      "answer": 0,
+      "explanation": "Frames are equal, so a free frame is always the right shape. The last page of a process can still waste space inside the frame: that is internal fragmentation.",
+      "tags": [
+        "paging"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w12-q05",
+      "week": 12,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Belady’s anomaly shows that",
+      "options": [
+        "FIFO can cause more faults if you add a frame",
+        "OPT is easy to run without knowing the future",
+        "LRU always faults more than FIFO",
+        "The TLB replaces the page table"
+      ],
+      "answer": 0,
+      "explanation": "For some reference strings, FIFO’s fault count rises when the frame count rises. LRU and OPT do not have this anomaly.",
+      "tags": [
+        "replacement"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "w12-q06",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "LRU replaces",
+      "options": [
+        "The page whose most recent use is the oldest",
+        "The page that will be used farthest in the future",
+        "A frame chosen with no rule",
+        "The page that was loaded most recently"
+      ],
+      "answer": 0,
+      "explanation": "LRU looks backward. OPT looks forward and evicts the page used farthest in the future. LRU is the practical approximation.",
+      "tags": [
+        "replacement"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Describing OPT when the name was LRU."
+      ]
+    },
+    {
+      "id": "w12-q07",
+      "week": 12,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Optimal replacement is not the real online policy because",
+      "options": [
+        "It needs the future reference string",
+        "It always faults more than FIFO",
+        "It requires pages of unequal size",
+        "It disables the TLB"
+      ],
+      "answer": 0,
+      "explanation": "OPT is the measuring stick. A real system has not seen the future, so it uses LRU or an approximation.",
+      "tags": [
+        "replacement"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w12-q08",
+      "week": 12,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "A page-table entry commonly needs room for",
+      "options": [
+        "A frame number",
+        "A valid (present) bit",
+        "Permission bits such as read-only",
+        "The process’s source code"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The entry translates a page and says whether it is present and what the process may do. Source text does not live in the entry.",
+      "tags": [
+        "paging"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w12-q09",
+      "week": 12,
+      "source": "mock",
+      "type": "short",
+      "prompt": "What is thrashing?",
+      "options": [],
+      "answer": "The machine spends most of its time paging because the working sets of the runnable processes do not fit.",
+      "explanation": "CPU utilization falls even while the disk is busy. The fix is to run fewer processes or give them more frames, not to schedule harder.",
+      "tags": [
+        "thrashing"
+      ],
+      "difficulty": 3
+    }
+  ]
+}

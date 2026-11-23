@@ -1,0 +1,181 @@
+{
+  "week": 11,
+  "questions": [
+    {
+      "id": "w11-q01",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A race condition happens when",
+      "options": [
+        "The result depends on the unpredictable order of operations on shared state",
+        "Two processes run the same sequential code on private data",
+        "The ready queue is empty",
+        "A file is read-only"
+      ],
+      "answer": 0,
+      "explanation": "If the outcome changes when the scheduler changes the interleaving, the program has a race. Private data does not create one.",
+      "tags": [
+        "critical-section"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w11-q02",
+      "week": 11,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which are requirements of a correct critical-section solution?",
+      "options": [
+        "Mutual exclusion",
+        "Progress",
+        "Bounded waiting",
+        "The critical section must contain a system call"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Mutual exclusion keeps two processes out at once. Progress says outsiders cannot freeze the decision. Bounded waiting caps how long one process can be overtaken.",
+      "tags": [
+        "critical-section"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w11-q03",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A mutex is used to",
+      "options": [
+        "Let only one holder be inside a critical section",
+        "Replace virtual memory",
+        "Increase the clock rate",
+        "Store a file’s inode"
+      ],
+      "answer": 0,
+      "explanation": "Lock before the shared update, unlock after. A second locker waits. That is mutual exclusion, not a memory-management scheme.",
+      "tags": [
+        "semaphore"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w11-q04",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A counting semaphore initialized to 3 is a natural fit for",
+      "options": [
+        "A pool of 3 identical resources",
+        "A single bit in the ALU",
+        "The program counter",
+        "Disabling all interrupts forever"
+      ],
+      "answer": 0,
+      "explanation": "Each acquire decrements the count. At zero the next acquire waits until a release. The initial value is the size of the pool.",
+      "tags": [
+        "semaphore"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w11-q05",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Which of these is NOT one of the four necessary conditions for deadlock?",
+      "options": [
+        "Mutual exclusion",
+        "Hold and wait",
+        "No preemption",
+        "Round-robin scheduling"
+      ],
+      "answer": 3,
+      "explanation": "The four conditions are mutual exclusion, hold and wait, no preemption, and circular wait. A scheduler name is not one of them.",
+      "tags": [
+        "deadlock"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Replacing “no preemption” with “preemption is allowed”, which is the opposite condition."
+      ]
+    },
+    {
+      "id": "w11-q06",
+      "week": 11,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Starvation differs from deadlock because",
+      "options": [
+        "The starved job could run if the scheduler chose it; a deadlocked set can never proceed",
+        "Deadlock lasts only one quantum",
+        "Starvation requires circular wait",
+        "They are two names for the same event"
+      ],
+      "answer": 0,
+      "explanation": "A starved job is legal to run and keeps losing. Deadlock is a set of jobs whose needed resources are held inside the set.",
+      "tags": [
+        "deadlock"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w11-q07",
+      "week": 11,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "In the banker’s algorithm, a state is safe when",
+      "options": [
+        "There exists an order of granting that lets every process finish",
+        "The system has already deadlocked",
+        "Every process already holds its maximum claim",
+        "The available vector is zero and nobody can run"
+      ],
+      "answer": 0,
+      "explanation": "Safety means there is at least one sequence that avoids deadlock from here. It does not mean a deadlock has already happened.",
+      "tags": [
+        "banker"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "Reading “safe” as “already stuck”."
+      ]
+    },
+    {
+      "id": "w11-q08",
+      "week": 11,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "Forcing a process to request every resource it will need before it starts mainly breaks",
+      "options": [
+        "Hold and wait",
+        "Mutual exclusion, by sharing a printer mid-line",
+        "The need for a CPU",
+        "The page table"
+      ],
+      "answer": 0,
+      "explanation": "If a process holds nothing while it waits for the whole set, it cannot hold one resource and wait for another.",
+      "tags": [
+        "deadlock"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "w11-q09",
+      "week": 11,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Name one deadlock condition and a concrete way to break it.",
+      "options": [],
+      "answer": "Circular wait can be broken by acquiring resources in one fixed global order, so a cycle cannot close.",
+      "explanation": "Other valid answers: break hold-and-wait by allocating the whole set at once, or allow preemption of the resource. Mutual exclusion often cannot be broken for a real device.",
+      "tags": [
+        "deadlock"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

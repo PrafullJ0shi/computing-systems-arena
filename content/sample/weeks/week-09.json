@@ -1,0 +1,187 @@
+{
+  "week": 9,
+  "questions": [
+    {
+      "id": "w09-q01",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A process is",
+      "options": [
+        "A program in execution, with its own state and resources",
+        "A source file sitting on disk",
+        "A single cache line",
+        "The assembler"
+      ],
+      "answer": 0,
+      "explanation": "The file is a program. A process is that program plus a program counter, registers, memory, and open resources.",
+      "tags": [
+        "process"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "The executable file is not yet a process."
+      ]
+    },
+    {
+      "id": "w09-q02",
+      "week": 9,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which items belong in a process control block?",
+      "options": [
+        "Saved registers and program counter",
+        "Process state and process id",
+        "Open files, or a pointer to them",
+        "The transistor netlist of the ALU"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The PCB is the OS’s record of one process. Hardware diagrams of the ALU are not part of it.",
+      "tags": [
+        "pcb"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w09-q03",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Two threads of one process share",
+      "options": [
+        "The address space; each has its own registers and stack",
+        "Nothing at all",
+        "One stack pointer and one program counter",
+        "The ALU’s only register"
+      ],
+      "answer": 0,
+      "explanation": "Sharing the address space is the point of threads. Each thread still needs its own PC, registers, and stack, or it could not be in a different place in the code.",
+      "tags": [
+        "thread"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "If they shared one PC they could not execute two different instructions."
+      ]
+    },
+    {
+      "id": "w09-q04",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A process that asked for disk data and cannot run until it arrives is",
+      "options": [
+        "Waiting (blocked)",
+        "Running",
+        "Terminated",
+        "New"
+      ],
+      "answer": 0,
+      "explanation": "It is not on the CPU, and it is not ready to take the CPU. It sits in the waiting state until the I/O completion moves it back to ready.",
+      "tags": [
+        "state"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w09-q05",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A context switch is costly mainly because",
+      "options": [
+        "The OS saves one set of registers and restores another, and caches may go cold",
+        "The ALU is replaced",
+        "The disk is formatted",
+        "The ISA changes"
+      ],
+      "answer": 0,
+      "explanation": "Direct cost: memory writes for the saved state. Indirect cost: the next process misses in caches and the TLB that the previous one had warmed.",
+      "tags": [
+        "process"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w09-q06",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "The ready queue holds processes that",
+      "options": [
+        "Could use the CPU immediately",
+        "Are waiting for a specific I/O completion",
+        "Have already exited",
+        "Have not been created"
+      ],
+      "answer": 0,
+      "explanation": "Ready means “runnable”. Waiting processes are on other queues until their event arrives.",
+      "tags": [
+        "state"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Putting blocked processes on the ready queue."
+      ]
+    },
+    {
+      "id": "w09-q07",
+      "week": 9,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A zombie process is one that",
+      "options": [
+        "Has exited, but its parent has not yet collected the exit status",
+        "Is running on two CPUs at once by definition",
+        "Is stored only in the TLB",
+        "Can no longer be created"
+      ],
+      "answer": 0,
+      "explanation": "The process is not executing. The OS keeps a small record so the parent can observe how it ended.",
+      "tags": [
+        "process"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "A zombie is not still running."
+      ]
+    },
+    {
+      "id": "w09-q08",
+      "week": 9,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Process isolation means",
+      "options": [
+        "One process cannot casually read or write another process’s memory",
+        "All processes share one address space on purpose",
+        "Threads are forbidden",
+        "System calls are forbidden"
+      ],
+      "answer": 0,
+      "explanation": "Each process gets its own translation from virtual addresses to frames. Crossing that boundary requires a system call or other explicit sharing.",
+      "tags": [
+        "process"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w09-q09",
+      "week": 9,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Give one reason to use a second thread instead of a second process.",
+      "options": [],
+      "answer": "Threads of one process already share the address space, so they can exchange data without a heavier copy.",
+      "explanation": "The cost of that convenience is that a bug in one thread can corrupt the others. A second process would be more isolated and more expensive to share with.",
+      "tags": [
+        "thread"
+      ],
+      "difficulty": 2
+    }
+  ]
+}

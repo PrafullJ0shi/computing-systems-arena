@@ -1,0 +1,186 @@
+{
+  "week": 5,
+  "questions": [
+    {
+      "id": "w05-q01",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "An instruction set architecture is best described as",
+      "options": [
+        "The contract a program can rely on: instructions, registers, and their visible effects",
+        "The physical layout of the transistors",
+        "The operating system’s scheduler",
+        "A particular brand of assembler"
+      ],
+      "answer": 0,
+      "explanation": "Two chips can implement one ISA with different pipelines. Programs see the contract, not the transistor floorplan.",
+      "tags": [
+        "isa"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w05-q02",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In a load/store instruction set, arithmetic operands come from",
+      "options": [
+        "Registers; memory is reached only by explicit load and store",
+        "Main memory on every add, with no registers",
+        "The disk controller",
+        "The page table only"
+      ],
+      "answer": 0,
+      "explanation": "Load/store machines keep the ALU on registers. Memory traffic is a separate, visible instruction.",
+      "tags": [
+        "isa"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "“RISC” is not only “fewer opcodes”. The memory rule is the sharper line."
+      ]
+    },
+    {
+      "id": "w05-q03",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "In ADD R1, 5 the 5 is an immediate. That means",
+      "options": [
+        "The value 5 is encoded in the instruction itself",
+        "5 is a memory address that must be loaded first",
+        "5 is a device number",
+        "The assembler deletes the 5"
+      ],
+      "answer": 0,
+      "explanation": "An immediate operand travels inside the instruction word. No extra memory read is required to find the 5.",
+      "tags": [
+        "addressing"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w05-q04",
+      "week": 5,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Which of these are real addressing ideas?",
+      "options": [
+        "Register: the operand is already in a named register",
+        "Immediate: the operand bits sit in the instruction",
+        "Base plus offset: a register plus a constant forms an address",
+        "Psychic: the CPU guesses the address from the opcode color"
+      ],
+      "answer": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Register, immediate, and base-plus-offset are standard ways to name an operand. The last one is not.",
+      "tags": [
+        "addressing"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w05-q05",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A taken conditional branch updates",
+      "options": [
+        "The program counter, so the next fetch uses the target address",
+        "Only the destination register of the previous ADD",
+        "The disk inode",
+        "The cache block size"
+      ],
+      "answer": 0,
+      "explanation": "A branch is a write to the PC, gated by a flag. If the condition is false, the PC keeps the sequential successor.",
+      "tags": [
+        "assembly"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w05-q06",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Assembly language is",
+      "options": [
+        "A readable encoding of machine instructions, translated by an assembler",
+        "The text the processor fetches from memory",
+        "A language with a garbage collector",
+        "A file system"
+      ],
+      "answer": 0,
+      "explanation": "The CPU fetches numbers. An assembler turns mnemonics and labels into those numbers.",
+      "tags": [
+        "assembly"
+      ],
+      "difficulty": 1,
+      "traps": [
+        "The processor does not fetch the mnemonic text."
+      ]
+    },
+    {
+      "id": "w05-q07",
+      "week": 5,
+      "source": "extra",
+      "type": "code",
+      "prompt": "What is R1 when this program halts?",
+      "options": [
+        "0",
+        "7",
+        "14",
+        "1"
+      ],
+      "answer": 0,
+      "explanation": "SUB R1, R1 writes 7 − 7 = 0. Adding R1 to itself then keeps 0. The 7 does not survive the subtract.",
+      "tags": [
+        "assembly"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "Reading SUB R1, R1 as “subtract one” instead of “subtract the register from itself”."
+      ],
+      "code": "MOV R1, 7\nSUB R1, R1\nADD R1, R1\nHLT"
+    },
+    {
+      "id": "w05-q08",
+      "week": 5,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "A call that saves a return address on a stack typically",
+      "options": [
+        "Writes the address and moves the stack pointer",
+        "Clears every register",
+        "Switches the machine from little-endian to big-endian",
+        "Deletes the caller"
+      ],
+      "answer": 0,
+      "explanation": "The return address has to survive the callee. A stack push stores it and leaves a new top of stack for the callee’s locals.",
+      "tags": [
+        "assembly"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w05-q09",
+      "week": 5,
+      "source": "mock",
+      "type": "short",
+      "prompt": "Give one concrete difference between a typical RISC ISA and a typical CISC ISA.",
+      "options": [],
+      "answer": "RISC designs favor a regular load/store set. CISC designs often allow arithmetic to name a memory operand directly.",
+      "explanation": "Both still need a written contract. The difference students should be able to say out loud is where an ADD is allowed to find its bits.",
+      "tags": [
+        "isa",
+        "risc"
+      ],
+      "difficulty": 3
+    }
+  ]
+}

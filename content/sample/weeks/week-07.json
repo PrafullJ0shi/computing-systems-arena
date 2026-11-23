@@ -1,0 +1,182 @@
+{
+  "week": 7,
+  "questions": [
+    {
+      "id": "w07-q01",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Polling means the CPU",
+      "options": [
+        "Repeatedly reads a device status bit to see if service is needed",
+        "Stops the clock until the disk finishes",
+        "Lets the device write the register file with no setup",
+        "Always services the keyboard before the disk"
+      ],
+      "answer": 0,
+      "explanation": "The CPU asks “are you ready?” in a loop. An interrupt lets the device signal instead, so the CPU can do other work.",
+      "tags": [
+        "polling",
+        "interrupts"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w07-q02",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "An interrupt vector table stores",
+      "options": [
+        "Addresses of handlers, selected by an interrupt number",
+        "The user’s open files",
+        "Cache tags",
+        "The ready queue"
+      ],
+      "answer": 0,
+      "explanation": "The hardware uses the interrupt number as an index and jumps to the address it finds. The handler itself lives elsewhere.",
+      "tags": [
+        "interrupts"
+      ],
+      "difficulty": 1
+    },
+    {
+      "id": "w07-q03",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Direct memory access helps because",
+      "options": [
+        "A device can move a block while the CPU does other work, instead of the CPU copying every byte",
+        "The CPU no longer needs a clock",
+        "Interrupts become illegal for the rest of the boot",
+        "Virtual memory is turned off"
+      ],
+      "answer": 0,
+      "explanation": "The CPU programs the DMA engine and is told when the block is finished. It does not sit in a load/store loop for every byte.",
+      "tags": [
+        "dma"
+      ],
+      "difficulty": 2,
+      "traps": [
+        "DMA does not power the CPU down, and it usually ends with an interrupt."
+      ]
+    },
+    {
+      "id": "w07-q04",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Two unmasked interrupts are pending. The CPU should service",
+      "options": [
+        "The one with the more urgent priority",
+        "Whichever belongs to the older program",
+        "Always the keyboard, regardless of priority",
+        "Neither, until the current process exits"
+      ],
+      "answer": 0,
+      "explanation": "Priority is how the machine decides which pending request is first. A mask can also take a device out of the contest.",
+      "tags": [
+        "interrupts"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w07-q05",
+      "week": 7,
+      "source": "extra",
+      "type": "multi",
+      "prompt": "Before a handler runs, something must preserve enough state to resume the interrupted program. Which items are part of that idea?",
+      "options": [
+        "The return address (program counter)",
+        "The condition flags",
+        "The inode of every file on disk",
+        "Registers the handler would otherwise overwrite"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "The interrupted program needs its PC, flags, and any registers the handler uses. Saving every file is not part of taking an interrupt.",
+      "tags": [
+        "interrupts"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w07-q06",
+      "week": 7,
+      "source": "extra",
+      "type": "mcq",
+      "prompt": "Memory-mapped I/O means",
+      "options": [
+        "Device registers appear at addresses the CPU can load and store",
+        "Every file is cached in RAM",
+        "Interrupts are stored as pages",
+        "The disk is the only memory in the machine"
+      ],
+      "answer": 0,
+      "explanation": "A load or store to a special address talks to a device. There is no separate I/O opcode required for that device.",
+      "tags": [
+        "io"
+      ],
+      "difficulty": 2
+    },
+    {
+      "id": "w07-q07",
+      "week": 7,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A non-maskable interrupt differs from a maskable one because",
+      "options": [
+        "The ordinary interrupt mask cannot quietly ignore it",
+        "It has no handler",
+        "It is never allowed to preempt anything",
+        "It is only the keyboard repeat"
+      ],
+      "answer": 0,
+      "explanation": "Maskable interrupts respect an enable flag. A non-maskable interrupt is reserved for events the machine must notice, such as a serious hardware fault.",
+      "tags": [
+        "interrupts"
+      ],
+      "difficulty": 3
+    },
+    {
+      "id": "w07-q08",
+      "week": 7,
+      "source": "mock",
+      "type": "mcq",
+      "prompt": "A page fault raised by the running instruction is best classed as",
+      "options": [
+        "An exception from the instruction stream, not a device interrupt",
+        "A disk DMA completion",
+        "A clock tick",
+        "A context switch by definition"
+      ],
+      "answer": 0,
+      "explanation": "Device interrupts arrive from outside. Exceptions are caused by the instruction being executed. The OS may do I/O to fix a page fault, but the original event is an exception.",
+      "tags": [
+        "interrupts"
+      ],
+      "difficulty": 3,
+      "traps": [
+        "Calling every control transfer a device interrupt."
+      ]
+    },
+    {
+      "id": "w07-q09",
+      "week": 7,
+      "source": "extra",
+      "type": "short",
+      "prompt": "Why does a handler often mask interrupts of the same priority at the very start?",
+      "options": [],
+      "answer": "So it can save state and touch device data without being re-entered in the middle of that prologue.",
+      "explanation": "Once the handler is in a safe state it may re-enable selected interrupts. The mask is about the dangerous first moments, not about never sharing the CPU.",
+      "tags": [
+        "interrupts"
+      ],
+      "difficulty": 2
+    }
+  ]
+}
